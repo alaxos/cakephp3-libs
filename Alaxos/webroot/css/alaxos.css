@@ -1,0 +1,64 @@
+.flash-message{
+	margin:10px 0px;
+	padding:15px;
+	text-align:center;
+}
+
+.error-message, .error{
+	color:red;
+}
+.cake-error{
+	color:red;
+	border-color:#FAAAAA;
+}
+a.asc{
+    padding-left:25px;
+    background-image:url('../img/asc.gif');
+    background-repeat: no-repeat;
+}
+a.desc{
+    padding-left:25px;
+    background-image:url('../img/desc.gif');
+    background-repeat: no-repeat;
+}
+
+/*** BOOTSTRAP ***/
+.navbar
+{
+	min-height: 0px;
+}
+.navbar-nav > li > a
+{
+	padding-bottom:5px;
+	padding-top:5px;
+}
+.navbar-text
+{
+	margin-bottom:0px;
+	margin-top:0px;
+	line-height:30px;
+}
+.navbar-default
+{
+	background-color:transparent;
+	background-image: none;
+}
+.dl-horizontal dt
+{
+	text-align:left;
+	min-height:30px;
+}
+.dl-horizontal dd
+{
+    text-align:left;
+    min-height:30px;
+}
+/*
+.dl-horizontal dd:before
+{
+	content: " : ";
+}*/
+td.actions
+{
+	white-space: nowrap;
+}
