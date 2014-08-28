@@ -2,8 +2,8 @@
     "name": "alaxos/cakephp3-libs",
     "description": "Custom libraries for CakePHP 3.x framework",
     "type": "cakephp-plugin",
-    "keywords" : ["cakephp", "libraries"]
-    "version": "0.1",
+    "keywords" : ["cakephp", "libraries"],
+    "version": "0.1.0",
     "homepage": "https://github.com/alaxos/cakephp3-libs",
     "license": "MIT",
     "require": {
