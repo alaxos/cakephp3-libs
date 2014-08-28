@@ -3,6 +3,9 @@ var Alaxos = (function($j) {
 	var INVALID_DATE             = "INVALID_DATE";
 	var DEFAULT_DATE_FORMAT      = "y-m-d";
 	
+	var pleaseSelectAtLeastOneItem      = "Please choose at least one item in the list";
+	var pleaseChooseActionToPerformText = "Please choose the action to perform";
+	
 	/********************************************************************
      * Date formatting
      */
@@ -507,6 +510,57 @@ var Alaxos = (function($j) {
 		}
 	}
 	
+	function register_action_all(){
+		
+		$j("#chooseActionFormBtn").click(function(e){
+			
+			var action = $j("#ActionToPerform").val();
+			if(action.length == 0)
+			{
+				alert(Alaxos.pleaseChooseActionToPerformText);
+				
+				return false;
+			}
+			
+			var checked_ids = [];
+			
+			$j("input.model_id[type=checkbox]:checked").each(function(){
+				checked_ids.push($j(this).val());
+			});
+			
+			if(checked_ids.length == 0)
+			{
+				alert(Alaxos.pleaseSelectAtLeastOneItem);
+				
+				return false;
+			}
+			
+			/****/
+			
+			var url = $j("#TechActionAllUrl").val();
+			
+			$j('#chooseActionFormBtn').after("<form id=\"actionAllForm\" action=\"" + url + "\" method=\"post\"></form>");
+			
+			$j("#actionAllForm").append("<input type=\"hidden\" name=\"data[_Tech][action]\" value=\"" + action + "\">");
+			
+			$j(checked_ids).each(function(){
+				
+				$j("#actionAllForm").append("<input type=\"hidden\" name=\"id[]\" value=\"" + this + "\">");
+				
+			});
+			
+			/*
+			 * If the Security component is used, try to find a token to use
+			 */
+			if($j("input[name='_csrfToken']").length > 0)
+			{
+				$j("#actionAllForm").append("<input type=\"hidden\" name=\"_csrfToken\" value=\"" + $j("input[name='_csrfToken']").val() + "\" />");
+			}
+			
+			$j("#actionAllForm").submit();
+		});
+	}
+	
 	/********************************************************************
      * Start auto scripts
      */
@@ -514,6 +568,7 @@ var Alaxos = (function($j) {
 		Alaxos.register_rows_dblclick();
 		Alaxos.register_select_all_checkboxes();
 		Alaxos.register_select_row();
+		Alaxos.register_action_all();
 	}
 	
 	/********************************************************************
@@ -521,6 +576,8 @@ var Alaxos = (function($j) {
      */
     return {
     	DEFAULT_DATE_FORMAT					:	DEFAULT_DATE_FORMAT,
+    	pleaseSelectAtLeastOneItem			:	pleaseSelectAtLeastOneItem,
+    	pleaseChooseActionToPerformText		:	pleaseChooseActionToPerformText,
     	
     	get_date_format						:	get_date_format,
     	get_complete_date_object			:	get_complete_date_object,
@@ -540,6 +597,7 @@ var Alaxos = (function($j) {
     	register_rows_dblclick				:	register_rows_dblclick,
     	register_select_all_checkboxes		:	register_select_all_checkboxes,
     	register_select_row					:	register_select_row,
+    	register_action_all					:	register_action_all,
     	
     	set_row_status						:	set_row_status,
     	
