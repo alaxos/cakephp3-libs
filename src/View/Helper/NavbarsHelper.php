@@ -20,6 +20,10 @@ class NavbarsHelper extends Helper
                             'paginate_infos'          => false,
                             'paginate_infos_format'   => '<div>Elements: {{start}} - {{end}} / {{count}}</div><div>Page: {{page}} on {{pages}}</div>',
                             
+                            'select_pagination_limit' => false,
+                            'pagination_limits'       => [10, 20, 50, 100],
+                            'pagination_limits_text'  => ___('show %s elements per page'),
+                            
                             /*
                              * Groups of buttons to show
                              */
@@ -58,9 +62,17 @@ class NavbarsHelper extends Helper
          */
         if($options['paginate_infos'])
         {
-            $html[] = '  <div class="col-md-2 col-sm-2 col-xs-3 text-right">';
-            $html[] =       $this->Paginator->counter(['format' => __($options['paginate_infos_format'])]);
-            $html[] = '  </div>';
+            $html[] = $this->get_paginate_infos($options);
+        }
+        
+        $html[] = '</div>';
+        
+        /*
+         * Combobox allowing to select pagination limit
+         */
+        if($options['select_pagination_limit'])
+        {
+            $html[] = $this->get_pagination_limit_combobox($options);
         }
         
         $html[] = '</div>';
@@ -245,6 +257,48 @@ class NavbarsHelper extends Helper
         $html = [];
         
         $html[] = $this->Html->link('<span class="glyphicon glyphicon-chevron-left"></span> ' . __('list'), $options['btn_back_to_list']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        
+        return implode("\n", $html);
+    }
+    
+    public function get_paginate_infos($options = array())
+    {
+        $html   = [];
+        
+        $html[] = '  <div class="col-md-2 col-sm-2 col-xs-3 text-right">';
+        $html[] =       $this->Paginator->counter(['format' => __($options['paginate_infos_format'])]);
+        $html[] = '  </div>';
+        
+        return implode("\n", $html);
+    }
+    
+    public function get_pagination_limit_combobox($options = array())
+    {
+        $html   = [];
+        
+        $html[] = '<div class="row">';
+        $html[] = '  <div class="col-md-12 col-sm-12 col-xs-12 text-right">';
+        
+        $select_options          = [];
+        $select_options['id']    = 'select_pagination_limit';
+        $select_options['value'] = isset($this->request->query['limit']) ? $this->request->query['limit'] : $this->Paginator->param('perPage');
+        
+        $select_limit =  $this->Form->select('_Tech.pagination_limit', array_combine($options['pagination_limits'], $options['pagination_limits']), $select_options);
+        
+        $js   = [];
+        $js[] = '<script type="text/javascript">';
+        $js[] = '$(document).ready(function(){';
+        $js[] = '   $("#select_pagination_limit").change(function(){';
+        $js[] = '       window.location = "' . $this->request->here . '" + "?limit=" +$(this).val();';
+        $js[] = '   });';
+        $js[] = '});';
+        $js[] = '</script>';
+        
+        $html[] = sprintf($options['pagination_limits_text'], $select_limit);
+        $html[] = implode("\n", $js);
+        
+        $html[] = '  </div>';
+        $html[] = '</div>';
         
         return implode("\n", $html);
     }
