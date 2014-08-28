@@ -26,7 +26,7 @@ echo "\t<div class=\"panel panel-default\">\n";
 echo "\t\t<div class=\"panel-heading\">\n";
 
 echo "\t\t<?php\n";
-echo "\t\techo \$this->Navbars->actionButtons(['paginate_infos' => true]);\n";
+echo "\t\techo \$this->Navbars->actionButtons(['paginate_infos' => true, 'select_pagination_limit' => true]);\n";
 echo "\t\t?>\n";
 
 echo "\t\t</div>\n";
