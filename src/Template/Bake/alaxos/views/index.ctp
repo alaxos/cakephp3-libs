@@ -161,18 +161,31 @@ echo "\t\t<div class=\"panel-body\">\n";
 	
 	</div>
 	
-	<div class="paging text-center">
-    	<ul class="pagination pagination-sm">
-<?php
-echo "\t\t<?php\n";
-echo "\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
-echo "\t\techo \$this->Paginator->numbers();\n";
-echo "\t\techo \$this->Paginator->next(__('next') . ' >');\n";
-echo "\t\t?>\n";
+<?php 
+	echo "\t<?php\n"; 
+	echo "\tif(isset(\${$pluralVar}) && \${$pluralVar}->count() > 0)\n";
+	echo "\t{\n";
+    echo "\t\techo '<div class=\"row\">';\n";
+    echo "\t\techo '<div class=\"col-md-1\">';\n";
+    echo "\t\techo \$this->AlaxosForm->postActionAllButton(__d('alaxos', 'delete all'), ['action' => 'delete_all'], ['confirm' => __d('alaxos', 'do you really want to delete the selected items ?')]);\n";
+    echo "\t\techo '</div>';\n";
+    echo "\t\techo '</div>';\n";
+	echo "\t}\n";
+	echo "\t?>\n";
 ?>
-    	</ul>
-	</div>
-	
+
+<?php
+    echo "\t<div class=\"paging text-center\">\n";
+    echo "\t\t<ul class=\"pagination pagination-sm\">\n";
+    echo "\t\t<?php\n";
+    echo "\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
+    echo "\t\techo \$this->Paginator->numbers();\n";
+    echo "\t\techo \$this->Paginator->next(__('next') . ' >');\n";
+    echo "\t\t?>\n";
+    echo "\t\t</ul>\n";
+    echo "\t</div>\n";
+?>
+
 	   </div>
 	</div>
 </div>

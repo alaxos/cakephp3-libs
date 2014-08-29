@@ -170,10 +170,10 @@ $allAssociations = array_merge(
             if ($statement = $query->execute()) {
                 $deleted_total = $statement->rowCount();
                 if($deleted_total == 1){
-                    $this->Flash->success(__('the selected <?= strtolower($singularHumanName); ?> has been deleted.'));
+                    $this->Flash->success(__('The selected <?= strtolower($singularHumanName); ?> has been deleted.'));
                 }
                 elseif($deleted_total > 1){
-                    $this->Flash->success(sprintf(__('the %s selected <?= strtolower($pluralHumanName); ?> have been deleted.'), $deleted_total));
+                    $this->Flash->success(sprintf(__('The %s selected <?= strtolower($pluralHumanName); ?> have been deleted.'), $deleted_total));
                 }
             } else {
                 $this->Flash->error(__('The selected <?= strtolower($pluralHumanName); ?> could not be deleted. Please, try again.'));
