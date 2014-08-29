@@ -460,6 +460,7 @@ var Alaxos = (function($j) {
 				Alaxos.set_row_status($j(this));
 			});
 			
+			Alaxos.check_action_all_btns_state();
 		});
 	}
 	
@@ -481,6 +482,7 @@ var Alaxos = (function($j) {
 			}
 	
 			Alaxos.set_row_status($j(checkbox));
+			Alaxos.check_action_all_btns_state();
 		});
 		
 		/*
@@ -490,6 +492,7 @@ var Alaxos = (function($j) {
 			e.stopPropagation();
 			
 			Alaxos.set_row_status($j(this));
+			Alaxos.check_action_all_btns_state();
 		});
 	}
 	
@@ -510,20 +513,24 @@ var Alaxos = (function($j) {
 		}
 	}
 	
-	function register_action_all(){
+	function check_action_all_btns_state()
+	{
+		if($j("input.model_id[type=checkbox]:checked").length > 0){
+			$j(".action_all_btn").removeProp("disabled");
+		}
+		else{
+			$j(".action_all_btn").prop("disabled", "disabled");
+		}
+	}
+	
+	function register_action_all_btns(){
 		
-		$j("#chooseActionFormBtn").click(function(e){
+		$j(".action_all_btn").click(function(e){
 			
-			var action = $j("#ActionToPerform").val();
-			if(action.length == 0)
-			{
-				alert(Alaxos.pleaseChooseActionToPerformText);
-				
-				return false;
-			}
+			e.stopPropagation();
+			e.preventDefault();
 			
 			var checked_ids = [];
-			
 			$j("input.model_id[type=checkbox]:checked").each(function(){
 				checked_ids.push($j(this).val());
 			});
@@ -537,27 +544,19 @@ var Alaxos = (function($j) {
 			
 			/****/
 			
-			var url = $j("#TechActionAllUrl").val();
-			
-			$j('#chooseActionFormBtn').after("<form id=\"actionAllForm\" action=\"" + url + "\" method=\"post\"></form>");
-			
-			$j("#actionAllForm").append("<input type=\"hidden\" name=\"data[_Tech][action]\" value=\"" + action + "\">");
+			var form    = $j(this).parents("form")[0];
+			var confirm = $j(this).prop("data-confirm");
 			
 			$j(checked_ids).each(function(){
 				
-				$j("#actionAllForm").append("<input type=\"hidden\" name=\"id[]\" value=\"" + this + "\">");
+				$j(form).append("<input type=\"hidden\" name=\"checked_ids[]\" value=\"" + this + "\">");
 				
 			});
 			
-			/*
-			 * If the Security component is used, try to find a token to use
-			 */
-			if($j("input[name='_csrfToken']").length > 0)
-			{
-				$j("#actionAllForm").append("<input type=\"hidden\" name=\"_csrfToken\" value=\"" + $j("input[name='_csrfToken']").val() + "\" />");
-			}
+			var test = "test";
 			
-			$j("#actionAllForm").submit();
+			form.submit();
+			//return false;
 		});
 	}
 	
@@ -568,7 +567,7 @@ var Alaxos = (function($j) {
 		Alaxos.register_rows_dblclick();
 		Alaxos.register_select_all_checkboxes();
 		Alaxos.register_select_row();
-		Alaxos.register_action_all();
+		Alaxos.register_action_all_btns();
 	}
 	
 	/********************************************************************
@@ -597,7 +596,8 @@ var Alaxos = (function($j) {
     	register_rows_dblclick				:	register_rows_dblclick,
     	register_select_all_checkboxes		:	register_select_all_checkboxes,
     	register_select_row					:	register_select_row,
-    	register_action_all					:	register_action_all,
+    	register_action_all_btns			:	register_action_all_btns,
+    	check_action_all_btns_state			:	check_action_all_btns_state,
     	
     	set_row_status						:	set_row_status,
     	

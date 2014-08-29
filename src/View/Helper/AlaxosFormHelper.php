@@ -123,4 +123,56 @@ class AlaxosFormHelper extends FormHelper
         
         return $filter;
     }
+    
+    /*******************************/
+    
+    public function postActionAllButton($title, $url, array $options = array())
+    {
+        $default_options = ['class'        => 'btn btn-default btn-xs action_all_btn', 
+                            'disabled'     => 'disabled', 
+                            'unlockFields' => ['checked_ids'],
+                            'data-confirm' => null
+                           ];
+        
+        if(isset($options['confirm'])){
+            $options['data-confirm'] = $options['confirm'];
+            unset($options['confirm']);
+        }
+        
+        $options = array_merge($default_options, $options);
+        
+        $html = $this->postButton($title, $url, $options);
+        
+        return $html;
+    }
+    
+    /*******************************/
+    
+    /**
+     * Add the possibility to the core FormHelper::postButton() method to add some unlocked fields
+     * that may be added with Javascript before sending the form
+     * 
+     * @see \Cake\View\Helper\FormHelper::postButton()
+     */
+    public function postButton($title, $url, array $options = array()) {
+        $out = $this->create(false, array('id' => false, 'url' => $url));
+        if (isset($options['data']) && is_array($options['data'])) {
+            foreach (Hash::flatten($options['data']) as $key => $value) {
+                $out .= $this->hidden($key, array('value' => $value, 'id' => false));
+            }
+            unset($options['data']);
+        }
+        
+        if(isset($options['unlockFields'])){
+            $unlockFields = is_array($options['unlockFields']) ? $options['unlockFields'] : array($options['unlockFields']);
+            foreach($unlockFields as $unlockField){
+                $this->unlockField($unlockField);
+            }
+        }
+        unset($options['unlockFields']);
+        
+        $out .= $this->button($title, $options);
+        $out .= $this->end();
+        return $out;
+    }
 }

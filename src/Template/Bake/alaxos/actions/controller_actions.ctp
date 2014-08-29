@@ -158,3 +158,29 @@ $allAssociations = array_merge(
 		}
 		return $this->redirect(['action' => 'index']);
 	}
+    
+    public function delete_all() {
+        $this->request->allowMethod('post', 'delete');
+        
+        if(isset($this->request->data['checked_ids']) && !empty($this->request->data['checked_ids'])){
+            
+            $query = $this-><?= $currentModelName ?>->query();
+            $query->delete()->where(['id IN' => $this->request->data['checked_ids']]);
+            
+            if ($statement = $query->execute()) {
+                $deleted_total = $statement->rowCount();
+                if($deleted_total == 1){
+                    $this->Flash->success(__('the selected <?= strtolower($singularHumanName); ?> has been deleted.'));
+                }
+                elseif($deleted_total > 1){
+                    $this->Flash->success(sprintf(__('the %s selected <?= strtolower($pluralHumanName); ?> have been deleted.'), $deleted_total));
+                }
+            } else {
+                $this->Flash->error(__('The selected <?= strtolower($pluralHumanName); ?> could not be deleted. Please, try again.'));
+            }
+        } else {
+            $this->Flash->error(__('There was no <?= strtolower($singularHumanName); ?> to delete'));
+        }
+        
+        return $this->redirect(['action' => 'index']);
+	}
