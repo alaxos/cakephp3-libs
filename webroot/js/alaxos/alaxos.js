@@ -3,8 +3,7 @@ var Alaxos = (function($j) {
 	var INVALID_DATE             = "INVALID_DATE";
 	var DEFAULT_DATE_FORMAT      = "y-m-d";
 	
-	var pleaseSelectAtLeastOneItem      = "Please choose at least one item in the list";
-	var pleaseChooseActionToPerformText = "Please choose the action to perform";
+	var pleaseSelectAtLeastOneItem = "Please choose at least one item from the list";
 	
 	/********************************************************************
      * Date formatting
@@ -544,8 +543,8 @@ var Alaxos = (function($j) {
 			
 			/****/
 			
-			var form    = $j(this).parents("form")[0];
-			var confirm = $j(this).prop("data-confirm");
+			var form        = $j(this).parents("form")[0];
+			var confirm_txt = $j(this).attr("data-confirm");
 			
 			$j(checked_ids).each(function(){
 				
@@ -553,10 +552,14 @@ var Alaxos = (function($j) {
 				
 			});
 			
-			var test = "test";
-			
-			form.submit();
-			//return false;
+			if(typeof(confirm_txt) != "undefined" && confirm_txt.length > 0){
+				if(confirm(confirm_txt)){
+					form.submit();
+				}
+			}
+			else{
+				form.submit();
+			}
 		});
 	}
 	
@@ -576,7 +579,6 @@ var Alaxos = (function($j) {
     return {
     	DEFAULT_DATE_FORMAT					:	DEFAULT_DATE_FORMAT,
     	pleaseSelectAtLeastOneItem			:	pleaseSelectAtLeastOneItem,
-    	pleaseChooseActionToPerformText		:	pleaseChooseActionToPerformText,
     	
     	get_date_format						:	get_date_format,
     	get_complete_date_object			:	get_complete_date_object,
