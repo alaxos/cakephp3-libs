@@ -53,9 +53,15 @@ class AlaxosFormHelper extends FormHelper
     public function number($fieldName, array $options = array())
     {
         echo $this->Html->script('Alaxos.alaxos/alaxos', ['block' => true]);
-    
+        
         $this->addWidget('number', ['Alaxos\View\Widget\Number']);
-    
+        
+        $type = $this->_context->type($fieldName);
+        
+        if($type == 'float'){
+            $options['decimal'] = true;
+        }
+        
         return  parent::number($fieldName, $options);
     }
     
@@ -74,9 +80,13 @@ class AlaxosFormHelper extends FormHelper
             case 'datetime':
                 $filter .= $this->filterDate($fieldName, $options);
                 break;
-                
+            
             case 'integer':
                 $filter .= $this->filterInteger($fieldName, $options);
+                break;
+            
+            case 'float':
+                $filter .= $this->filterFloat($fieldName, $options);
                 break;
             
             default:
@@ -113,6 +123,23 @@ class AlaxosFormHelper extends FormHelper
         $default_options = ['type'  => 'number',
                             'label' => false,
                             'class' => 'form-control'];
+        
+        $options = array_merge($default_options, $options);
+        
+        $filter = '';
+        
+        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __('from or equal')]);
+        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __('to')]);
+        
+        return $filter;
+    }
+    
+    public function filterFloat($fieldName, array $options = array())
+    {
+        $default_options = ['type'    => 'number',
+                            'decimal' => true, 
+                            'label'   => false,
+                            'class'   => 'form-control'];
         
         $options = array_merge($default_options, $options);
         

@@ -143,7 +143,8 @@ class FilterComponent extends Component
         			switch($columnType)
         			{
         			    case 'integer':
-        			    	$this->_addIntegerCondition($query, $fieldName, $value, $options);
+        			    case 'float':
+        			    	$this->_addNumericCondition($query, $fieldName, $value, $options);
         			    	break;
         	
         			    case 'datetime':
@@ -266,7 +267,7 @@ class FilterComponent extends Component
     
     /********************************************************************************/
     
-    protected function _addIntegerCondition(Query $query, $fieldName, $value, array $options = array())
+    protected function _addNumericCondition(Query $query, $fieldName, $value, array $options = array())
     {
         $number1 = null;
         $number2 = null;
@@ -293,9 +294,9 @@ class FilterComponent extends Component
         if(isset($number1) && isset($number2))
         {
             /*
-             * search BETWEEN both dates
-            */
-        
+             * search BETWEEN both numbers
+             */
+            
             $query->where(function($exp) use ($fieldName, $number1, $number2){
                 return $exp->gte($fieldName, $number1)
                            ->lte($fieldName, $number2);
@@ -304,17 +305,17 @@ class FilterComponent extends Component
         elseif(isset($number1))
         {
             /*
-             * search AT first date
-            */
-        
+             * search equal first number
+             */
+            
             $query->where([$fieldName => $number1]);
         }
         elseif(isset($number2))
         {
             /*
-             * search UNTIL second date
-            */
-        
+             * search less or equal second number
+             */
+            
             $query->where(function($exp) use ($fieldName, $number2){
                 return $exp->lte($fieldName, $number2);
             });
