@@ -87,10 +87,10 @@ $allAssociations = array_merge(
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->newEntity($this->request->data);
 		if ($this->request->is('post')) {
 			if ($this-><?= $currentModelName; ?>->save($<?= $singularName ?>)) {
-				$this->Flash->success(__('The <?= strtolower($singularHumanName); ?> has been saved.'));
+				$this->Flash->set(__('The <?= strtolower($singularHumanName); ?> has been saved.'), ['element' => 'Alaxos.success']);
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Flash->error(__('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
+				$this->Flash->set(__('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.'), ['element' => 'Alaxos.error']);
 			}
 		}
 <?php
@@ -123,10 +123,10 @@ $allAssociations = array_merge(
 			
 			$<?= $singularName ?> = $this-><?= $currentModelName ?>->patchEntity($<?= $singularName ?>, $this->request->data);
 			if ($this-><?= $currentModelName; ?>->save($<?= $singularName ?>)) {
-				$this->Flash->success(__('The <?= strtolower($singularHumanName); ?> has been saved.'));
+				$this->Flash->set(__('The <?= strtolower($singularHumanName); ?> has been saved.'), ['element' => 'Alaxos.success']);
 				return $this->redirect(['action' => 'view', $id]);
 			} else {
-				$this->Flash->error(__('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
+				$this->Flash->set(__('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.'), ['element' => 'Alaxos.error']);
 			}
 		}
 <?php
@@ -152,9 +152,9 @@ $allAssociations = array_merge(
 		$<?= $singularName ?> = $this-><?= $currentModelName ?>->get($id);
 		$this->request->allowMethod('post', 'delete');
 		if ($this-><?= $currentModelName; ?>->delete($<?= $singularName ?>)) {
-			$this->Flash->success(__('The <?= strtolower($singularHumanName); ?> has been deleted.'));
+			$this->Flash->set(__('The <?= strtolower($singularHumanName); ?> has been deleted.'), ['element' => 'Alaxos.success']);
 		} else {
-			$this->Flash->error(__('The <?= strtolower($singularHumanName); ?> could not be deleted. Please, try again.'));
+			$this->Flash->set(__('The <?= strtolower($singularHumanName); ?> could not be deleted. Please, try again.'), ['element' => 'Alaxos.error']);
 		}
 		return $this->redirect(['action' => 'index']);
 	}
@@ -167,19 +167,24 @@ $allAssociations = array_merge(
             $query = $this-><?= $currentModelName ?>->query();
             $query->delete()->where(['id IN' => $this->request->data['checked_ids']]);
             
-            if ($statement = $query->execute()) {
-                $deleted_total = $statement->rowCount();
-                if($deleted_total == 1){
-                    $this->Flash->success(__('The selected <?= strtolower($singularHumanName); ?> has been deleted.'));
+            try{
+                if ($statement = $query->execute()) {
+                    $deleted_total = $statement->rowCount();
+                    if($deleted_total == 1){
+                        $this->Flash->set(__('The selected <?= strtolower($singularHumanName); ?> has been deleted.'), ['element' => 'Alaxos.success']);
+                    }
+                    elseif($deleted_total > 1){
+                        $this->Flash->set(sprintf(__('The %s selected <?= strtolower($pluralHumanName); ?> have been deleted.'), $deleted_total), ['element' => 'Alaxos.success']);
+                    }
+                } else {
+                    $this->Flash->set(__('The selected <?= strtolower($pluralHumanName); ?> could not be deleted. Please, try again.'), ['element' => 'Alaxos.error']);
                 }
-                elseif($deleted_total > 1){
-                    $this->Flash->success(sprintf(__('The %s selected <?= strtolower($pluralHumanName); ?> have been deleted.'), $deleted_total));
-                }
-            } else {
-                $this->Flash->error(__('The selected <?= strtolower($pluralHumanName); ?> could not be deleted. Please, try again.'));
+            }
+            catch(\Exception $ex){
+                $this->Flash->set(__('The selected <?= strtolower($pluralHumanName); ?> could not be deleted. Please, try again.'), ['element' => 'Alaxos.error', 'params' => ['exception_message' => $ex->getMessage()]]);
             }
         } else {
-            $this->Flash->error(__('There was no <?= strtolower($singularHumanName); ?> to delete'));
+            $this->Flash->set(__('There was no <?= strtolower($singularHumanName); ?> to delete'), ['element' => 'Alaxos.error']);
         }
         
         return $this->redirect(['action' => 'index']);
