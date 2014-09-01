@@ -49,7 +49,7 @@ if (strpos($action, 'add') !== false)
         echo "\t\t\t<div class=\"panel-body\">\n";
         
         echo "\t\t\t<?php\n";
-        echo "\t\t\techo \$this->Form->create(\${$singularVar}, array('class' => 'form-horizontal', 'role' => 'form', 'novalidate' => 'novalidate'));\n\n";
+        echo "\t\t\techo \$this->AlaxosForm->create(\${$singularVar}, array('class' => 'form-horizontal', 'role' => 'form', 'novalidate' => 'novalidate'));\n\n";
         
 		foreach ($fields as $field) {
 			if (strpos($action, 'add') !== false && in_array($field, $primaryKey)) {
@@ -57,9 +57,9 @@ if (strpos($action, 'add') !== false)
 			}
 			if (isset($keyFields[$field])) {
 			    echo "\t\t\techo '<div class=\"form-group\">';\n";
-			    echo "\t\t\techo \$this->Form->label('{$field}', __('{$field}'), ['class' => 'col-sm-2 control-label']);\n";
+			    echo "\t\t\techo \$this->AlaxosForm->label('{$field}', __('{$field}'), ['class' => 'col-sm-2 control-label']);\n";
 			    echo "\t\t\techo '<div class=\"col-sm-5\">';\n";
-				echo "\t\t\techo \$this->Form->input('{$field}', ['options' => \${$keyFields[$field]}, 'empty' => true, 'class' => 'form-control', 'label' => false]);\n";
+				echo "\t\t\techo \$this->AlaxosForm->input('{$field}', ['options' => \${$keyFields[$field]}, 'empty' => true, 'class' => 'form-control', 'label' => false]);\n";
 				echo "\t\t\techo '</div>';\n";
 				echo "\t\t\techo '</div>';\n\n";
 				continue;
@@ -67,7 +67,7 @@ if (strpos($action, 'add') !== false)
 			if (!in_array($field, [$primaryKey[0], 'created', 'modified', 'updated', 'created_by', 'modified_by'])) {
 
                 echo "\t\t\techo '<div class=\"form-group\">';\n";
-                echo "\t\t\techo \$this->Form->label('{$field}', __('{$field}'), ['class' => 'col-sm-2 control-label']);\n";
+                echo "\t\t\techo \$this->AlaxosForm->label('{$field}', __('{$field}'), ['class' => 'col-sm-2 control-label']);\n";
                 echo "\t\t\techo '<div class=\"col-sm-5\">';\n";
                 
                 $type = $schema->columnType($field);
@@ -76,16 +76,16 @@ if (strpos($action, 'add') !== false)
                     //Time::now(Configure::read('display_timezone'))
                     if (strpos($action, 'add') !== false)
                     {
-                        echo "\t\t\techo \$this->Form->input('{$field}', array('label' => false, 'class' => 'form-control'));\n";
+                        echo "\t\t\techo \$this->AlaxosForm->input('{$field}', array('label' => false, 'class' => 'form-control'));\n";
                     }
                     else
                     {
-                        echo "\t\t\techo \$this->Form->input('{$field}', array('value' => \${$singularVar}->to_display_timezone('{$field}'), 'label' => false, 'class' => 'form-control'));\n";
+                        echo "\t\t\techo \$this->AlaxosForm->input('{$field}', array('value' => \${$singularVar}->to_display_timezone('{$field}'), 'label' => false, 'class' => 'form-control'));\n";
                     }
                 }
                 else
                 {
-				    echo "\t\t\techo \$this->Form->input('{$field}', ['label' => false, 'class' => 'form-control']);\n";
+				    echo "\t\t\techo \$this->AlaxosForm->input('{$field}', ['label' => false, 'class' => 'form-control']);\n";
                 }
                 
                 echo "\t\t\techo '</div>';\n";
@@ -96,17 +96,17 @@ if (strpos($action, 'add') !== false)
 		}
 		if (!empty($associations['BelongsToMany'])) {
 			foreach ($associations['BelongsToMany'] as $assocName => $assocData) {
-				echo "\t\techo \$this->Form->input('{$assocData['property']}._ids', ['options' => \${$assocData['variable']}]);\n";
+				echo "\t\techo \$this->AlaxosForm->input('{$assocData['property']}._ids', ['options' => \${$assocData['variable']}]);\n";
 			}
 		}
 		
 		echo "\t\t\techo '<div class=\"form-group\">';\n";
 		echo "\t\t\techo '<div class=\"col-sm-offset-2 col-sm-5\">';\n";
-		echo "\t\t\techo \$this->Form->button(__('Submit'), ['class' => 'btn btn-default']);\n";
+		echo "\t\t\techo \$this->AlaxosForm->button(__('Submit'), ['class' => 'btn btn-default']);\n";
 		echo "\t\t\techo '</div>';\n";
 		echo "\t\t\techo '</div>';\n\n";
 						
-		echo "\t\t\techo \$this->Form->end();\n";
+		echo "\t\t\techo \$this->AlaxosForm->end();\n";
 		echo "\t\t\t?>\n";
 		
 		echo "\t\t\t</div>\n";
