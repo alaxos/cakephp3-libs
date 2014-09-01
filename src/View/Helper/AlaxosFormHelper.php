@@ -3,7 +3,9 @@ namespace Alaxos\View\Helper;
 
 use Cake\View\Helper\FormHelper;
 use Cake\Utility\Time;
+use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;
+use Alaxos\Lib\SecurityTool;
 
 class AlaxosFormHelper extends FormHelper
 {
@@ -173,8 +175,6 @@ class AlaxosFormHelper extends FormHelper
         return $html;
     }
     
-    /*******************************/
-    
     /**
      * Add the possibility to the core FormHelper::postButton() method to add some unlocked fields
      * that may be added with Javascript before sending the form
@@ -201,5 +201,19 @@ class AlaxosFormHelper extends FormHelper
         $out .= $this->button($title, $options);
         $out .= $this->end();
         return $out;
+    }
+    
+    /*******************************/
+    
+    /**
+     * Add some JS code that add a hidden field
+     * If the hidden field is not present in the POST, SpamFilterComponent considers the request as spam.
+     */
+    public function antispam($form_dom_id)
+    {
+        $salt  = isset($this->_View->viewVars['_alaxos_spam_filter_salt']) ? $this->_View->viewVars['_alaxos_spam_filter_salt'] : null;
+        $token = SecurityTool::get_today_token($salt);
+        
+        return $this->Html->script(Router::url(['plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
     }
 }
