@@ -21,29 +21,26 @@ class AlaxosFormHelper extends FormHelper
         echo $this->Html->script('Alaxos.alaxos/alaxos', ['block' => true]);
         echo $this->Html->script('Alaxos.bootstrap/datepicker/bootstrap-datepicker', ['block' => true]);
         
-        if(isset(Time::$defaultLocale))
+        $defaultLocale = isset(Time::$defaultLocale) ? Time::$defaultLocale : 'en';;
+        $defaultLocale = strtolower($defaultLocale);
+        $defaultLocale = str_replace('-', '_', $defaultLocale);
+        
+        switch($defaultLocale)
         {
-            $defaultLocale = Time::$defaultLocale;
-            $defaultLocale = strtolower($defaultLocale);
-            $defaultLocale = str_replace('-', '_', $defaultLocale);
-            
-            switch($defaultLocale)
-            {
-                case 'fr':
-                case 'fr_fr':
-                case 'fr_ch':
-                    echo $this->Html->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr', ['block' => true]);
-                    $options['language']           = 'fr';
-                    $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
-                    $options['datepicker_format']  = 'd.m.Y';
-                    break;
-                    
-                default:
-                    $options['language']           = 'en';
-                    $options['alaxos_js_format']   = 'y/m/d'; //format for Alaxos JS date parsing
-                    $options['datepicker_format']  = 'Y/m/d';
-                    break;
-            }
+            case 'fr':
+            case 'fr_fr':
+            case 'fr_ch':
+                echo $this->Html->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr', ['block' => true]);
+                $options['language']           = 'fr';
+                $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
+                $options['datepicker_format']  = 'd.m.Y';
+                break;
+                
+            default:
+                $options['language']           = 'en';
+                $options['alaxos_js_format']   = 'y/m/d'; //format for Alaxos JS date parsing
+                $options['datepicker_format']  = 'Y/m/d';
+                break;
         }
         
         $options = $this->_initInputField($fieldName, $options);

@@ -1,6 +1,8 @@
 <?php
 namespace Alaxos\Lib;
+
 use Cake\Utility\Security;
+
 /**
  *
  * @author   Nicolas Rod <nico@alaxos.com>
