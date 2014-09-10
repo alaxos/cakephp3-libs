@@ -22,7 +22,10 @@ class DebugTool
     {
         if(DebugTool::$enabled)
         {
-            echo '<pre>';
+            if(PHP_SAPI != 'cli')
+            {
+                echo '<pre>';
+            }
             
             $calledFrom = debug_backtrace();
             echo "\n" . $calledFrom[$backtrace_index]['file'];
@@ -44,7 +47,15 @@ class DebugTool
                 $object->formatOutput = true;
                 $object->preserveWhiteSpace = false;
                 $xml_string = $object->saveXML();
-                echo htmlentities($xml_string) . "\n";
+                
+                if(PHP_SAPI != 'cli')
+                {
+                    echo htmlentities($xml_string) . "\n";
+                }
+                else
+                {
+                    echo $xml_string . "\n";
+                }
             }
             elseif (is_a($object, 'DOMNodeList') || is_a($object, 'DOMElement'))
             {
@@ -73,7 +84,15 @@ class DebugTool
                 $dom->formatOutput = true;
                 $dom->preserveWhiteSpace = false;
                 $xml_string = $dom->saveXML();
-                echo htmlentities($xml_string) . "\n";
+                
+                if(PHP_SAPI != 'cli')
+                {
+                    echo htmlentities($xml_string) . "\n";
+                }
+                else
+                {
+                    echo $xml_string . "\n";
+                }
             }
             elseif (is_object($object))
             {
@@ -84,7 +103,10 @@ class DebugTool
                 echo $object . "\n";
             }
             
-            echo '</pre>';
+            if(PHP_SAPI != 'cli')
+            {
+                echo '</pre>';
+            }
         }
     }
 
