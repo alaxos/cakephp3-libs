@@ -73,31 +73,50 @@ class AlaxosFormHelper extends FormHelper
         $fieldName = StringTool::ensure_start_with($fieldName, 'Filter.');
         
         $type = $this->_context->type($fieldName);
-        //debug($type);
-        switch($type)
+        
+        if(preg_match('/_id$/', $fieldName))
         {
-            case 'datetime':
-                $filter .= $this->filterDate($fieldName, $options);
-                break;
-            
-            case 'integer':
-                $filter .= $this->filterInteger($fieldName, $options);
-                break;
-            
-            case 'float':
-                $filter .= $this->filterFloat($fieldName, $options);
-                break;
-            
-            case 'boolean':
-                $filter .= $this->filterBoolean($fieldName, $options);
-                break;
-            
-            default:
-                $filter .= $this->filterText($fieldName, $options);
-                break;
+            $filter .= $this->filterSelect($fieldName, $options);
+        }
+        else
+        {
+            switch($type)
+            {
+                case 'datetime':
+                    $filter .= $this->filterDate($fieldName, $options);
+                    break;
+                
+                case 'integer':
+                    $filter .= $this->filterInteger($fieldName, $options);
+                    break;
+                
+                case 'float':
+                    $filter .= $this->filterFloat($fieldName, $options);
+                    break;
+                
+                case 'boolean':
+                    $filter .= $this->filterBoolean($fieldName, $options);
+                    break;
+                
+                default:
+                    $filter .= $this->filterText($fieldName, $options);
+                    break;
+            }
         }
         
         return $filter;
+    }
+    
+    public function filterSelect($fieldName, array $options = array())
+    {
+        $default_options = ['type'  => 'select',
+                            'empty' => true,
+                            'label' => false,
+                            'class' => 'form-control'];
+        
+        $options = array_merge($default_options, $options);
+        
+        return $this->input($fieldName, $options);
     }
     
     public function filterText($fieldName, array $options = array())
@@ -124,7 +143,7 @@ class AlaxosFormHelper extends FormHelper
         $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __('from or equal')]);
         $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __('to')]);
         
-    	return $filter;
+        return $filter;
     }
     
     public function filterInteger($fieldName, array $options = array())

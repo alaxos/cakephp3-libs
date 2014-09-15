@@ -116,12 +116,12 @@ class FilterComponent extends Component
         	    
         	    if(is_array($value))
         	    {
-        	        if(isset($value['__start__']) && !empty($value['__start__']))
+        	        if(isset($value['__start__']) && (!empty($value['__start__']) || $value['__start__'] === '0'))
         	        {
         	            $has_value = true;
         	        }
         	        
-        	        if(isset($value['__end__']) && !empty($value['__end__']))
+        	        if(isset($value['__end__']) && (!empty($value['__end__']) || $value['__end__'] === '0'))
         	        {
         	            $has_value = true;
         	        }
