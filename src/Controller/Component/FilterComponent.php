@@ -126,6 +126,10 @@ class FilterComponent extends Component
         	            $has_value = true;
         	        }
         	    }
+        	    elseif($value === '0')
+        	    {
+        	        $has_value = true;
+        	    }
         	    else
         	    {
         	        $has_value = !empty($value);
@@ -154,6 +158,11 @@ class FilterComponent extends Component
         			    case 'string':
         			    	$this->_addStringCondition($query, $fieldName, $value, $options);
         			    	break;
+        			    	
+        			    case 'boolean':
+        			        $this->_addBooleanCondition($query, $fieldName, $value, $options);
+        			        break;
+        			        
         			}
         		}
         	}
@@ -403,6 +412,14 @@ class FilterComponent extends Component
             }
             
             $query->where([$fieldName . ' LIKE' => $value]);
+        }
+    }
+    
+    protected function _addBooleanCondition(Query $query, $fieldName, $value, array $options = array())
+    {
+        if(in_array($value, [0, 1, true, false, 'true', 'false']))
+        {
+            $query->where([$fieldName => $value]);
         }
     }
 }

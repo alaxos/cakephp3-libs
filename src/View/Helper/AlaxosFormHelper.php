@@ -88,6 +88,10 @@ class AlaxosFormHelper extends FormHelper
                 $filter .= $this->filterFloat($fieldName, $options);
                 break;
             
+            case 'boolean':
+                $filter .= $this->filterBoolean($fieldName, $options);
+                break;
+            
             default:
                 $filter .= $this->filterText($fieldName, $options);
                 break;
@@ -98,7 +102,13 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterText($fieldName, array $options = array())
     {
-    	return $this->input($fieldName, ['label' => false, 'class' => 'form-control']);
+        $default_options = ['type'  => 'text',
+                            'label' => false,
+                            'class' => 'form-control'];
+        
+        $options = array_merge($default_options, $options);
+        
+        return $this->input($fieldName, $options);
     }
     
     public function filterDate($fieldName, array $options = array())
@@ -148,6 +158,19 @@ class AlaxosFormHelper extends FormHelper
         $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __('to')]);
         
         return $filter;
+    }
+    
+    public function filterBoolean($fieldName, array $options = array())
+    {
+        $default_options = ['type'    => 'select',
+                            'options' => [1 =>__d('alaxos', 'yes'), 0 => __d('alaxos', 'no')],
+                            'empty'   => true,
+                            'label'   => false,
+                            'class'   => 'form-control'];
+        
+        $options = array_merge($default_options, $options);
+        
+        return $this->input($fieldName, $options);
     }
     
     /*******************************/
