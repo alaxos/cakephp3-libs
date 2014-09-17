@@ -10,5 +10,6 @@ class LogEntriesTable extends Table {
         $this->displayField('message');
         $this->primaryKey('id');
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Alaxos.UserLink');
     }
 }
