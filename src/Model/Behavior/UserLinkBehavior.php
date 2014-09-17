@@ -25,7 +25,7 @@ class UserLinkBehavior extends Behavior
                 $entity->created_by = $user_id;
             }
             
-            if($entity->accessible('modified_by')){
+            if(!$entity->isNew() && $entity->accessible('modified_by')){
                 $entity->modified_by = $user_id;
             }
             
