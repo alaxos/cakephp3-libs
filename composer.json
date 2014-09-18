@@ -9,7 +9,8 @@
     "require": {
         "php": ">=5.4.19",
         "composer/installers": "*",
-        "cakephp/cakephp": ">=3.0"
+        "cakephp/cakephp": ">=3.0",
+        "solarium/solarium": "3.2.*"
     },
     "extra": {
         "installer-name": "Alaxos"
