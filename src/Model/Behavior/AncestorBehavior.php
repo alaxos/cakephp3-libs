@@ -15,6 +15,7 @@ class AncestorBehavior extends Behavior
 		'model_sort_fieldname'      => 'sort',
 		'ancestor_table_name'       => null,
 		'has_new_parent'            => false,
+		'add_validation_rules'      => true
 	];
 	
 	/**
@@ -33,6 +34,41 @@ class AncestorBehavior extends Behavior
 		parent::__construct($table, $config);
 		
 		$this->_table = $table;
+		
+		$this->addValidationRules();
+	}
+	
+	public function addValidationRules(){
+		
+		$add_validation_rules = $this->config('add_validation_rules');
+		
+		if($add_validation_rules){
+			
+			$this->_table->validator()->add('parent_id', 'child_of_itself', ['rule' => function($value, $context){
+			
+																				if(!$context['newRecord'] && $context['data']['parent_id'] == $context['data']['id']){
+																					return false;
+																				}
+																			
+																				return true;
+																			},
+																			'message' => __d('alaxos', 'a node can not be child of itself')]);
+			
+			$this->_table->validator()->add('parent_id', 'child_of_child', ['rule' => function($value, $context){
+			
+																				if(!$context['newRecord']){
+																					$child_nodes  = $context['providers']['table']->find('children', ['for' => $context['data']['id']]);
+																					$children_ids = $child_nodes->extract('id')->toArray();
+																						
+																					if(in_array($context['data']['parent_id'], $children_ids)){
+																						return false;
+																					}
+																				}
+																					
+																				return true;
+																			},
+																			'message' => __d('alaxos', 'a node can not be child of one of its children')]);
+		}
 	}
 	
 	public function beforeSave(Event $event, Entity $entity) {
@@ -301,6 +337,7 @@ class AncestorBehavior extends Behavior
 		/*
 		 * Create ancestors that do not exist yet
 		*/
+		$new_level_value = 1;
 		foreach($pairs_to_save as $k => $pair_to_save)
 		{
 			if(!in_array($pair_to_save, $existing_pairs))
@@ -313,7 +350,7 @@ class AncestorBehavior extends Behavior
 				$data                = [];
 				$data['node_id']     = $values[0];
 				$data['ancestor_id'] = $values[1];
-				$data['level']       = $level;
+				$data['level']       = $new_level_value;
 				
 				$ancestor = $ancestor_table->newEntity($data);
 				
@@ -329,13 +366,15 @@ class AncestorBehavior extends Behavior
 				 */
 				$existing_ancestor_id = array_search($pair_to_save, $existing_pairs);
 				
-				$query = $ancestor_table->query()->update()->set(['level' => $level])->where(['id' => $existing_ancestor_id]);
+				$query = $ancestor_table->query()->update()->set(['level' => $new_level_value])->where(['id' => $existing_ancestor_id]);
 				
 				if(!$query->execute())
 				{
 					$result = false;
 				}
 			}
+			
+			$new_level_value++;
 		}
 		
 		/*
@@ -352,7 +391,7 @@ class AncestorBehavior extends Behavior
 		
 		if(!empty($ancestors_to_delete_ids))
 		{
-			$query = $ancestor_table->query()->delete()->where(['id' => $ancestors_to_delete_ids]);
+			$query = $ancestor_table->query()->delete()->where(['id IN' => $ancestors_to_delete_ids]);
 			if(!$query->execute())
 			{
 				$result = false;
@@ -576,29 +615,37 @@ class AncestorBehavior extends Behavior
 		}
 	}
 	
-	public function findPath(Query $query, array $options) {
+	public function findPath(Query $query, array $options)
 	{
 		if (empty($options['for'])) {
 			throw new \InvalidArgumentException("The 'for' key is required for find('path')");
 		}
 		
-		
+		$for = $options['for'];
 		
 		$ancestor_table = $this->getAncestorTable($this->_table);
 		
 		$model_alias = $this->_table->alias();
 		
 		$ancestor_table->belongsTo($model_alias, [
-				'className'    => $model_alias,
-				'foreignKey'   => 'node_id',
-				'propertyName' => 'linked_node'
-			]);
+			'className'    => $model_alias,
+			'foreignKey'   => 'ancestor_id',
+			'propertyName' => 'linked_node'
+		]);
 		
-		$this->_table->hasMany('Ancestor', [
+		$query = $ancestor_table->find();
+		$query->contain([$model_alias]);
+		$query->order(['level' => 'asc']);
+		$query->where(['node_id' => $for]);
 		
-		])
+		$nodes = [];
+		foreach($query as $ancestor_entity){
+			$nodes[] = $ancestor_entity->linked_node;
+		}
 		
+		$nodes_collections = new \Cake\Collection\Collection($nodes);
 		
+		return $nodes_collections;
 	}
 	
 	/****************************************************************************************/
