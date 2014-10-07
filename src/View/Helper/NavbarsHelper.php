@@ -75,8 +75,6 @@ class NavbarsHelper extends Helper
             $html[] = $this->get_pagination_limit_combobox($options);
         }
         
-        $html[] = '</div>';
-        
         return implode("\n", $html);
     }
     

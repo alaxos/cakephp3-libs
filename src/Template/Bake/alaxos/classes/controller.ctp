@@ -42,7 +42,8 @@ if (!empty($components)) {
 class <?= $name; ?>Controller extends AppController {
 
 <?php
-
+	$helpers[] = 'Alaxos.AlaxosForm';
+	$helpers[] = 'Alaxos.Navbars';
 	if (count($helpers)):
 		echo "/**\n * Helpers\n *\n * @var array\n */\n";
 		echo "\tpublic \$helpers = [";

@@ -58,6 +58,20 @@ $allAssociations = array_merge(
 		
 <?php endif; ?>
 		$this->set('<?= $pluralName ?>', $this->paginate($this->Filter->getFilterQuery()));
+		
+<?php
+		$compact = [];
+		foreach ($editAssociations as $assoc):
+			$association = $modelObj->association($assoc);
+			$otherName = $association->target()->alias();
+			$otherPlural = $this->_pluralName($otherName);
+			echo "\t\t\${$otherPlural} = \$this->{$currentModelName}->{$otherName}->find('list');\n";
+			$compact[] = "'{$otherPlural}'";
+		endforeach;
+		if(!empty($compact)){
+			echo "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
+		}
+?>
 	}
 
 /**
