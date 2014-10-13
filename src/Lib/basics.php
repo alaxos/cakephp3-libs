@@ -4,16 +4,20 @@ use Alaxos\Lib\StringTool;
 
 function ___($singular, $args = null)
 {
-    $ucf_singular = StringTool::mb_ucfirst($singular);
+	$arguments = func_get_args();
+	$translation = __($singular, array_slice($arguments, 1));
+	
+    $ucf_translation = StringTool::mb_ucfirst($translation);
     
-    $arguments = func_get_args();
-    return __($ucf_singular, array_slice($arguments, 1));
+    return $ucf_translation;
 }
 
 function ___d($domain, $msg, $args = null)
 {
-    $ucf_msg = StringTool::mb_ucfirst($msg);
-    
-    $arguments = func_get_args();
-    return __d($domain, $ucf_msg, array_slice($arguments, 1));
+	$arguments = func_get_args();
+	$translation = __d($domain, $ucf_msg, array_slice($arguments, 1));
+	
+	$ucf_translation = StringTool::mb_ucfirst($translation);
+	
+	return $ucf_translation;
 }

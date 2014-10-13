@@ -102,12 +102,15 @@ class TimezoneEventListener implements EventListener {
                             $timezoned_value = Time::create($data[$property]['year'], $data[$property]['month'], $data[$property]['day'], $data[$property]['hour'], $data[$property]['minute'], $data[$property]['second'], $display_timezone);
                         }
                         
-                        /*
-                         * Transform the Time object to UTC timezone
-                         */
-                        $timezoned_value->setTimezone($default_timezone);
-                        
-                        $entity->set($property, $timezoned_value);
+                        if(isset($timezoned_value))
+                        {
+	                        /*
+	                         * Transform the Time object to UTC timezone
+	                         */
+	                        $timezoned_value->setTimezone($default_timezone);
+	                        
+	                        $entity->set($property, $timezoned_value);
+                        }
                     }
                 }
             }

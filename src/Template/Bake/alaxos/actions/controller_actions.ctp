@@ -49,11 +49,13 @@ $allAssociations = array_merge(
 <?php if ($belongsTo): ?>
 		$this->paginate = [
 		    'limit' => 20,
+		    'maxLimit' => 100,
 			'contain' => [<?= $stringifyList($belongsTo) ?>]
 		];
 <?php else: ?>
 		$this->paginate = [
-		    'limit' => 20
+		    'limit' => 20,
+		    'maxLimit' => 100,
 		];
 		
 <?php endif; ?>

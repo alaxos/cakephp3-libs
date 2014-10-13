@@ -6,6 +6,7 @@ use Cake\Utility\Time;
 use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;
 use Alaxos\Lib\SecurityTool;
+use Cake\I18n\I18n;
 
 class AlaxosFormHelper extends FormHelper
 {
@@ -21,7 +22,8 @@ class AlaxosFormHelper extends FormHelper
         echo $this->Html->script('Alaxos.alaxos/alaxos', ['block' => true]);
         echo $this->Html->script('Alaxos.bootstrap/datepicker/bootstrap-datepicker', ['block' => true]);
         
-        $defaultLocale = isset(Time::$defaultLocale) ? Time::$defaultLocale : 'en';;
+        $defaultLocale = I18n::locale();
+        $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
         $defaultLocale = strtolower($defaultLocale);
         $defaultLocale = str_replace('-', '_', $defaultLocale);
         
