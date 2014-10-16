@@ -11,6 +11,18 @@
         "composer/installers": "*",
         "cakephp/cakephp": ">=3.0"
     },
+    "autoload": {
+        "psr-4": {
+            "Alaxos\\": "src",
+            "Alaxos\\Test\\Fixture\\": "tests\\Fixture"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cake\\Test\\": "vendor/cakephp/cakephp/tests",
+            "Alaxos\\Test\\": "tests"
+        }
+    },
     "extra": {
         "installer-name": "Alaxos"
     }
