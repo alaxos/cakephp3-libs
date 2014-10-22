@@ -446,4 +446,66 @@ class AncestorBehaviorTest extends TestCase {
 		$this->assertEquals(4, $children[2]->id);
 		$this->assertEquals(20, $children[2]->sort);
 	}
+
+	public function testMoveBySettingNewParent()
+	{
+		$entity_3 = $this->Nodes->findById(3)->first();
+		$entity_3->parent_id = 6;
+		$this->Nodes->save($entity_3);
+		
+		$children_of_6 = $this->Nodes->find('children', ['for' => 6]);
+		$this->assertEquals(5, $children_of_6->count());
+		
+		$children_of_1 = $this->Nodes->find('children', ['for' => 1]);
+		$this->assertEquals(0, $children_of_1->count());
+	}
+	
+	public function testMoveUnderItself()
+	{
+		$entity_3 = $this->Nodes->findById(3)->first();
+		$entity_3->parent_id = 3;
+		$result = $this->Nodes->save($entity_3);
+		
+		$this->assertFalse($result);
+		$this->assertEquals(['parent_id' => ['child_of_itself' => 'a node can not be child of itself']], $entity_3->errors());
+	}
+	
+	public function testMoveUnderChild()
+	{
+		$entity_3 = $this->Nodes->findById(3)->first();
+		$entity_3->parent_id = 7;
+		$result = $this->Nodes->save($entity_3);
+	
+		$this->assertFalse($result);
+		$this->assertEquals(['parent_id' => ['child_of_child' => 'a node can not be child of one of its children']], $entity_3->errors());
+	}
+	
+	public function testDelete()
+	{
+		$ancestorTable = $this->Nodes->getAncestorTable();
+		
+		/*
+		 * Before being deleted, Node 7 has 3 ancestors
+		 */
+		$ancestors_for_7 = $ancestorTable->find()->where(['node_id' => 7]);
+		$this->assertEquals(3, $ancestors_for_7->count());
+		
+		/*
+		 * Delete Node 7
+		 */
+		$entity_7 = $this->Nodes->findById(7)->first();
+		$this->Nodes->delete($entity_7);
+		
+		/*
+		 * Check that all ancestors linked to Node 7 have been deleted
+		 */
+		$ancestors_for_7 = $ancestorTable->find()->where(['node_id' => 7]);
+		$this->assertEquals(0, $ancestors_for_7->count());
+		
+		/*
+		 * Node 1 should only have 4 children left
+		 */
+		$children_of_1 = $this->Nodes->find('children', ['for' => 1]);
+		$this->assertEquals(4, $children_of_1->count());
+	}
 }
