@@ -255,6 +255,6 @@ class AlaxosFormHelper extends FormHelper
         $salt  = isset($this->_View->viewVars['_alaxos_spam_filter_salt']) ? $this->_View->viewVars['_alaxos_spam_filter_salt'] : null;
         $token = SecurityTool::get_today_token($salt);
         
-        return $this->Html->script(Router::url(['plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
+        return $this->Html->script(Router::url(['prefix' => false, 'plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
     }
 }

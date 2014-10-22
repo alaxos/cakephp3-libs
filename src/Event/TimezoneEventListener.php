@@ -1,7 +1,7 @@
 <?php 
 namespace Alaxos\Event;
 
-use Cake\Event\EventListener;
+use Cake\Event\EventListenerInterface;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
@@ -9,7 +9,7 @@ use Cake\Utility\Time;
 use Cake\Event\Event;
 use Cake\Validation\Validator;
 
-class TimezoneEventListener implements EventListener {
+class TimezoneEventListener implements EventListenerInterface {
     
     use InstanceConfigTrait;
     

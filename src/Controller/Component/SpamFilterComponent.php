@@ -9,6 +9,31 @@ use Alaxos\Lib\SecurityTool;
 use Cake\Event\Event;
 use Cake\Utility\String;
 
+/**
+ * This component can be used to check if a form protected by AlaxosFormHelper->antispam() method 
+ * has been submitted from a webpage with Javascript enabled.
+ * 
+ * If this is not the case, the SpamFilterComponent->request_is_spam() returns true.
+ * 
+ * Unlike Security and Csrf components, SpamFilterComponent does not blackhole the request. The idea is only to detect a potential spam.
+ * One could for instance set an entity property before saving it.
+ * 
+ * Usage:
+ * ======
+ * 
+ *		View
+ *		-----
+ *		echo $this->AlaxosForm->create($role, ['id' => 'my_form']);
+ *		$this->AlaxosForm->antispam('my_form');
+ *		
+ *		Controller
+ *		----------
+ *		if ($this->request->is('post')) {
+ *			$entity->is_spam = $this->SpamFilter->request_is_spam();
+ *			...
+ *		}
+ *		
+ */
 class SpamFilterComponent extends Component
 {
     protected $_defaultConfig = ['use_session_salt' => false];

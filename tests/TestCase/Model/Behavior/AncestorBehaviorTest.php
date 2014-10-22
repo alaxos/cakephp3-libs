@@ -110,10 +110,7 @@ class AncestorBehaviorTest extends TestCase {
 						'name' => 'Root node A',
 						'sort' => 0
 					]);
-		if(!$this->Nodes->save($root_entity))
-		{
-			debug($root_entity->errors());
-		}
+		$this->Nodes->save($root_entity);
 		
 		$child_entity = $this->Nodes->newEntity([
 						'parent_id' => $root_entity->id,
