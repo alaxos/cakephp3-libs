@@ -1,3 +1,9 @@
-.buildpath
-.project
-.settings
+/.buildpath
+/.project
+/.settings
+/composer.lock
+/vendor/*
+/tmp/*
+/logs/*
+/clover.xml
+/junit.xml

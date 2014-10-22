@@ -21,7 +21,7 @@ class LogCategoriesFixture extends TestFixture {
 			'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
 		],
 		'_options' => [
-			'engine' => 'InnoDB', 'collation' => 'latin1_swedish_ci'
+'engine' => 'InnoDB', 'collation' => 'latin1_swedish_ci'
 		],
 	];
 

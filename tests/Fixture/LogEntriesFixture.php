@@ -43,7 +43,7 @@ class LogEntriesFixture extends TestFixture {
 			'log_entries_ibfk_2' => ['type' => 'foreign', 'columns' => ['log_category_id'], 'references' => ['log_categories', 'id'], 'update' => 'restrict', 'delete' => 'restrict', 'length' => []],
 		],
 		'_options' => [
-			'engine' => 'InnoDB', 'collation' => 'latin1_swedish_ci'
+'engine' => 'InnoDB', 'collation' => 'latin1_swedish_ci'
 		],
 	];
 
@@ -58,12 +58,12 @@ class LogEntriesFixture extends TestFixture {
 			'log_level_id' => 6,
 			'log_category_id' => 1,
 			'message' => 'request',
-			'url' => 'https://www.alaxos.org/',
+			'url' => 'https://rodn.unige.ch/lmstools/roles',
 			'http_method' => 'GET',
 			'client_ip' => '127.0.0.1',
 			'client_hostname' => 'localhost',
 			'user_agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0',
-			'referer' => 'https://www.alaxos.org/',
+			'referer' => 'https://rodn.unige.ch/lmstools/roles/edit/1',
 			'post_data' => null,
 			'headers' => null,
 			'cookies' => null,
@@ -78,12 +78,12 @@ class LogEntriesFixture extends TestFixture {
 			'log_level_id' => 6,
 			'log_category_id' => 1,
 			'message' => 'request',
-			'url' => 'https://www.alaxos.org/about',
+			'url' => 'https://rodn.unige.ch/lmstools/roles/add',
 			'http_method' => 'GET',
 			'client_ip' => '127.0.0.1',
 			'client_hostname' => 'localhost',
 			'user_agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:32.0) Gecko/20100101 Firefox/32.0',
-			'referer' => 'https://www.alaxos.org/',
+			'referer' => 'https://rodn.unige.ch/lmstools/roles',
 			'post_data' => null,
 			'headers' => null,
 			'cookies' => null,

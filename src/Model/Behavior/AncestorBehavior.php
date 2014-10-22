@@ -278,7 +278,12 @@ class AncestorBehavior extends Behavior
 	
 	/****************************************************************************************/
 	
-	protected function getAncestorTable(Table $table)
+	/**
+	 * Get the Table for the linked ancestors table
+	 *  
+	 * @return @return \Cake\ORM\Table
+	 */
+	public function getAncestorTable()
 	{
 		$ancestor_table = TableRegistry::get('Alaxos.Ancestors');
 		$table_name     = $this->config('ancestor_table_name');
@@ -456,8 +461,6 @@ class AncestorBehavior extends Behavior
 	 * - direct: Boolean, whether to return only the direct (true), or all (false) children, 
 	 *           defaults to false (all children).
 	 * - order : The order to apply on found nodes. Default on 'model_sort_fieldname' config
-	 * - multilevel: Boolean, wether the children must be organized in a recursive array
-	 *               default to false
 	 *               
 	 * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
 	 * 
@@ -469,8 +472,7 @@ class AncestorBehavior extends Behavior
 		
 		$default_options = [
 			'direct' => false,
-			'sort'   => [],
-			'multilevel' => false
+			'sort'   => []
 		];
 		$options = array_merge($default_options, $options);
 		
@@ -497,121 +499,96 @@ class AncestorBehavior extends Behavior
 		else
 		{
 			/*
-			 * 1) Find all nodes linked to the ancestors that are under the searched item
-			 * 2) Create a new collection based on the items as we don't want a Collection of ancestors
-			 * 3) if $options['multilevel'] is true -> organize items as a multilevel array
-			 */
-			$ancestor_table = $this->getAncestorTable($this->_table);
+			 SELECT nodes.*, t2.max_level as level
+			FROM nodes
+			INNER JOIN
+			(
+					SELECT nac.node_id, MAX(level) as max_level
+					FROM nodes_ancestors nac
+					INNER JOIN
+					(
+							SELECT node_id
+							FROM nodes_ancestors
+							WHERE ancestor_id = 1
+					) t ON t.node_id = nac.node_id
+					GROUP BY node_id
+			) t2 ON nodes.id = t2.node_id
+			ORDER BY max_level ASC, sort ASC
+			*/
 			
-			$model_alias = $this->_table->alias();
+			$ancestorTable = $this->getAncestorTable($this->_table);
 			
-			$ancestor_table->belongsTo($model_alias, [
-					'className'    => $model_alias,
-					'foreignKey'   => 'node_id',
-					'propertyName' => 'linked_node'
-				]);
+			$subquery2 = $ancestorTable->find()->select(['nac_node_id' => 'node_id'])->where(['ancestor_id' => $for]);
 			
-			$order = [];
-			$order['level'] = 'ASC';
-			if(isset($options['sort']))
-			{
-				$order = $order + $options['sort'];
-			}
+			$subquery1 = $ancestorTable->find()->select(['node_id' => 'nac_node_id', 'max_level' => $subquery2->func()->max('level')])
+												->join([
+														'table' => $subquery2,
+														'alias' => 't',
+														'type' => 'INNER',
+														'conditions' => 't.nac_node_id = Ancestors.node_id',
+														])
+												->group(['node_id']);
 			
-			$query = $ancestor_table->find();
-			$query->contain([$model_alias]);
-			$query->order($order);
-			$query->where(['ancestor_id' => $for]);
 			
-			$nodes = [];
-			foreach($query as $ancestor_entity){
-				$nodes[] = $ancestor_entity->linked_node;
-			}
+			$selected_fields = $this->_table->schema()->columns();
+			$selected_fields['level'] = 't2.max_level';
 			
-			$nodes_collections = new \Cake\Collection\Collection($nodes);
+			$query->select($selected_fields)
+					->join([
+							'table' => $subquery1,
+							'alias' => 't2',
+							'type'  => 'INNER',
+							'conditions' => $this->_table->alias() . '.id = t2.node_id'
+							])
+					->order(['max_level' => 'ASC', 'sort' => 'ASC']);
 			
-			if(!$options['multilevel'])
-			{
-				/*
-				 * Return the flat Collection
-				 */
-				
-				return $nodes_collections;
-			}
-			else
-			{
-				/*
-				 * Organize children in a multilevel array
-				 */
-				
-				$primaryKey = $this->_table->schema()->primaryKey();
-				$primaryKey = count($primaryKey) == 1 ? $primaryKey[0] : $primaryKey;
-				
-				$parent_id_fieldname = $this->config('model_parent_id_fieldname');
-				
-				
-				$subtree        = array();
-				$nodes_by_level = array();
-				$levels         = array();
-				
-				foreach($query as $ancestor_entity){
-					
-					$level = $ancestor_entity->level;
-					
-					if(!in_array($level, $levels))
-					{
-						$levels[] = $level;
-					}
-					
-					$nodes_by_level[$level][] = $ancestor_entity->linked_node;
-				}
-				
-				$parent_nodes_by_id = null;
-				foreach($levels as $level){
-					
-					$nodes = &$nodes_by_level[$level];
-					
-					foreach($nodes as &$node){
-						
-						if(isset($parent_nodes_by_id))
-						{
-							/*
-							 * Add node to the list of its parent children
-							 */
-							if(!isset($parent_nodes_by_id[$node->{$parent_id_fieldname}]['children']))
-							{
-								$parent_nodes_by_id[$node->{$parent_id_fieldname}]['children'] = [];
-							}
-							
-							$parent_nodes_by_id[$node->{$parent_id_fieldname}]['children'][] = &$node;
-						}
-						else
-						{
-							/*
-							 * Start filling tree with the first level of nodes
-							 */
-							$subtree[] = &$node;
-						}
-						
-					}
-					unset($node);
-					
-					/*
-					 * Reset the list of parent nodes to be available for their children in the next loop
-					 */
-					$parent_nodes_by_id = array();
-					foreach($nodes as &$node)
-					{
-						$parent_nodes_by_id[$node->{$primaryKey}] = &$node;
-					}
-					unset($node);
-				}
-				
-				$tree = $this->_table->get($for);
-				$tree['children'] = $subtree;
-				
-				return $tree;
-			}
+			return $query;
+			
+// 			/*
+// 			SELECT n2.*
+// 			FROM nodes n1
+// 			INNER JOIN nodes_ancestors ON ancestor_id = n1.id
+// 			INNER JOIN nodes n2 ON node_id = n2.id
+// 			WHERE ancestor_id = 1
+// 			ORDER BY level ASC, n1.sort ASC
+// 			*/
+			
+			
+			
+			
+// 			/*
+// 			 * 1) Find all nodes linked to the ancestors that are under the searched item
+// 			 * 2) Create a new collection based on the items as we don't want a Collection of ancestors
+// 			 * 3) if $options['multilevel'] is true -> organize items as a multilevel array
+// 			 */
+// 			$ancestor_table = $this->getAncestorTable($this->_table);
+			
+// 			$model_alias = $this->_table->alias();
+			
+// 			$ancestor_table->belongsTo($model_alias, [
+// 					'className'    => $model_alias,
+// 					'foreignKey'   => 'node_id',
+// 					'propertyName' => 'linked_node'
+// 				]);
+			
+// 			$order = [];
+// 			$order['level'] = 'ASC';
+// 			if(isset($options['sort']))
+// 			{
+// 				$order = $order + $options['sort'];
+// 			}
+			
+// 			$query = $ancestor_table->find();
+// 			$query->contain([$model_alias]);
+// 			$query->order($order);
+// 			$query->where(['ancestor_id' => $for]);
+			
+// 			$nodes = [];
+// 			foreach($query as $ancestor_entity){
+// 				$nodes[] = $ancestor_entity->linked_node;
+// 			}
+			
+// 			return new \Cake\Collection\Collection($nodes);
 		}
 	}
 	
@@ -651,6 +628,57 @@ class AncestorBehavior extends Behavior
 	/****************************************************************************************/
 	
 	/**
+	 * Return a multi-dimension array of child nodes
+	 * 
+	 * @param int $id
+	 * @param array $options
+	 * @return multitype:Ambigous <\Cake\ORM\Query, Query, \Cake\Collection\Collection>
+	 */
+	public function getMultilevelChildren($id, array $options = [])
+	{
+		$options['for']    = $id;
+		$options['direct'] = false;
+		
+		$options['for']    = $id;
+		$options['direct'] = false;
+		
+		$query    = $this->_table->find();
+		$iterator = $this->findChildren($query, $options);
+		
+		$primaryKey = $this->_table->schema()->primaryKey();
+		$primaryKey = count($primaryKey) == 1 ? $primaryKey[0] : $primaryKey;
+		
+		$parent_id_fieldname = $this->config('model_parent_id_fieldname');
+		
+		$nodes_by_pk = [];
+		$root_nodes  = [];
+		
+		foreach($iterator as $node)
+		{
+			$nodes_by_pk[$node->{$primaryKey}] = $node;
+			
+			if($node->{$parent_id_fieldname} == $id)
+			{
+				$root_nodes[] = $node;
+			}
+			
+			if(isset($nodes_by_pk[$node->{$parent_id_fieldname}]))
+			{
+				if(!isset($nodes_by_pk[$node->{$parent_id_fieldname}]->children))
+				{
+					$nodes_by_pk[$node->{$parent_id_fieldname}]->children = [];
+				}
+				
+				$nodes_by_pk[$node->{$parent_id_fieldname}]->children[] = $node;
+			}
+		}
+		unset($node);
+		
+		return new \Cake\Collection\Collection($root_nodes);
+		//return $root_nodes;
+	}
+	
+	/**
 	 * Available options are:
 	 * 
 	 * - direct: Boolean, whether to return only the direct (true), or all (false) children, 
@@ -671,7 +699,7 @@ class AncestorBehavior extends Behavior
 	
 	/**
 	 * Move a node under the same parent node or under a new node.
-	 * New position of the node can be sprecified
+	 * New position of the node can be specified
 	 *
 	 * @param int $id ID of the node to move
 	 * @param int $parent_id ID of the (new) parent node
