@@ -137,71 +137,62 @@ class AncestorBehavior extends Behavior
 		$parent_id_fieldname = $this->config('model_parent_id_fieldname');
 		$parent_id = $entity->{$parent_id_fieldname};
 		
-		if(!empty($parent_id))
+		$id = $entity->{$primaryKey};
+		
+		$ancestor_table = $this->getAncestorTable($table);
+		
+		if($entity->isNew())
 		{
-			$id = $entity->{$primaryKey};
+			/**********************
+			 * INSERT
+			 **********************/
 			
-			$ancestor_table = $this->getAncestorTable($table);
-			
-			if($entity->isNew())
+			if(!$this->saveAncestors($table, $id, $parent_id))
 			{
-				/**********************
-				 * INSERT
-				 **********************/
+				$result = false;
+			}
+		}
+		else
+		{
+			/**********************
+			 * UPDATE
+			 **********************/
+			
+			/*
+			 * Update the ancestors only if the node has been moved in the Tree
+			 */
+			if($this->has_new_parent)
+			{
+				/*
+				 * Delete the whole path of the saved node
+				 */
+				$query = $ancestor_table->query()->delete()->where(['node_id' => $id]);
+				$statement = $query->execute();
 				
+				/*
+				 * Create the ancestor chain again
+				 */
 				if(!$this->saveAncestors($table, $id, $parent_id))
 				{
 					$result = false;
 				}
-			}
-			else
-			{
-				/**********************
-				 * UPDATE
-				 **********************/
 				
 				/*
-				 * Update the ancestors only if the node has been moved in the Tree
+				 * Get all node's subnodes and update their ancestors chain as well
 				 */
-				if($this->has_new_parent)
+				$child_nodes = $ancestor_table->find()->where(['ancestor_id' => $id]);
+				$child_nodes_ids = $child_nodes->extract('node_id')->toArray();
+				
+				$ancestors = $ancestor_table->find()->where(['node_id IN' => $child_nodes_ids])->order(['level' => 'asc']);
+				
+				foreach($ancestors as $ancestor)
 				{
-					/*
-					 * Delete the whole path of the saved node
-					 */
-					$query = $ancestor_table->query()->delete()->where(['node_id' => $id]);
-					$statement = $query->execute();
+					$child = $table->find()->where([$primaryKey => $ancestor->node_id])->first();
+					$child_parent_id = $child->{$parent_id_fieldname};
 					
-					/*
-					 * Create the ancestor chain again
-					 */
-					if(!$this->saveAncestors($table, $id, $parent_id))
+					if(!$this->saveAncestors($table, $ancestor->node_id, $child_parent_id))
 					{
 						$result = false;
-					}
-					
-					/*
-					 * Get all node's subnodes and update their ancestors chain as well
-					 */
-					$child_nodes = $ancestor_table->find()->where(['ancestor_id' => $id]);
-					$child_nodes_ids = $child_nodes->extract('node_id')->toArray();
-					
-// 					$child_nodes_ids = [];
-// 					foreach($child_nodes as $ancestor)
-// 					{
-// 						$child_nodes_ids[] = $ancestor->node_id;
-// 					}
-					
-					$ancestors = $ancestor_table->find()->where(['node_id IN' => $child_nodes_ids])->order(['level' => 'asc']);
-					
-					foreach($ancestors as $ancestor)
-					{
-						$child = $table->find()->where([$primaryKey => $ancestor->node_id])->first();
-						$child_parent_id = $child->{$parent_id_fieldname};
-						
-						if(!$this->saveAncestors($table, $ancestor->node_id, $child_parent_id))
-						{
-							$result = false;
-						}
 					}
 				}
 			}
@@ -304,13 +295,9 @@ class AncestorBehavior extends Behavior
 		$existing_pairs = [];
 		$pairs_to_save  = [];
 		
-		$existing_level = null;
-		
 		foreach($existing_ancestors as $existing_ancestor)
 		{
-			$existing_pairs[$existing_ancestor->id] = $existing_ancestor->node_id . '_' . $existing_ancestor->ancestor_id;
-			
-			$existing_level = $existing_ancestor->level;
+			$existing_pairs[$existing_ancestor->node_id . '_' . $existing_ancestor->ancestor_id] = $existing_ancestor;
 		}
 		
 		if(!empty($parent_id))
@@ -336,70 +323,78 @@ class AncestorBehavior extends Behavior
 			$pairs_to_save[] = $node_id . '_' . $parent_id;
 		}
 		
-		//debug($existing_pairs);
-		//debug($pairs_to_save);
-		
 		/*
-		 * Create ancestors that do not exist yet
-		*/
-		$new_level_value = 1;
-		foreach($pairs_to_save as $k => $pair_to_save)
-		{
-			if(!in_array($pair_to_save, $existing_pairs))
-			{
-				/*
-				 * The ancestor must be created
-				 */
-				$values = explode('_', $pair_to_save);
-				
-				$data                = [];
-				$data['node_id']     = $values[0];
-				$data['ancestor_id'] = $values[1];
-				$data['level']       = $new_level_value;
-				
-				$ancestor = $ancestor_table->newEntity($data);
-				
-				if(!$ancestor_table->save($ancestor))
-				{
-					$result = false;
-				}
-			}
-			elseif($level != $existing_level)
-			{
-				/*
-				 * Ancestor already exists, but its level must be updated
-				 */
-				$existing_ancestor_id = array_search($pair_to_save, $existing_pairs);
-				
-				$query = $ancestor_table->query()->update()->set(['level' => $new_level_value])->where(['id' => $existing_ancestor_id]);
-				
-				if(!$query->execute())
-				{
-					$result = false;
-				}
-			}
-			
-			$new_level_value++;
-		}
-		
-		/*
-		 * Delete existing ancestors that do not exist anymore
+		 * Look for ancestors that do not exist anymore in order to delete them
+		 * Look for ancestors that still exists but whose level value may be a problem with unique index on node_id - level
 		 */
-		$ancestors_to_delete_ids = array();
-		foreach($existing_pairs as $id => $existing_pair)
+		$ancestors_to_delete_ids                   = [];
+		$ancestors_to_temporarely_update_level_ids = [];
+		
+		foreach($existing_pairs as $key => $existing_ancestor)
 		{
-			if(!in_array($existing_pair, $pairs_to_save))
+			if(!in_array($key, $pairs_to_save))
 			{
-				$ancestors_to_delete_ids[] = $id;
+				$ancestors_to_delete_ids[] = $existing_ancestor->id;
+			}
+			else {
+				$ancestors_to_temporarely_update_level_ids[] = $existing_ancestor->id;
 			}
 		}
 		
+		/*
+		 * Delete ancestors with node_id - ancestor_id values pairs that do not exist anymore
+		 */
 		if(!empty($ancestors_to_delete_ids))
 		{
 			$query = $ancestor_table->query()->delete()->where(['id IN' => $ancestors_to_delete_ids]);
 			if(!$query->execute())
 			{
 				$result = false;
+			}
+		}
+		
+		/*
+		 * Update level of ancestors that will be updated later in order to make the unique index on node_id - level not raise an exception
+		 */
+		if(!empty($ancestors_to_temporarely_update_level_ids))
+		{
+			$ancestors_to_temporarely_update_level = $ancestor_table->find()->where(['id IN' => $ancestors_to_temporarely_update_level_ids]);
+			foreach($ancestors_to_temporarely_update_level as $ancestor_to_temporarely_update_level)
+			{
+				$ancestor_to_temporarely_update_level->level = $ancestor_to_temporarely_update_level->level + 1000000;
+				if(!$ancestor_table->save($ancestor_to_temporarely_update_level))
+				{
+					$result = false;
+				}
+			}
+		}
+		
+		/*
+		 * Create ancestors that do not exist yet
+		 */
+		$level = 1;
+		foreach($pairs_to_save as $pair_to_save)
+		{
+			$values      = explode('_', $pair_to_save);
+			$node_id     = $values[0];
+			$ancestor_id = $values[1];
+			
+			$data                = [];
+			$data['node_id']     = $values[0];
+			$data['ancestor_id'] = $values[1];
+			$data['level']       = $level++;
+			
+			if(isset($existing_pairs[$node_id . '_' . $ancestor_id]))
+			{
+				$data['id'] = $existing_pairs[$node_id . '_' . $ancestor_id]->id;
+			}
+			
+			$ancestor = $ancestor_table->newEntity($data);
+			
+			if(!$ancestor_table->save($ancestor))
+			{
+				$result = false;
+				break;
 			}
 		}
 		

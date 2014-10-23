@@ -444,14 +444,53 @@ class AncestorBehaviorTest extends TestCase {
 		$this->assertEquals(20, $children[2]->sort);
 	}
 
-	public function testMoveBySettingNewParent()
+	public function testMoveBySettingNewParentOfNodeHavingOneChild()
 	{
-		$entity_3 = $this->Nodes->findById(3)->first();
-		$entity_3->parent_id = 6;
-		$this->Nodes->save($entity_3);
+		$entity = $this->Nodes->findById(4)->first();
+		$entity->parent_id = 6;
+		$this->Nodes->save($entity);
+		
+		$children_of_6 = $this->Nodes->find('children', ['for' => 6]);
+		$this->assertEquals(2, $children_of_6->count());
+		
+		$children_of_1 = $this->Nodes->find('children', ['for' => 1]);
+		$this->assertEquals(3, $children_of_1->count());
+	}
+	
+	public function testMoveBySettingNewParentOfNodeHavingManyLevelsOfChildren()
+	{
+		$entity = $this->Nodes->findById(3)->first();
+		$entity->parent_id = 2;
+		$this->Nodes->save($entity);
+	
+		$children_of_2 = $this->Nodes->find('children', ['for' => 2]);
+		$this->assertEquals(6, $children_of_2->count());
+	
+		$children_of_1 = $this->Nodes->find('children', ['for' => 1]);
+		$this->assertEquals(0, $children_of_1->count());
+	}
+	
+	public function testMoveDeeperInTreeBySettingNewParent()
+	{
+		$entity = $this->Nodes->findById(3)->first();
+		$entity->parent_id = 6;
+		$this->Nodes->save($entity);
 		
 		$children_of_6 = $this->Nodes->find('children', ['for' => 6]);
 		$this->assertEquals(5, $children_of_6->count());
+		
+		$children_of_1 = $this->Nodes->find('children', ['for' => 1]);
+		$this->assertEquals(0, $children_of_1->count());
+	}
+	
+	public function testMoveHigherInTreeBySettingNewParentNull()
+	{
+		$entity = $this->Nodes->findById(3)->first();
+		$entity->parent_id = null;
+		$this->Nodes->save($entity);
+		
+		$children_of_3 = $this->Nodes->find('children', ['for' => 3]);
+		$this->assertEquals(4, $children_of_3->count());
 		
 		$children_of_1 = $this->Nodes->find('children', ['for' => 1]);
 		$this->assertEquals(0, $children_of_1->count());
