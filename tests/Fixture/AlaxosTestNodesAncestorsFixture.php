@@ -26,6 +26,7 @@ class AlaxosTestNodesAncestorsFixture extends TestFixture {
 		'_constraints' => [
 			'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
 			'alaxos_test_node_ancestor_unique' => ['type' => 'unique', 'columns' => ['node_id', 'ancestor_id'], 'length' => []],
+			'alaxos_test_node_node_id_level_unique' => ['type' => 'unique', 'columns' => ['node_id', 'level'], 'length' => []],
 			'alaxos_test_nodes_ancestors_ibfk_2' => ['type' => 'foreign', 'columns' => ['ancestor_id'], 'references' => ['alaxos_test_nodes', 'id'], 'update' => 'restrict', 'delete' => 'restrict', 'length' => []],
 			'alaxos_test_nodes_ancestors_ibfk_1' => ['type' => 'foreign', 'columns' => ['node_id'], 'references' => ['alaxos_test_nodes', 'id'], 'update' => 'restrict', 'delete' => 'restrict', 'length' => []],
 		],

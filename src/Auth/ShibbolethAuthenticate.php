@@ -146,7 +146,7 @@ class ShibbolethAuthenticate extends BaseAuthenticate
 	        $table = TableRegistry::get($this->_config['userModel']);
 	        
 	        /*
-	         * At the time of writing, primary key may be an array composed on one value
+	         * At the time of writing, primary key may be an array containing only one value
 	         * (bug in 3.0-DEV ?)
 	         */
 	        $pk = $table->primaryKey();
