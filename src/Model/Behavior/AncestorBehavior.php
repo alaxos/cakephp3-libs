@@ -307,8 +307,6 @@ class AncestorBehavior extends Behavior
 			 */
 			$parent_ancestors_nodes = $ancestor_table->find()->where(['node_id' => $parent_id]);
 			
-			$level = $parent_ancestors_nodes->count() + 1;
-			
 			/*
 			 * Compute values to save
 			 */
@@ -336,7 +334,8 @@ class AncestorBehavior extends Behavior
 			{
 				$ancestors_to_delete_ids[] = $existing_ancestor->id;
 			}
-			else {
+			else 
+			{
 				$ancestors_to_temporarely_update_level_ids[] = $existing_ancestor->id;
 			}
 		}

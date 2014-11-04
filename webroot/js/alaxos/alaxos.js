@@ -564,6 +564,93 @@ var Alaxos = (function($j) {
 	}
 	
 	/********************************************************************
+     * Ajax response treatment
+     */
+	
+	function manage_ajax_error(data, selector_to_display)
+	{	
+		if(typeof(data.errors) != "undefined")
+		{
+			var msg = build_message(data.errors);
+			Alaxos.show_text(msg, "error", selector_to_display);
+		}
+	}
+	
+	function manage_ajax_success(data, selector_to_display)
+	{	
+		if(typeof(data.success) != "undefined")
+		{
+			var msg = build_message(data.success);
+			Alaxos.show_text(msg, "success", selector_to_display);
+		}
+	}
+	
+	function build_message(data)
+	{
+		var msg = "";
+		
+		if(data.length > 1){
+			msg += '<ul>';
+		}
+		
+		$j(data).each(function(i, value){
+			
+			msg += (data.length > 1) ? "<li>" : "";
+			msg += value;
+			msg += (data.length > 1) ? "</li>" : "";
+		});
+		
+		if(data.length > 1){
+			msg += '</ul>';
+		}
+		
+		return msg;
+	}
+	
+	function show_text(text, css_class, selector_to_display)
+	{
+		if(typeof(selector_to_display) != "undefined" && selector_to_display != null)
+		{
+			if(typeof(css_class) != "undefined" && css_class != null){
+				$j(selector_to_display).attr("class", css_class);
+			}
+			
+			$j(selector_to_display).html(text);
+			
+			if($j(selector_to_display + ":hidden").length > 0)
+			{
+				$j(selector_to_display).show();
+			}
+		}
+		else
+		{
+			var start_div = null;
+			
+			if(typeof(css_class) != "undefined" && css_class != null){
+				start_div = '<div class="' + css_class + '">';
+			}else{
+				start_div = '<div>';	
+			}
+			
+			var msg = start_div + text + "</div>";
+			
+			if($j("#alaxos_text_panel").length == 0){
+				if($j("#content").length > 0){
+					$j("#content").prepend('<div id="alaxos_text_panel"></div>');
+				}
+				else{
+					$j("body").prepend('<div id="alaxos_text_panel"></div>');
+				}
+			}
+			
+			$j("#alaxos_text_panel").fadeOut(100, function(){
+				$j(this).html(msg);
+				$j(this).fadeIn(100);
+			});
+		}
+	}
+	
+	/********************************************************************
      * Start auto scripts
      */
 	function start(){
@@ -600,6 +687,10 @@ var Alaxos = (function($j) {
     	register_select_row					:	register_select_row,
     	register_action_all_btns			:	register_action_all_btns,
     	check_action_all_btns_state			:	check_action_all_btns_state,
+    	
+    	manage_ajax_error					:	manage_ajax_error,
+    	manage_ajax_success					:	manage_ajax_success,
+    	show_text							:	show_text,
     	
     	set_row_status						:	set_row_status,
     	
