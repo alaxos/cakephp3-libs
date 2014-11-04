@@ -569,7 +569,12 @@ var Alaxos = (function($j) {
 	
 	function manage_ajax_error(data, selector_to_display)
 	{	
-		if(typeof(data.errors) != "undefined")
+		if(typeof(data.responseJSON) != "undefined" && typeof(data.responseJSON.errors) != "undefined")
+		{
+			var msg = build_message(data.responseJSON.errors);
+			Alaxos.show_text(msg, "error", selector_to_display);
+		}
+		else if(typeof(data.errors) != "undefined")
 		{
 			var msg = build_message(data.errors);
 			Alaxos.show_text(msg, "error", selector_to_display);
