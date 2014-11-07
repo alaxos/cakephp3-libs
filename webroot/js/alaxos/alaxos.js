@@ -620,12 +620,10 @@ var Alaxos = (function($j) {
 				$j(selector_to_display).attr("class", css_class);
 			}
 			
-			$j(selector_to_display).html(text);
-			
-			if($j(selector_to_display + ":hidden").length > 0)
-			{
-				$j(selector_to_display).show();
-			}
+			$j(selector_to_display).fadeOut(100, function(){
+				$j(selector_to_display).html(text);
+				$j(selector_to_display).fadeIn(100);
+			});
 		}
 		else
 		{

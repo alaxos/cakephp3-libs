@@ -8,8 +8,13 @@ use Alaxos\Lib\StringTool;
 use Alaxos\Lib\SecurityTool;
 use Cake\I18n\I18n;
 
+/**
+ * @property Alaxos\View\Helper\AlaxosHtmlHelper $AlaxosHtml
+ */
 class AlaxosFormHelper extends FormHelper
 {
+	public $helpers = ['Url', 'AlaxosHtml'];
+	
     public function dateTime($fieldName, array $options = array()) {
         
         $default_options = ['format_on_blur'  => true];
@@ -18,9 +23,9 @@ class AlaxosFormHelper extends FormHelper
         
         //debug($options);
         
-        echo $this->Html->css('Alaxos.bootstrap/datepicker', ['block' => true]);
-        echo $this->Html->script('Alaxos.alaxos/alaxos', ['block' => true]);
-        echo $this->Html->script('Alaxos.bootstrap/datepicker/bootstrap-datepicker', ['block' => true]);
+        $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
+        $this->AlaxosHtml->includeAlaxosJS();
+        $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
         
         $defaultLocale = I18n::locale();
         $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
@@ -32,7 +37,7 @@ class AlaxosFormHelper extends FormHelper
             case 'fr':
             case 'fr_fr':
             case 'fr_ch':
-                echo $this->Html->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr', ['block' => true]);
+                echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr', ['block' => true]);
                 $options['language']           = 'fr';
                 $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
                 $options['datepicker_format']  = 'd.m.Y';
@@ -53,7 +58,7 @@ class AlaxosFormHelper extends FormHelper
     
     public function number($fieldName, array $options = array())
     {
-        echo $this->Html->script('Alaxos.alaxos/alaxos', ['block' => true]);
+        $this->AlaxosHtml->includeAlaxosJS();
         
         $this->addWidget('number', ['Alaxos\View\Widget\Number']);
         
@@ -64,6 +69,43 @@ class AlaxosFormHelper extends FormHelper
         }
         
         return  parent::number($fieldName, $options);
+    }
+    
+    public function textarea($fieldName, array $options = array())
+    {
+    	$default_options = [
+    		'autosize' => true
+    	];
+    	
+    	$options = array_merge($default_options, $options);
+    	
+    	$script_block = null;
+    	if($options['autosize'])
+    	{
+    		$this->AlaxosHtml->includeTextareaAutosizeJS();
+    		
+    		if(isset($options['id']))
+    		{
+    			$dom_id = $options['id'];
+    		}
+    		else
+    		{
+    			$dom_id = $this->_domId($fieldName);
+    		}
+    		
+    		$script = [];
+    		$script[]  = $this->AlaxosHtml->config('jquery_variable') . '(document).ready(function(){';
+    		$script[]  = '  if(typeof(' . $this->AlaxosHtml->config('jquery_variable') . '("#' . $dom_id . '").autosize) != "undefined"){';
+    		$script[]  = '    ' . $this->AlaxosHtml->config('jquery_variable') . '("#' . $dom_id . '").autosize();';
+    		$script[]  = '  }';
+    		$script[]  = '});';
+    		
+    		$script_block = $this->AlaxosHtml->scriptBlock(implode("\n", $script));
+    	}
+    	
+    	unset($options['autosize']);
+    	
+    	return parent :: textarea($fieldName, $options) . $script_block;
     }
     
     /*******************************/
@@ -255,6 +297,6 @@ class AlaxosFormHelper extends FormHelper
         $salt  = isset($this->_View->viewVars['_alaxos_spam_filter_salt']) ? $this->_View->viewVars['_alaxos_spam_filter_salt'] : null;
         $token = SecurityTool::get_today_token($salt);
         
-        return $this->Html->script(Router::url(['prefix' => false, 'plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
+        return $this->AlaxosHtml->script(Router::url(['prefix' => false, 'plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
     }
 }
