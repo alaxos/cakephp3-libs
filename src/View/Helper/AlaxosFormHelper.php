@@ -184,8 +184,8 @@ class AlaxosFormHelper extends FormHelper
         
         $filter = '';
         
-        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __('from or equal')]);
-        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __('to')]);
+        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __d('alaxos', 'from or equal')]);
+        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __d('alaxos', 'to')]);
         
         return $filter;
     }
@@ -200,8 +200,8 @@ class AlaxosFormHelper extends FormHelper
         
         $filter = '';
         
-        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __('from or equal')]);
-        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __('to')]);
+        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __d('alaxos', 'from or equal')]);
+        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __d('alaxos', 'to')]);
         
         return $filter;
     }
@@ -217,8 +217,8 @@ class AlaxosFormHelper extends FormHelper
         
         $filter = '';
         
-        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __('from or equal')]);
-        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __('to')]);
+        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __d('alaxos', 'from or equal')]);
+        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __d('alaxos', 'to')]);
         
         return $filter;
     }

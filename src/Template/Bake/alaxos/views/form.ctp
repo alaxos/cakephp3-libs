@@ -102,7 +102,7 @@ if (strpos($action, 'add') !== false)
 		
 		echo "\t\t\techo '<div class=\"form-group\">';\n";
 		echo "\t\t\techo '<div class=\"col-sm-offset-2 col-sm-5\">';\n";
-		echo "\t\t\techo \$this->AlaxosForm->button(__('Submit'), ['class' => 'btn btn-default']);\n";
+		echo "\t\t\techo \$this->AlaxosForm->button(___('submit'), ['class' => 'btn btn-default']);\n";
 		echo "\t\t\techo '</div>';\n";
 		echo "\t\t\techo '</div>';\n\n";
 						

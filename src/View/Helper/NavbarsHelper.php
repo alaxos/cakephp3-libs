@@ -18,11 +18,11 @@ class NavbarsHelper extends Helper
                             'buttons_group'           => 'list',
                             'model_id'                => null,
                             'paginate_infos'          => false,
-                            'paginate_infos_format'   => '<div>Elements: {{start}} - {{end}} / {{count}}</div><div>Page: {{page}} on {{pages}}</div>',
+                            'paginate_infos_format'   => '<div>' . ___d('alaxos', 'elements') . ': {{start}} - {{end}} / {{count}}</div><div>' . ___d('alaxos', 'page') . ': {{page}} on {{pages}}</div>',
                             
                             'select_pagination_limit' => false,
                             'pagination_limits'       => [10, 20, 50, 100],
-                            'pagination_limits_text'  => ___('show %s elements per page'),
+                            'pagination_limits_text'  => 'show {0} elements per page',
                             
                             /*
                              * Groups of buttons to show
@@ -166,7 +166,7 @@ class NavbarsHelper extends Helper
     {
         $html = [];
         
-        $html[] = $this->Html->link('<span class="glyphicon glyphicon-list"></span> ' . __('list'), $options['btn_list']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        $html[] = $this->Html->link('<span class="glyphicon glyphicon-list"></span> ' . __d('alaxos', 'list'), $options['btn_list']['link'], ['class' => 'btn btn-default', 'escape' => false]);
         
         return implode("\n", $html);
     }
@@ -175,7 +175,7 @@ class NavbarsHelper extends Helper
     {
         $html = [];
         
-        $html[] = $this->Html->link('<span class="glyphicon glyphicon-plus"></span> ' . __('add'), $options['btn_add']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        $html[] = $this->Html->link('<span class="glyphicon glyphicon-plus"></span> ' . __d('alaxos', 'add'), $options['btn_add']['link'], ['class' => 'btn btn-default', 'escape' => false]);
         
         return implode("\n", $html);
     }
@@ -189,7 +189,7 @@ class NavbarsHelper extends Helper
             $options['btn_view']['link'][] = $options['model_id'];
         }
         
-        $html[] = $this->Html->link('<span class="glyphicon glyphicon-search"></span> ' . __('view'), $options['btn_view']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        $html[] = $this->Html->link('<span class="glyphicon glyphicon-search"></span> ' . __d('alaxos', 'view'), $options['btn_view']['link'], ['class' => 'btn btn-default', 'escape' => false]);
         
         return implode("\n", $html);
     }
@@ -203,7 +203,7 @@ class NavbarsHelper extends Helper
             $options['btn_edit']['link'][] = $options['model_id'];
         }
         
-        $html[] = $this->Html->link('<span class="glyphicon glyphicon-pencil"></span> ' . __('edit'), $options['btn_edit']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        $html[] = $this->Html->link('<span class="glyphicon glyphicon-pencil"></span> ' . __d('alaxos', 'edit'), $options['btn_edit']['link'], ['class' => 'btn btn-default', 'escape' => false]);
         
         return implode("\n", $html);
     }
@@ -217,7 +217,7 @@ class NavbarsHelper extends Helper
             $options['btn_copy']['link'][] = $options['model_id'];
         }
         
-        $html[] = $this->Html->link('<span class="glyphicon glyphicon-plus"></span> ' . __('copy'), $options['btn_copy']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        $html[] = $this->Html->link('<span class="glyphicon glyphicon-plus"></span> ' . __d('alaxos', 'copy'), $options['btn_copy']['link'], ['class' => 'btn btn-default', 'escape' => false]);
         
         return implode("\n", $html);
     }
@@ -230,7 +230,7 @@ class NavbarsHelper extends Helper
         {
             $options['btn_delete']['link'][] = $options['model_id'];
             
-            $html[] = $this->Form->postLink('<span class="glyphicon glyphicon-trash"></span> ' . __('delete'), $options['btn_delete']['link'], ['class' => 'btn btn-default', 'escape' => false, 'confirm' => __('Are you sure you want to delete # %s ?', $options['model_id'])]);
+            $html[] = $this->Form->postLink('<span class="glyphicon glyphicon-trash"></span> ' . __d('alaxos', 'delete'), $options['btn_delete']['link'], ['class' => 'btn btn-default', 'escape' => false, 'confirm' => __d('alaxos', 'Are you sure you want to delete element # {0}?', $options['model_id'])]);
         }
         
         return implode("\n", $html);
@@ -245,7 +245,7 @@ class NavbarsHelper extends Helper
             $options['btn_back_to_view']['link'][] = $options['model_id'];
         }
         
-        $html[] = $this->Html->link('<span class="glyphicon glyphicon-chevron-left"></span> ' . __('back'), $options['btn_back_to_view']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        $html[] = $this->Html->link('<span class="glyphicon glyphicon-chevron-left"></span> ' . __d('alaxos', 'back'), $options['btn_back_to_view']['link'], ['class' => 'btn btn-default', 'escape' => false]);
         
         return implode("\n", $html);
     }
@@ -254,7 +254,7 @@ class NavbarsHelper extends Helper
     {
         $html = [];
         
-        $html[] = $this->Html->link('<span class="glyphicon glyphicon-chevron-left"></span> ' . __('list'), $options['btn_back_to_list']['link'], ['class' => 'btn btn-default', 'escape' => false]);
+        $html[] = $this->Html->link('<span class="glyphicon glyphicon-chevron-left"></span> ' . __d('alaxos', 'list'), $options['btn_back_to_list']['link'], ['class' => 'btn btn-default', 'escape' => false]);
         
         return implode("\n", $html);
     }
@@ -292,7 +292,7 @@ class NavbarsHelper extends Helper
         $js[] = '});';
         $js[] = '</script>';
         
-        $html[] = sprintf($options['pagination_limits_text'], $select_limit);
+        $html[] = ___d('alaxos', $options['pagination_limits_text'], $select_limit);
         $html[] = implode("\n", $js);
         
         $html[] = '  </div>';

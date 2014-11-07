@@ -1,5 +1,6 @@
 <?php 
 use Cake\I18n\Time;
+use Cake\I18n\I18n;
 if(isset($entity))
 {
 	/**
@@ -36,7 +37,8 @@ if(isset($entity))
 	$date_format   = null;
 	$time_format   = null;
 	
-	$defaultLocale = isset(Time::$defaultLocale) ? Time::$defaultLocale : 'en';
+	$locale        = I18n::locale();
+	$defaultLocale = isset($locale) ? $locale : 'en';
 	$defaultLocale = strtolower($defaultLocale);
 	$defaultLocale = str_replace('-', '_', $defaultLocale);
 	
@@ -45,6 +47,8 @@ if(isset($entity))
 		case 'fr':
 		case 'fr_fr':
 		case 'fr_ch':
+		case 'fra':
+		case 'fre':
 			$date_format   = 'd.m.Y';
 			$time_format   = 'H:i:s';
 			break;

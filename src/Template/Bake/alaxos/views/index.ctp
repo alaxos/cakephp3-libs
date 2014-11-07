@@ -49,7 +49,7 @@ echo "\t\t<div class=\"panel-body\">\n";
 	}
 ?></th>
 	<?php endforeach; ?>
-	<th class="actions"><?= "<?= __('Actions'); ?>"; ?></th>
+	<th class="actions"><?= "<?= ___('actions'); ?>"; ?></th>
 	</tr>
 	<tr>
 <?php 
@@ -74,7 +74,7 @@ echo "\t\t<div class=\"panel-body\">\n";
 	   <td>
 <?php 
 	echo "\t\t\t<?php\n";
-	echo "\t\t\techo \$this->AlaxosForm->button(__('Submit'), ['class' => 'btn btn-default']);\n";
+	echo "\t\t\techo \$this->AlaxosForm->button(___('submit'), ['class' => 'btn btn-default']);\n";
 	echo "\t\t\techo \$this->AlaxosForm->end();\n";
 	echo "\t\t\t?>\n";
 	?>
@@ -140,7 +140,7 @@ echo "\t\t<div class=\"panel-body\">\n";
 		echo "\t\t\t\t\t'title'   => '<span class=\"glyphicon glyphicon-trash\"></span> ' . __('delete'),\n";
 		echo "\t\t\t\t\t'url'     => ['action' => 'delete', {$pk}],\n";
 		echo "\t\t\t\t\t'method'  => 'POST',\n";
-		echo "\t\t\t\t\t'options' => ['confirm' => __('Are you sure you want to delete # %s?', {$pk}), 'escape' => false]\n";
+		echo "\t\t\t\t\t'options' => ['confirm' => __d('alaxos', 'Are you sure you want to delete # %s?', {$pk}), 'escape' => false]\n";
 		echo "\t\t\t\t\t]\n";
 		echo "\t\t\t\t],\n";
 		echo "\t\t\t];\n";
@@ -178,12 +178,12 @@ echo "\t\t<div class=\"panel-body\">\n";
     echo "\t<div class=\"paging text-center\">\n";
     echo "\t\t<ul class=\"pagination pagination-sm\">\n";
     echo "\t\t<?php\n";
-    echo "\t\techo \$this->Paginator->prev('< ' . __('previous'));\n";
+    echo "\t\techo \$this->Paginator->prev('< ' . __d('alaxos', 'previous'));\n";
     echo "\t\t\$this->Paginator->templates([\n";
     echo "\t\t\t'ellipsis' => '<li class=\"disabled\"><a href=\"#\" onclick=\"return false;\">...</a></li>'\n";
     echo "\t\t]);\n";
     echo "\t\techo \$this->Paginator->numbers(['first' => 2, 'last' => 2]);\n";
-    echo "\t\techo \$this->Paginator->next(__('next') . ' >');\n";
+    echo "\t\techo \$this->Paginator->next(__d('alaxos', 'next') . ' >');\n";
     echo "\t\t?>\n";
     echo "\t\t</ul>\n";
     echo "\t</div>\n";

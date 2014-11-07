@@ -217,11 +217,9 @@ class AlaxosHtmlHelper extends HtmlHelper
 	 *
 	 * @param $email
 	 */
-	function encodeEmail($email)
+	public function encodeEmail($email)
 	{
-// 		$this->include_js_jquery();
-// 		$this->include_js_jquery_no_conflict();
-// 		$this->include_js_encode();
+		$this->includeAlaxosEncodeJS();
 		
 		$js_code = '<script type="text/javascript">';
 		
@@ -264,5 +262,27 @@ class AlaxosHtmlHelper extends HtmlHelper
 		}
 		
 		return $js_code;
+	}
+
+	/***/
+	
+	public function yesNo($value)
+	{
+		if($value){
+			return __d('alaxos', 'yes');
+		}
+		else{
+			return __d('alaxos', 'no');
+		}
+	}
+	
+	public function trueFalse($value)
+	{
+		if($value){
+			return __d('alaxos', 'true');
+		}
+		else{
+			return __d('alaxos', 'false');
+		}
 	}
 }

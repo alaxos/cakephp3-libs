@@ -1,0 +1,76 @@
+msgid "created on %s at %s by %s"
+msgstr "créé le %s à %s par %s"
+
+msgid "created on %s at %s"
+msgstr "créé le %s à %s"
+
+msgid "last update on %s at %s by %s"
+msgstr "dernière modification le %s à %s par %s"
+
+msgid "last update on %s at %s"
+msgstr "dernière modification le %s à %s"
+
+msgid "true"
+msgstr "vrai"
+
+msgid "false"
+msgstr "faux"
+
+msgid "yes"
+msgstr "oui"
+
+msgid "no"
+msgstr "non"
+
+msgid "Are you sure you want to delete element # {0}?"
+msgstr "Voulez-vous vraiment effacer l'élément #{0} ?"
+
+msgid "show {0} elements per page"
+msgstr "montrer {0} éléments par page"
+
+msgid "add"
+msgstr "ajouter"
+
+msgid "edit"
+msgstr "modifier"
+
+msgid "copy"
+msgstr "copier"
+
+msgid "delete"
+msgstr "effacer"
+
+msgid "list"
+msgstr "liste"
+
+msgid "back"
+msgstr "retour"
+
+msgid "elements"
+msgstr "éléments"
+
+msgid "element"
+msgstr "élément"
+
+msgid "page"
+msgstr "page"
+
+msgid "pages"
+msgstr "pages"
+
+msgid "from or equal"
+msgstr "de ou égal à"
+
+msgid "to"
+msgstr "à"
+
+msgid ""
+msgstr ""
+
+msgid ""
+msgstr ""
+
+
+msgid ""
+msgstr ""
+

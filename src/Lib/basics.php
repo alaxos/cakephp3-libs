@@ -15,7 +15,7 @@ function ___($singular, $args = null)
 function ___d($domain, $msg, $args = null)
 {
 	$arguments = func_get_args();
-	$translation = __d($domain, $ucf_msg, array_slice($arguments, 1));
+	$translation = __d($domain, $msg, array_slice($arguments, 2));
 	
 	$ucf_translation = StringTool::mb_ucfirst($translation);
 	
