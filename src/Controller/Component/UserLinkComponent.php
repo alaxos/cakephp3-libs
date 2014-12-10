@@ -59,7 +59,7 @@ class UserLinkComponent extends Component
                 /*
                  * Check that the new saved model has the UserLink behavior loaded
                  */
-                if($table->behaviors()->loaded('UserLink')){
+                if($table->behaviors()->has('UserLink')){
                     
                     /*
                      * If UserLink behavior is loaded, set its 'get_user_id_function' parameter used to get the logged in user id

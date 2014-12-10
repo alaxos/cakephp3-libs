@@ -58,14 +58,14 @@ class SpamFilterComponent extends Component
     {
         if($this->config('use_session_salt'))
         {
-            if(!$this->controller->components()->load('Session')->check('Alaxos.SpamFilterComponent.salt'))
+            if(!$this->controller->request->session()->check('Alaxos.SpamFilterComponent.salt'))
             {
-                $this->controller->components()->load('Session')->write('Alaxos.SpamFilterComponent.salt', String::uuid());
+                $this->controller->request->session()->write('Alaxos.SpamFilterComponent.salt', String::uuid());
             }
         }
-        elseif($this->controller->components()->load('Session')->check('Alaxos.SpamFilterComponent.salt'))
+        elseif($this->controller->request->session()->check('Alaxos.SpamFilterComponent.salt'))
         {
-            $this->controller->components()->load('Session')->delete('Alaxos.SpamFilterComponent.salt');
+            $this->controller->request->session()->delete('Alaxos.SpamFilterComponent.salt');
         }
         
         $salt = $this->get_session_salt();
@@ -132,6 +132,6 @@ class SpamFilterComponent extends Component
     
     public function get_session_salt()
     {
-        return $this->controller->components()->load('Session')->read('Alaxos.SpamFilterComponent.salt');
+        return $this->controller->request->session()->read('Alaxos.SpamFilterComponent.salt');
     }
 }
