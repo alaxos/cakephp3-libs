@@ -307,7 +307,7 @@ class NavbarsHelper extends Helper
     
     public function horizontalMenu($elements = array(), $options = array())
     {
-        $default_options = ['selected' => null, 'container' => true];
+        $default_options = ['selected' => null, 'container' => true, 'navbar_class' => 'navbar navbar-default'];
         
         $options = array_merge($default_options, $options);
         
@@ -330,7 +330,7 @@ class NavbarsHelper extends Helper
         
         if($options['container'] === true)
         {
-            $html[] = '<nav class="navbar navbar-default" role="navigation">';
+            $html[] = '<nav class="' . $options['navbar_class'] . '" role="navigation">';
             $html[] = '  <div class="container-fluid">';
             
             $html[] = '    <div class="collapse navbar-collapse" id="navbar_links">';
@@ -341,7 +341,7 @@ class NavbarsHelper extends Helper
          */
         if(isset($elements['_left_']) && !empty($elements['_left_']))
         {
-            $html[] = $this->getElementsGroup($elements['_left_'], $options);
+            $html[] = $this->getElementsGroup($elements['_left_'], [], $options);
         }
         
         /*
