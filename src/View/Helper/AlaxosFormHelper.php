@@ -114,8 +114,6 @@ class AlaxosFormHelper extends FormHelper
     {
         $filter = '';
         
-        $fieldName = StringTool::ensure_start_with($fieldName, 'Filter.');
-        
         $type = $this->_context->type($fieldName);
         
         if(preg_match('/_id$/', $fieldName))
@@ -153,6 +151,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterSelect($fieldName, array $options = array())
     {
+    	$fieldName = $this->completeFilterFieldname($fieldName);
+    	
         $default_options = ['type'  => 'select',
                             'empty' => true,
                             'label' => false,
@@ -165,6 +165,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterText($fieldName, array $options = array())
     {
+    	$fieldName = $this->completeFilterFieldname($fieldName);
+    	
         $default_options = ['type'  => 'text',
                             'label' => false,
                             'class' => 'form-control'];
@@ -176,6 +178,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterDate($fieldName, array $options = array())
     {
+    	$fieldName = $this->completeFilterFieldname($fieldName);
+    	
         $default_options = ['type'  => 'datetime', 
                             'label' => false, 
                             'class' => 'form-control'];
@@ -192,6 +196,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterInteger($fieldName, array $options = array())
     {
+    	$fieldName = $this->completeFilterFieldname($fieldName);
+    	
         $default_options = ['type'  => 'number',
                             'label' => false,
                             'class' => 'form-control'];
@@ -208,6 +214,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterFloat($fieldName, array $options = array())
     {
+    	$fieldName = $this->completeFilterFieldname($fieldName);
+    	
         $default_options = ['type'    => 'number',
                             'decimal' => true, 
                             'label'   => false,
@@ -225,6 +233,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterBoolean($fieldName, array $options = array())
     {
+    	$fieldName = $this->completeFilterFieldname($fieldName);
+    	
         $default_options = ['type'    => 'select',
                             'options' => [1 =>__d('alaxos', 'yes'), 0 => __d('alaxos', 'no')],
                             'empty'   => true,
@@ -234,6 +244,13 @@ class AlaxosFormHelper extends FormHelper
         $options = array_merge($default_options, $options);
         
         return $this->input($fieldName, $options);
+    }
+    
+    private function completeFilterFieldname($fieldName)
+    {
+    	$fieldName = StringTool::ensure_start_with($fieldName, 'Filter.');
+    	
+    	return $fieldName;
     }
     
     /*******************************/
