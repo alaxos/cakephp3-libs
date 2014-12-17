@@ -574,6 +574,10 @@ var Alaxos = (function($j) {
 			var msg = build_message(data.responseJSON.errors);
 			Alaxos.show_text(msg, "error", selector_to_display);
 		}
+		else if(typeof(data.responseJSON) != "undefined" && typeof(data.responseJSON.message) != "undefined")
+		{
+			Alaxos.show_text(data.responseJSON.message, "error", selector_to_display);
+		}
 		else if(typeof(data.errors) != "undefined")
 		{
 			var msg = build_message(data.errors);
