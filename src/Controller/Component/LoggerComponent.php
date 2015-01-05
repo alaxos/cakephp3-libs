@@ -7,7 +7,7 @@ use Alaxos\Log\AlaxosLog;
 use Alaxos\Lib\StringTool;
 use Cake\Error\NotImplementedException;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Time;
+use Cake\I18n\Time;
 
 class LoggerComponent extends Component
 {
