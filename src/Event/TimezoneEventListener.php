@@ -5,7 +5,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
-use Cake\Utility\Time;
+use Cake\I18n\Time;
 use Cake\Event\Event;
 use Cake\Validation\Validator;
 
@@ -78,7 +78,7 @@ class TimezoneEventListener implements EventListenerInterface {
                     
                     if($type == 'datetime')
                     {
-                        if(is_a($data[$property], 'Cake\Utility\Time'))
+                        if(is_a($data[$property], 'Cake\I18n\Time'))
                         {
                             /*
                              * At this step, as the datetime has already been marshalled, the datetime has the value selected in the view, but its timezone is wrong

@@ -19,7 +19,7 @@ $pk = "\${$singularVar}->{$primaryKey[0]}";
 if (strpos($action, 'add') !== false)
 {
     echo "<?php\n";
-    echo "use Cake\Utility\Time;\n";
+    echo "use Cake\I18n\Time;\n";
     echo "use Cake\Core\Configure;\n";
     echo "?>\n";
 }

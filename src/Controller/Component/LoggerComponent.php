@@ -5,7 +5,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Alaxos\Log\AlaxosLog;
 use Alaxos\Lib\StringTool;
-use Cake\Error\NotImplementedException;
+use Cake\Network\Exception\NotImplementedException;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Time;
 

@@ -6,7 +6,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Alaxos\Event\TimezoneEventListener;
 use Cake\Core\Configure;
-use Cake\Utility\Time;
+use Cake\I18n\Time;
 use Cake\Database\Query;
 use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;

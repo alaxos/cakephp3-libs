@@ -11,7 +11,7 @@ trait TimezonedTrait
         
         $display_timezone = Configure::read('display_timezone');
         
-        if(!empty($display_timezone) && isset($value) && is_a($value, 'Cake\Utility\Time'))
+        if(!empty($display_timezone) && isset($value) && is_a($value, 'Cake\I18n\Time'))
         {
             $value->setTimezone($display_timezone);
             

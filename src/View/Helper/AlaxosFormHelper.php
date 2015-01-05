@@ -2,7 +2,6 @@
 namespace Alaxos\View\Helper;
 
 use Cake\View\Helper\FormHelper;
-use Cake\Utility\Time;
 use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;
 use Alaxos\Lib\SecurityTool;
@@ -313,6 +312,12 @@ class AlaxosFormHelper extends FormHelper
     {
         $salt  = isset($this->_View->viewVars['_alaxos_spam_filter_salt']) ? $this->_View->viewVars['_alaxos_spam_filter_salt'] : null;
         $token = SecurityTool::get_today_token($salt);
+        
+        /*
+         * Unlock hidden field added by JS to prevent blackholing of form
+         */
+        $fieldname = SecurityTool::get_today_fieldname($salt);
+        $this->unlockField($fieldname);
         
         return $this->AlaxosHtml->script(Router::url(['prefix' => false, 'plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
     }
