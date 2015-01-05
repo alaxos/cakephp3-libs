@@ -26,7 +26,13 @@
         }
     },
     "extra": {
-        "installer-name": "Alaxos"
+        "installer-name": "Alaxos",
+        "branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
+    },
+    "support": {
+    	"source": "https://github.com/alaxos/cakephp3-libs"
     }
 }
 
