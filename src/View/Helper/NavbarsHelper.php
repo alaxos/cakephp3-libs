@@ -333,7 +333,18 @@ class NavbarsHelper extends Helper
             $html[] = '<nav class="' . $options['navbar_class'] . '" role="navigation">';
             $html[] = '  <div class="container-fluid">';
             
-            $html[] = '    <div class="collapse navbar-collapse" id="navbar_links">';
+            $navbar_dom_id = 'navbar_links_' . time();
+            
+            $html[] = '<div class="navbar-header">';
+            $html[] = '  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#' . $navbar_dom_id . '">';
+            $html[] = '    <span class="sr-only">Toggle navigation</span>';
+            $html[] = '    <span class="icon-bar"></span>';
+            $html[] = '    <span class="icon-bar"></span>';
+            $html[] = '    <span class="icon-bar"></span>';
+            $html[] = '  </button>';
+            $html[] = '</div>';
+            
+            $html[] = '    <div class="collapse navbar-collapse" id="' . $navbar_dom_id . '">';
         }
         
         /*
