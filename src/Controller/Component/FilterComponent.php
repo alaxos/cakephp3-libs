@@ -152,10 +152,12 @@ class FilterComponent extends Component
         			    	break;
         	
         			    case 'datetime':
+        			    case 'date':
         			    	$this->_addDatetimeCondition($query, $fieldName, $value, $options);
         			    	break;
         	
         			    case 'string':
+        			    case 'text':
         			    	$this->_addStringCondition($query, $fieldName, $value, $options);
         			    	break;
         			    	
