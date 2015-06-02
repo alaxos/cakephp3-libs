@@ -21,6 +21,10 @@ a.desc{
     background-image:url('../img/desc.gif');
     background-repeat: no-repeat;
 }
+tr.filterHeader td
+{
+    vertical-align:bottom !important;
+} 
 
 /*** BOOTSTRAP ***/
 .navbar

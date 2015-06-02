@@ -499,7 +499,7 @@ var Alaxos = (function($j) {
 		/*
 		 * Add an 'info' CSS class to the row if its checkbox is checked
 		 */
-		if(!$j(checkbox).parents("tr").hasClass("searchHeader"))
+		if(!$j(checkbox).parents("tr").hasClass("filterHeader"))
 		{
 			if($j(checkbox).prop("checked"))
 			{
