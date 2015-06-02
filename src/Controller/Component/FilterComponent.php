@@ -79,10 +79,10 @@ class FilterComponent extends Component
         
         if($this->request->is('post') || $this->request->is('put'))
         {
-        	if(isset($this->request->data['Filter']) && !empty($this->request->data['Filter']))
-        	{
-        		$filter_data = $this->request->data['Filter'];
-        	}
+            if(isset($this->request->data['Filter']) && !empty($this->request->data['Filter']))
+            {
+                $filter_data = $this->request->data['Filter'];
+            }
         }
         elseif($this->request->is('get'))
         {
@@ -90,12 +90,12 @@ class FilterComponent extends Component
             
             if($options['check_referer'])
             {
-            	$referer_path = $this->getComparisonPath(Router::parse($this->request->referer(true)));
-            	
-            	if($referer_path == $current_path)
-            	{
-            	   $filter_data = $this->getStoredQuery($current_path, $options);
-            	}
+                $referer_path = $this->getComparisonPath(Router::parse($this->request->referer(true)));
+                
+                if($referer_path == $current_path)
+                {
+                   $filter_data = $this->getStoredQuery($current_path, $options);
+                }
             }
             else
             {
@@ -106,86 +106,86 @@ class FilterComponent extends Component
         if(!empty($filter_data))
         {
             //debug($this->request->data);
-        	$query = $this->controller->{$options['modelClass']}->find();
-        	
-        	//debug($query->__debugInfo()['params']);
-        	
-        	foreach($filter_data as $fieldName => $value)
-        	{
-        	    $has_value = false;
-        	    
-        	    if(is_array($value))
-        	    {
-        	        if(isset($value['__start__']) && (!empty($value['__start__']) || $value['__start__'] === '0'))
-        	        {
-        	            $has_value = true;
-        	        }
-        	        
-        	        if(isset($value['__end__']) && (!empty($value['__end__']) || $value['__end__'] === '0'))
-        	        {
-        	            $has_value = true;
-        	        }
-        	    }
-        	    elseif($value === '0')
-        	    {
-        	        $has_value = true;
-        	    }
-        	    else
-        	    {
-        	        $has_value = !empty($value);
-        	    }
-        	    
-        		if($has_value)
-        		{
-        			$columnType = $this->controller->{$options['modelClass']}->schema()->columnType($fieldName);
-        			
-        			//$condition_fieldName = StringTool::ensure_start_with($fieldName, Inflector::singularize($options['modelClass']) . '.');
-        			$fieldName = StringTool::ensure_start_with($fieldName, $options['modelClass'] . '.');
-        			
-        			//debug($columnType);
-        			
-        			switch($columnType)
-        			{
-        			    case 'integer':
-        			    case 'float':
-        			    	$this->_addNumericCondition($query, $fieldName, $value, $options);
-        			    	break;
-        	
-        			    case 'datetime':
-        			    case 'date':
-        			    	$this->_addDatetimeCondition($query, $fieldName, $value, $options);
-        			    	break;
-        	
-        			    case 'string':
-        			    case 'text':
-        			    	$this->_addStringCondition($query, $fieldName, $value, $options);
-        			    	break;
-        			    	
-        			    case 'boolean':
-        			        $this->_addBooleanCondition($query, $fieldName, $value, $options);
-        			        break;
-        			        
-        			}
-        		}
-        	}
-        	
-        	/*
-        	 * Store Query in session in order to be able to navigate to other list pages
-        	 * without loosing the filters
-        	 */
-        	$path = $this->getComparisonPath($this->request->params);
-        	$this->storeQuery($path, $filter_data);
-        	
-        	/*
-        	 * Set request data if no already filled
-        	 * (this is the case when navigating from page to page with pagination)
-        	 */
-        	if(!isset($this->request->data['Filter']))
-        	{
-        		$this->request->data['Filter'] = $filter_data;
-        	}
-        	
-        	return $query;
+            $query = $this->controller->{$options['modelClass']}->find();
+            
+            //debug($query->__debugInfo()['params']);
+            
+            foreach($filter_data as $fieldName => $value)
+            {
+                $has_value = false;
+                
+                if(is_array($value))
+                {
+                    if(isset($value['__start__']) && (!empty($value['__start__']) || $value['__start__'] === '0'))
+                    {
+                        $has_value = true;
+                    }
+                    
+                    if(isset($value['__end__']) && (!empty($value['__end__']) || $value['__end__'] === '0'))
+                    {
+                        $has_value = true;
+                    }
+                }
+                elseif($value === '0')
+                {
+                    $has_value = true;
+                }
+                else
+                {
+                    $has_value = !empty($value);
+                }
+                
+                if($has_value)
+                {
+                    $columnType = $this->controller->{$options['modelClass']}->schema()->columnType($fieldName);
+                    
+                    //$condition_fieldName = StringTool::ensure_start_with($fieldName, Inflector::singularize($options['modelClass']) . '.');
+                    $fieldName = StringTool::ensure_start_with($fieldName, $options['modelClass'] . '.');
+                    
+                    //debug($columnType);
+                    
+                    switch($columnType)
+                    {
+                        case 'integer':
+                        case 'float':
+                            $this->_addNumericCondition($query, $fieldName, $value, $options);
+                            break;
+            
+                        case 'datetime':
+                        case 'date':
+                            $this->_addDatetimeCondition($query, $fieldName, $value, $options);
+                            break;
+            
+                        case 'string':
+                        case 'text':
+                            $this->_addStringCondition($query, $fieldName, $value, $options);
+                            break;
+                            
+                        case 'boolean':
+                            $this->_addBooleanCondition($query, $fieldName, $value, $options);
+                            break;
+                            
+                    }
+                }
+            }
+            
+            /*
+             * Store Query in session in order to be able to navigate to other list pages
+             * without loosing the filters
+             */
+            $path = $this->getComparisonPath($this->request->params);
+            $this->storeQuery($path, $filter_data);
+            
+            /*
+             * Set request data if no already filled
+             * (this is the case when navigating from page to page with pagination)
+             */
+            if(!isset($this->request->data['Filter']))
+            {
+                $this->request->data['Filter'] = $filter_data;
+            }
+            
+            return $query;
         }
     }
     
@@ -208,15 +208,15 @@ class FilterComponent extends Component
     
     protected function storeQuery($path, $data)
     {
-    	//debug($path);
-    	
-        if(isset($this->controller->Session))
+        $session = $this->request->session();
+        
+        if(isset($session))
         {
             $stored_alaxos_filter = [];
             
-            if($this->controller->Session->check('Alaxos.Filter'))
+            if($session->check('Alaxos.Filter'))
             {
-                $stored_alaxos_filter = $this->controller->Session->read('Alaxos.Filter');
+                $stored_alaxos_filter = $session->read('Alaxos.Filter');
             }
             
             if(isset($data))
@@ -228,7 +228,7 @@ class FilterComponent extends Component
                 unset($stored_alaxos_filter[$path]);
             }
             
-            $this->controller->Session->write('Alaxos.Filter', $stored_alaxos_filter);
+            $session->write('Alaxos.Filter', $stored_alaxos_filter);
         }
         
         return false;
@@ -236,13 +236,13 @@ class FilterComponent extends Component
     
     protected function getStoredQuery($path)
     {
-//     	debug($path);
-    	
-        if(isset($this->controller->Session))
+        $session = $this->request->session();
+        
+        if(isset($session))
         {
-            if($this->controller->Session->check('Alaxos.Filter'))
+            if($session->check('Alaxos.Filter'))
             {
-                $stored_alaxos_filter = $this->controller->Session->read('Alaxos.Filter');
+                $stored_alaxos_filter = $session->read('Alaxos.Filter');
                 
                 if(isset($stored_alaxos_filter[$path]))
                 {
@@ -265,6 +265,8 @@ class FilterComponent extends Component
         {
             unset($url['?']);
             unset($url['pass']);
+            unset($url['_Token']);
+            unset($url['_csrfToken']);
             
             $path = Router::url($url);
             
