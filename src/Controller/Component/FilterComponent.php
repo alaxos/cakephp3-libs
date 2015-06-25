@@ -113,17 +113,34 @@ class FilterComponent extends Component
             foreach($filter_data as $fieldName => $value)
             {
                 $has_value = false;
+                $is_association_filter = false;
                 
                 if(is_array($value))
                 {
-                    if(isset($value['__start__']) && (!empty($value['__start__']) || $value['__start__'] === '0'))
+                    if(isset($value['__start__']) || isset($value['__end__']))
                     {
-                        $has_value = true;
+                        if(isset($value['__start__']) && (!empty($value['__start__']) || $value['__start__'] === '0'))
+                        {
+                            $has_value = true;
+                        }
+                        
+                        if(isset($value['__end__']) && (!empty($value['__end__']) || $value['__end__'] === '0'))
+                        {
+                            $has_value = true;
+                        }
                     }
-                    
-                    if(isset($value['__end__']) && (!empty($value['__end__']) || $value['__end__'] === '0'))
+                    else
                     {
-                        $has_value = true;
+                        /*
+                         * Case of filter field like 'LinkedModels.title'
+                         */
+                        
+                        $association = $this->controller->{$options['modelClass']}->association($fieldName);
+                        if(isset($association))
+                        {
+                            $has_value = true;
+                            $is_association_filter = true;
+                        }
                     }
                 }
                 elseif($value === '0')
@@ -137,12 +154,24 @@ class FilterComponent extends Component
                 
                 if($has_value)
                 {
-                    $columnType = $this->controller->{$options['modelClass']}->schema()->columnType($fieldName);
+                    if(!$is_association_filter)
+                    {
+                        $columnType = $this->controller->{$options['modelClass']}->schema()->columnType($fieldName);
+                        
+                        $fieldName = StringTool::ensure_start_with($fieldName, $options['modelClass'] . '.');
+                    }
+                    else
+                    {
+                        $associationModelName = $fieldName;
+                        
+                        $fieldName = array_keys($value)[0];
+                        $value     = $value[$fieldName];
+                        
+                        $columnType = $this->controller->{$options['modelClass']}->{$associationModelName}->schema()->columnType($fieldName);
+                        
+                        $fieldName = $associationModelName . '.' . $fieldName;
+                    }
                     
-                    //$condition_fieldName = StringTool::ensure_start_with($fieldName, Inflector::singularize($options['modelClass']) . '.');
-                    $fieldName = StringTool::ensure_start_with($fieldName, $options['modelClass'] . '.');
-                    
-                    //debug($columnType);
                     
                     switch($columnType)
                     {
@@ -150,12 +179,12 @@ class FilterComponent extends Component
                         case 'float':
                             $this->_addNumericCondition($query, $fieldName, $value, $options);
                             break;
-            
+                            
                         case 'datetime':
                         case 'date':
                             $this->_addDatetimeCondition($query, $fieldName, $value, $options);
                             break;
-            
+                            
                         case 'string':
                         case 'text':
                             $this->_addStringCondition($query, $fieldName, $value, $options);
