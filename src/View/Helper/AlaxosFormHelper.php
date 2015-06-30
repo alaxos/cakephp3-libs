@@ -321,4 +321,12 @@ class AlaxosFormHelper extends FormHelper
         
         return $this->AlaxosHtml->script(Router::url(['prefix' => false, 'plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
     }
+    
+    /*******************************/
+    
+    public function domId($value)
+    {
+        return $this->_domId($value);
+    }
+    
 }
