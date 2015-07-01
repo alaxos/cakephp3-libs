@@ -413,6 +413,20 @@ class FilterComponent extends Component
         
         /****/
         
+        if(isset($date2))
+        {
+            if(stripos($value['__end__'], ' ') === false)
+            {
+                /*
+                 * No time is given -> we should search *including* the end date
+                 * -> add one day to searched value
+                 */
+                $date2->addDay();
+            }
+        }
+        
+        /****/
+        
         if(isset($date1) && isset($date2))
         {
            /*
