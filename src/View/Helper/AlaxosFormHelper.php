@@ -124,6 +124,7 @@ class AlaxosFormHelper extends FormHelper
             switch($type)
             {
                 case 'datetime':
+                case 'date':
                     $filter .= $this->filterDate($fieldName, $options);
                     break;
                 
