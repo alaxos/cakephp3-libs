@@ -72,8 +72,9 @@ class FilterComponent extends Component
          */
         $this->prepareSearchEntity($options);
         
-        
         $options['modelClass'] = isset($options['modelClass']) ? $options['modelClass'] : $this->controller->modelClass;
+        
+        /***/
         
         $filter_data = null;
         
@@ -103,13 +104,19 @@ class FilterComponent extends Component
             }
         }
         
+        /***/
+        
+        $query = $this->controller->{$options['modelClass']}->find();
+        
+        if(isset($options['contain']))
+        {
+            $query->contain($options['contain']);
+        }
+        
+        /***/
+        
         if(!empty($filter_data))
         {
-            //debug($this->request->data);
-            $query = $this->controller->{$options['modelClass']}->find();
-            
-            //debug($query->__debugInfo()['params']);
-            
             foreach($filter_data as $fieldName => $value)
             {
                 $has_value = false;
@@ -213,9 +220,11 @@ class FilterComponent extends Component
             {
                 $this->request->data['Filter'] = $filter_data;
             }
-            
-            return $query;
         }
+        
+        /***/
+        
+        return $query;
     }
     
     /**
