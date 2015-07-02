@@ -32,6 +32,9 @@ class Datetime implements WidgetInterface
         unset($data['minute']);
         unset($data['meridian']);
         
+        $upper_datepicker_id = isset($data['upper_datepicker_id']) ? $data['upper_datepicker_id'] : null;
+        unset($data['upper_datepicker_id']);
+        
         if(isset($data['value']) && is_a($data['value'], 'DateTime'))
         {
         	$data['value'] = $data['value']->format($data['datepicker_format']);
@@ -77,10 +80,23 @@ class Datetime implements WidgetInterface
             $js_code[] = '      ';
             $js_code[] = '  });';
             
-            $js_code[] = '  $("#' . $data['id'] . '").datepicker("changeDate", function(){';
+            $js_code[] = '  $("#' . $data['id'] . '").datepicker().on("changeDate", function(){';
             $js_code[] = '      ';
             $js_code[] = '      clearTimeout(date_on_blur_timeout);';
             $js_code[] = '      ';
+            
+            if(isset($upper_datepicker_id))
+            {
+                $js_code[] = '      $("#' . $upper_datepicker_id . '").datepicker("setStartDate", $("#' . $data['id'] . '").datepicker("getDate"));';
+                $js_code[] = '      ';
+                $js_code[] = '      var upper_date = $("#' . $upper_datepicker_id . '").datepicker("getDate");';
+                $js_code[] = '      ';
+                $js_code[] = '      if(upper_date == null){';
+                $js_code[] = '          $("#' . $upper_datepicker_id . '").datepicker("update", "");';
+                $js_code[] = '      }';
+                
+            }
+            
             $js_code[] = '  });';
         }
         
