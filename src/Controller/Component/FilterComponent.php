@@ -375,10 +375,24 @@ class FilterComponent extends Component
     
     protected function _addDatetimeCondition(Query $query, $fieldName, $value, array $options = array())
     {
-        $display_timezone = isset($this->_config['display_timezone']) ? $this->_config['display_timezone'] : Configure::read('display_timezone');
         $default_timezone = date_default_timezone_get();
+        $display_timezone = $default_timezone;
         
-        $display_timezone = !empty($display_timezone) ? $display_timezone : $default_timezone;
+        if(isset($this->_config['display_timezone']))
+        {
+            $display_timezone = $this->_config['display_timezone'];
+        }
+        elseif(Configure::check('display_timezone'))
+        {
+            $display_timezone = Configure::read('display_timezone');
+        }
+        elseif(Configure::check('default_display_timezone'))
+        {
+            $display_timezone = Configure::read('default_display_timezone');
+        }
+        
+//         $default_timezone = date_default_timezone_get();
+//         $display_timezone = !empty($display_timezone) ? $display_timezone : $default_timezone;
         
         $date1 = null;
         $date2 = null;
@@ -444,7 +458,25 @@ class FilterComponent extends Component
             * search AT first date
             */
             
-            $query->where([$fieldName => $date1->toDateTimeString()]);
+            if(stripos($value['__start__'], ' ') === false)
+            {
+                /*
+                 * Not time is given -> the search is made on the whole day, from midnight to midnight
+                 */
+                
+                $fake_date2 = $date1->copy();
+                $fake_date2->addDay();
+                
+                $query->where(function($exp) use ($fieldName, $date1, $fake_date2){
+                    return $exp->gte($fieldName, $date1->toDateTimeString())
+                               ->lte($fieldName, $fake_date2->toDateTimeString());
+                });
+                
+            }
+            else
+            {
+                $query->where([$fieldName => $date1->toDateTimeString()]);
+            }
         }
         elseif(isset($date2))
         {

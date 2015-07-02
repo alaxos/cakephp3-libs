@@ -40,7 +40,11 @@ class Datetime implements WidgetInterface
         	$data['value'] = $data['value']->format($data['datepicker_format']);
         }
         
-        $input = $this->_templates->format('input', [
+        /***********/
+        
+        $input  = '<div class="input-group date" id="' . $data['id'] . '-container">';
+        
+        $input .= $this->_templates->format('input', [
             'name' => $data['name'],
             'type' => $data['type'],
             'attrs' => $this->_templates->formatAttributes(
@@ -48,6 +52,11 @@ class Datetime implements WidgetInterface
                 ['name', 'type']
             ),
         ]);
+        
+        $input .= '<span class="input-group-addon" id="' .  $data['id'] . '-group-addon"><i class="glyphicon glyphicon-th"></i></span>';
+        $input .= '</div>';
+        
+        /***********/
         
         $js_code   = [];
         $js_code[] = '<script type="text/javascript">';
@@ -57,7 +66,7 @@ class Datetime implements WidgetInterface
         $js_code[] = '$(document).ready(function(){';
         $js_code[] = 'var language = "' . (isset($data['language']) ? $data['language'] : 'en') . '";';
         $js_code[] = '';
-        $js_code[] = '  $("#' . $data['id'] . '").datepicker({language : language, forceParse : false, autoclose : true, todayHighlight: true});';
+        $js_code[] = '  $("#' . $data['id'] . '").datepicker({language : language, forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false});';
         $js_code[] = '';
         
         if(isset($data['format_on_blur']) && $data['format_on_blur'])
@@ -101,13 +110,49 @@ class Datetime implements WidgetInterface
         }
         
         $js_code[] = '';
-        $js_code[] = '';
-        $js_code[] = '';
-        $js_code[] = '';
-        $js_code[] = '';
-        $js_code[] = '';
-        $js_code[] = '';
-        $js_code[] = '';
+        
+        /*
+         * Click on icon -> show
+         */
+        $js_code[] = '  $("#' .  $data['id'] . '-group-addon").click(function(e){';
+        $js_code[] = '      ';
+//         $js_code[] = '      if(typeof(opened_bootstrap_datepicker_id) != "undefined"){';
+//         $js_code[] = '          window.console.log("click when opened_bootstrap_datepicker_id = " + opened_bootstrap_datepicker_id);';
+//         $js_code[] = '      }else{';
+//         $js_code[] = '          window.console.log("click when opened_bootstrap_datepicker_id = undefined");';
+//         $js_code[] = '      }';
+//         $js_code[] = '      ';
+//         $js_code[] = '      if(typeof(opened_bootstrap_datepicker_id) == "undefined" || opened_bootstrap_datepicker_id != "' . $data['id'] . '"){';
+        $js_code[] = '          $("#' .  $data['id'] . '").datepicker("show");';
+//         $js_code[] = '      }';
+        $js_code[] = '      ';
+        $js_code[] = '      ';
+        $js_code[] = '  });';
+        $js_code[] = '  ';
+        
+//         /*
+//          * Open -> set datepicker open id
+//          */
+//         $js_code[] = '  $("#' . $data['id'] . '").datepicker().on("show", function(){';
+//         $js_code[] = '      ';
+//         $js_code[] = '      opened_bootstrap_datepicker_id = "' . $data['id'] . '";';
+//         $js_code[] = '      ';
+//         $js_code[] = '      window.console.log("opened_bootstrap_datepicker_id = \"' . $data['id'] . '\"");';
+//         $js_code[] = '  });';
+//         $js_code[] = '  ';
+        
+//         /*
+//          * Close -> set datepicker open id
+//          */
+//         $js_code[] = '  $("#' . $data['id'] . '").datepicker().on("hide", function(){';
+//         $js_code[] = '      ';
+//         $js_code[] = '      window.console.log("opened_bootstrap_datepicker_id = null");';
+//         $js_code[] = '      ';
+//         $js_code[] = '      opened_bootstrap_datepicker_id = null;';
+//         $js_code[] = '      ';
+//         $js_code[] = '  });';
+//         $js_code[] = '  ';
+        
         $js_code[] = '});';
         $js_code[] = '</script>';
         
