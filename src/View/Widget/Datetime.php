@@ -64,8 +64,9 @@ class Datetime implements WidgetInterface
         $js_code[] = 'date_on_blur_timeout = null;';
         $js_code[] = '';
         $js_code[] = '$(document).ready(function(){';
-        $js_code[] = 'var language = "' . (isset($data['language']) ? $data['language'] : 'en') . '";';
-        $js_code[] = '';
+        $js_code[] = '  ';
+        $js_code[] = '  var language = "' . (isset($data['language']) ? $data['language'] : 'en') . '";';
+        $js_code[] = '  ';
         $js_code[] = '  $("#' . $data['id'] . '").datepicker({language : language, forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false});';
         $js_code[] = '';
         
@@ -84,10 +85,8 @@ class Datetime implements WidgetInterface
             $js_code[] = '          }';
             $js_code[] = '      ';
             $js_code[] = '      }, 30);';
-            $js_code[] = '      ';
-            $js_code[] = '      ';
-            $js_code[] = '      ';
             $js_code[] = '  });';
+            $js_code[] = '  ';
             
             $js_code[] = '  $("#' . $data['id'] . '").datepicker().on("changeDate", function(){';
             $js_code[] = '      ';
@@ -123,12 +122,24 @@ class Datetime implements WidgetInterface
 //         $js_code[] = '      }';
 //         $js_code[] = '      ';
 //         $js_code[] = '      if(typeof(opened_bootstrap_datepicker_id) == "undefined" || opened_bootstrap_datepicker_id != "' . $data['id'] . '"){';
-        $js_code[] = '          $("#' .  $data['id'] . '").datepicker("show");';
+        $js_code[] = '      $("#' .  $data['id'] . '").datepicker("show");';
 //         $js_code[] = '      }';
-        $js_code[] = '      ';
         $js_code[] = '      ';
         $js_code[] = '  });';
         $js_code[] = '  ';
+        
+        
+        if(isset($upper_datepicker_id))
+        {
+            $js_code[] = '  /*';
+            $js_code[] = '   * Setting the lower limit too early seems to brake the date format';
+            $js_code[] = '   */';
+            $js_code[] = '  initStartDate = setTimeout(function(){';
+            $js_code[] = '      $("#' . $upper_datepicker_id . '").datepicker("setStartDate", $("#' . $data['id'] . '").datepicker("getDate"));';
+            $js_code[] = '  }, 1000);';
+            $js_code[] = '  ';
+        }
+        
         
 //         /*
 //          * Open -> set datepicker open id
