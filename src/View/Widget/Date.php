@@ -4,7 +4,7 @@ namespace Alaxos\View\Widget;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Form\ContextInterface;
 
-class Datetime implements WidgetInterface
+class Date implements WidgetInterface
 {
     protected $_templates;
     
@@ -42,7 +42,7 @@ class Datetime implements WidgetInterface
         
         /***********/
         
-        $input  = '<div class="input-group date alaxos-datetime" id="' . $data['id'] . '-container">';
+        $input  = '<div class="input-group date alaxos-date" id="' . $data['id'] . '-container">';
         
         $input .= $this->_templates->format('input', [
             'name' => $data['name'],

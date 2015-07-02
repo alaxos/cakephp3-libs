@@ -14,6 +14,50 @@ class AlaxosFormHelper extends FormHelper
 {
 	public $helpers = ['Url', 'AlaxosHtml'];
 	
+	public function date($fieldName, array $options = [])
+	{
+	    $default_options = ['format_on_blur'  => true];
+	    
+	    $options = array_merge($default_options, $options);
+	    
+	    $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
+	    $this->AlaxosHtml->includeAlaxosJS();
+	    $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
+	    
+	    $defaultLocale = I18n::locale();
+	    $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
+	    $defaultLocale = strtolower($defaultLocale);
+	    $defaultLocale = str_replace('-', '_', $defaultLocale);
+	    
+	    switch($defaultLocale)
+	    {
+	        case 'fr':
+	        case 'fr_fr':
+	            echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr.min', ['block' => true]);
+	            $options['language']           = 'fr';
+	            $options['alaxos_js_format']   = 'd/m/y'; //format for Alaxos JS date parsing
+	            $options['datepicker_format']  = 'd/m/Y';
+	            break;
+	        case 'fr_ch':
+	            echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr-CH.min', ['block' => true]);
+	            $options['language']           = 'fr';
+	            $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
+	            $options['datepicker_format']  = 'd.m.Y';
+	            break;
+	    
+	        default:
+	            $options['language']           = 'en';
+	            $options['alaxos_js_format']   = 'y/m/d'; //format for Alaxos JS date parsing
+	            $options['datepicker_format']  = 'Y/m/d';
+	            break;
+	    }
+	    
+	    $options = $this->_initInputField($fieldName, $options);
+	    
+	    $this->addWidget('date', ['Alaxos\View\Widget\Date']);
+	    return $this->widget('date', $options);
+	}
+	
     public function dateTime($fieldName, array $options = array()) {
         
         $default_options = ['format_on_blur'  => true];
