@@ -27,7 +27,7 @@ class AlaxosHtmlHelper extends HtmlHelper
 		$this->_defaultConfig['alaxos_css']               = 'Alaxos.alaxos';
 		$this->_defaultConfig['bootstrap_min_css']        = 'Alaxos.bootstrap/bootstrap.min';
 		$this->_defaultConfig['bootstrap_theme_css']      = 'Alaxos.bootstrap/bootstrap-theme.min';
-		$this->_defaultConfig['bootstrap_datepicker_css'] = 'Alaxos.bootstrap/datepicker3';
+		$this->_defaultConfig['bootstrap_datepicker_css'] = 'Alaxos.bootstrap/bootstrap-datepicker3';
 		
 		parent::__construct($View, $config);
 	}

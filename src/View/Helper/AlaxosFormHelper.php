@@ -35,8 +35,13 @@ class AlaxosFormHelper extends FormHelper
         {
             case 'fr':
             case 'fr_fr':
+                echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr.min', ['block' => true]);
+                $options['language']           = 'fr';
+                $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
+                $options['datepicker_format']  = 'd.m.Y';
+                break;
             case 'fr_ch':
-                echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr', ['block' => true]);
+                echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr-CH.min', ['block' => true]);
                 $options['language']           = 'fr';
                 $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
                 $options['datepicker_format']  = 'd.m.Y';
