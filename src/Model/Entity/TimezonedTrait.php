@@ -61,7 +61,10 @@ trait TimezonedTrait
                     break;
             }
             
-            return $value->format($format);
+            if(isset($value))
+            {
+                return $value->format($format);
+            }
         }
     }
 }
