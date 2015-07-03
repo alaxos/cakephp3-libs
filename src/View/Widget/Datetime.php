@@ -88,6 +88,23 @@ class Datetime implements WidgetInterface
             $js_code[] = '  });';
             $js_code[] = '  ';
             
+            $js_code[] = '  $("#' . $data['id'] . '").keypress(function(e){';
+            $js_code[] = '      ';
+            $js_code[] = '      if(e.which == 13){';
+            $js_code[] = '          ';
+            $js_code[] = '          e.preventDefault();';
+            $js_code[] = '          ';
+            $js_code[] = '          //$("#' . $data['id'] . '").datepicker("hide");';
+            $js_code[] = '          ';
+            $js_code[] = '          var value = $(this).val();';
+            $js_code[] = '          var completed_date = Alaxos.get_complete_date_object(value, "' . $data['alaxos_js_format'] . '");';
+            $js_code[] = '          ';
+            $js_code[] = '          $("#' . $data['id'] . '").datepicker("setDate", completed_date);';
+            $js_code[] = '          ';
+            $js_code[] = '      }';
+            $js_code[] = '  });';
+            $js_code[] = '  ';
+            
             $js_code[] = '  $("#' . $data['id'] . '").datepicker().on("changeDate", function(){';
             $js_code[] = '      ';
             $js_code[] = '      clearTimeout(date_on_blur_timeout);';

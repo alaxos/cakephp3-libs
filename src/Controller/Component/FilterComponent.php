@@ -405,14 +405,26 @@ class FilterComponent extends Component
             
             if(isset($value['__start__']) && !empty($value['__start__']))
             {
-                $date1 = Time::parse($value['__start__'], $display_timezone);
-                $date1->setTimezone($default_timezone);
+                try
+                {
+                    $date1 = Time::parse($value['__start__'], $display_timezone);
+                    $date1->setTimezone($default_timezone);
+                }
+                catch(\Exception $ex)
+                {
+                }
             }
             
             if(isset($value['__end__']) && !empty($value['__end__']))
             {
-                $date2 = Time::parse($value['__end__'], $display_timezone);
-                $date2->setTimezone($default_timezone);
+                try
+                {
+                    $date2 = Time::parse($value['__end__'], $display_timezone);
+                    $date2->setTimezone($default_timezone);
+                }
+                catch(\Exception $ex)
+                {
+                }
             }
         }
         elseif(is_string($value) && !empty($value))
@@ -421,8 +433,14 @@ class FilterComponent extends Component
              * ONE field filter
              */
             
-            $date1 = Time::parse($value, $display_timezone);
-            $date1->setTimezone($default_timezone);
+            try
+            {
+                $date1 = Time::parse($value, $display_timezone);
+                $date1->setTimezone($default_timezone);
+            }
+            catch(\Exception $ex)
+            {
+            }
         }
         
         /****/
