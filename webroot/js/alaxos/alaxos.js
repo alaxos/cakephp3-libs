@@ -583,6 +583,10 @@ var Alaxos = (function($j) {
 			var msg = build_message(data.errors);
 			Alaxos.show_text(msg, "error", selector_to_display);
 		}
+		else
+		{
+			Alaxos.show_text("an error occured", "error", selector_to_display);
+		}
 	}
 	
 	function manage_ajax_success(data, selector_to_display)
