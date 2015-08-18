@@ -11,6 +11,7 @@ use Cake\Database\Query;
 use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;
 use Cake\Utility\Inflector;
+use Cake\ORM\TableRegistry;
 
 class FilterComponent extends Component
 {
@@ -36,7 +37,6 @@ class FilterComponent extends Component
     * @var \Cake\Network\Response
     */
     public $response;
-    
     
     public function __construct(ComponentRegistry $collection, array $config = array()) 
     {
@@ -74,7 +74,7 @@ class FilterComponent extends Component
         
         $options['modelClass'] = isset($options['modelClass']) ? $options['modelClass'] : $this->controller->modelClass;
         
-        /***/
+        /******/
         
         $filter_data = null;
         
@@ -104,7 +104,7 @@ class FilterComponent extends Component
             }
         }
         
-        /***/
+        /******/
         
         $query = $this->controller->{$options['modelClass']}->find();
         
@@ -113,19 +113,85 @@ class FilterComponent extends Component
             $query->contain($options['contain']);
         }
         
-        /***/
+        /******/
         
         if(!empty($filter_data))
         {
+            /*
+             * Normalize $filter_data to get a flat array, even if some filters concern linked models 
+             */
+            $flat_filter_data = [];
             foreach($filter_data as $fieldName => $value)
             {
-                $has_value = false;
-                $is_association_filter = false;
-                
-                if(is_array($value))
+                if(!is_array($value) || isset($value['__start__']) || isset($value['__end__']))
                 {
-                    if(isset($value['__start__']) || isset($value['__end__']))
+                    /*
+                     * Conditions on main model
+                     */
+                    
+                    $flat_filter_data[$options['modelClass']] = isset($flat_filter_data[$options['modelClass']]) ? $flat_filter_data[$options['modelClass']] : array();
+                    
+                    $flat_filter_data[$options['modelClass']][$fieldName] = $value;
+                }
+                else
+                {
+                    /*
+                     * Conditions on linked model
+                     */
+                    $flat_filter_data[$options['modelClass'] . '.' . $fieldName] = isset($flat_filter_data[$options['modelClass'] . '.' . $fieldName]) ? $flat_filter_data[$options['modelClass'] . '.' . $fieldName] : array();
+                    
+                    foreach($value as $linked_model_fieldname => $linked_value)
                     {
+                        if(!is_array($linked_value) || isset($linked_value['__start__']) || isset($linked_value['__end__']))
+                        {
+                            /*
+                             * Case of LinkedModels.title
+                             */
+                            $flat_filter_data[$options['modelClass'] . '.' . $fieldName][$linked_model_fieldname] = $linked_value;
+                        }
+                        else
+                        {
+                            $flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname] = isset($flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname]) ? $flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname] : array();
+                            
+                            foreach($linked_value as $linked_model_2_fieldname => $linked_value_2)
+                            {
+                                if(!is_array($linked_value_2) || isset($linked_value_2['__start__']) || isset($linked_value_2['__end__']))
+                                {
+                                    /*
+                                     * Case of LinkedModels.LinkedModels.title
+                                     */
+                                    $flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname][$linked_model_2_fieldname] = $linked_value_2;
+                                }
+                                else
+                                {
+                                    throw new NotImplementedException(___('filtering on 3rd level related model is not implemented'));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            /******/
+            
+            foreach($flat_filter_data as $modelName => $conditions)
+            {
+                foreach($conditions as $fieldName => $value)
+                {
+                    $has_value = false;
+                    
+                    if(!is_array($value))
+                    {
+                        if(!empty($value) || $value === '0')
+                        {
+                            $has_value = true;
+                        }
+                    }
+                    else
+                    {
+                        /*
+                         * Case of From - To
+                         */
                         if(isset($value['__start__']) && (!empty($value['__start__']) || $value['__start__'] === '0'))
                         {
                             $has_value = true;
@@ -136,71 +202,123 @@ class FilterComponent extends Component
                             $has_value = true;
                         }
                     }
-                    else
+                    
+                    if($has_value)
                     {
-                        /*
-                         * Case of filter field like 'LinkedModels.title'
-                         */
+                        $schema = null;
                         
-                        $association = $this->controller->{$options['modelClass']}->association($fieldName);
-                        if(isset($association))
+                        if(stripos($modelName, '.') !== -1)
                         {
-                            $has_value = true;
-                            $is_association_filter = true;
+                            /*
+                             * Case of linked models
+                             */
+                            
+                            $modelNames = explode('.', $modelName);
+                            $table = null;
+                            foreach($modelNames as $modName)
+                            {
+                                if(!isset($table))
+                                {
+                                    $table = $this->controller->{$modName};
+                                }
+                                else
+                                {
+                                    $table = $table->{$modName};
+                                }
+                            }
+                            
+                            $schema = $table->schema();
+                            $condition_fieldname = $modName . '.' . $fieldName;
+                            
+                            /*
+                             * Add an INNER JOIN to the query to ensure the field will be in the result set
+                             */
+                            if(count($modelNames) == 2)
+                            {
+                                /*
+                                 * Case of 1st level associated model
+                                 * -> we can force an INNER JOIN quite easily
+                                 */
+                                $association = $this->controller->{$modelNames[0]}->association($modName);
+                                if(isset($association))
+                                {
+                                    if(is_a($association, 'Cake\ORM\Association\BelongsTo'))
+                                    {
+                                        /*
+                                         * Force the join type of the BelongsTo association (default is LEFT JOIN)
+                                         */
+                                        $association->joinType('INNER');
+                                    }
+                                    elseif(is_a($association, 'Cake\ORM\Association\BelongsToMany'))
+                                    {
+                                        /*
+                                         * Force 2 INNER JOIN to reach the target table (model -> association_table -> target table)
+                                         */
+                                        $sourceTable   = $association->source();
+                                        $junctionTable = $association->junction();
+                                        $targetTable   = $association->target();
+                                        
+                                        $query->join([$junctionTable->alias() => [
+                                            'table'      => $junctionTable->schema()->name(),
+                                            'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $junctionTable->alias() . '.' . $association->foreignKey()
+                                        ]]);
+                                        
+                                        $query->join([$targetTable->alias() => [
+                                            'table'      => $targetTable->schema()->name(),
+                                            'conditions' => $junctionTable->alias() . '.' . $association->targetForeignKey() . ' = ' . $targetTable->alias() . '.' . $targetTable->primaryKey()
+                                        ]]);
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
-                elseif($value === '0')
-                {
-                    $has_value = true;
-                }
-                else
-                {
-                    $has_value = !empty($value);
-                }
-                
-                if($has_value)
-                {
-                    if(!$is_association_filter)
-                    {
-                        $columnType = $this->controller->{$options['modelClass']}->schema()->columnType($fieldName);
-                        
-                        $fieldName = StringTool::ensure_start_with($fieldName, $options['modelClass'] . '.');
-                    }
-                    else
-                    {
-                        $associationModelName = $fieldName;
-                        
-                        $fieldName = array_keys($value)[0];
-                        $value     = $value[$fieldName];
-                        
-                        $columnType = $this->controller->{$options['modelClass']}->{$associationModelName}->schema()->columnType($fieldName);
-                        
-                        $fieldName = $associationModelName . '.' . $fieldName;
-                    }
-                    
-                    
-                    switch($columnType)
-                    {
-                        case 'integer':
-                        case 'float':
-                            $this->_addNumericCondition($query, $fieldName, $value, $options);
-                            break;
+                        else
+                        {
+                            /*
+                             * Main model
+                             */
                             
-                        case 'datetime':
-                        case 'date':
-                            $this->_addDatetimeCondition($query, $fieldName, $value, $options);
-                            break;
+                            $schema = $this->controller->{$options['modelClass']}->schema();
+                            $condition_fieldname = $fieldName;
+                        }
+                        
+                        /******/
+                        
+                        $aliases = $this->config('aliases');
+                        if(is_array($aliases) && array_key_exists($condition_fieldname, $aliases))
+                        {
+                            $condition_expression = $aliases[$condition_fieldname]['expression'];
+                            $columnType           = isset($aliases[$condition_fieldname]['columnType']) ? $aliases[$condition_fieldname]['columnType'] : 'string';
                             
-                        case 'string':
-                        case 'text':
-                            $this->_addStringCondition($query, $fieldName, $value, $options);
-                            break;
-                            
-                        case 'boolean':
-                            $this->_addBooleanCondition($query, $fieldName, $value, $options);
-                            break;
-                            
+                            $condition_fieldname = $condition_expression;
+                        }
+                        else
+                        {
+                            $columnType = $schema->columnType($fieldName);
+                        }
+                        
+                        /******/
+                        
+                        switch($columnType)
+                        {
+                            case 'integer':
+                            case 'float':
+                                $this->_addNumericCondition($query, $condition_fieldname, $value, $options);
+                                break;
+                                
+                            case 'datetime':
+                            case 'date':
+                                $this->_addDatetimeCondition($query, $condition_fieldname, $value, $options);
+                                break;
+                                
+                            case 'string':
+                            case 'text':
+                                $this->_addStringCondition($query, $condition_fieldname, $value, $options);
+                                break;
+                                
+                            case 'boolean':
+                                $this->_addBooleanCondition($query, $condition_fieldname, $value, $options);
+                                break;
+                        }
                     }
                 }
             }
@@ -222,7 +340,7 @@ class FilterComponent extends Component
             }
         }
         
-        /***/
+        /******/
         
         return $query;
     }
@@ -517,7 +635,9 @@ class FilterComponent extends Component
                 $value = '%' . $value . '%';
             }
             
-            $query->where([$fieldName . ' LIKE' => $value]);
+            $query->where(function($exp, $query) use ($fieldName, $value){
+                return $exp->like($fieldName, $value);
+            });
         }
     }
     
