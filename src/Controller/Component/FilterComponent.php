@@ -238,43 +238,45 @@ class FilterComponent extends Component
                                 {
                                     $association = $table->association($modelNames[$i + 1]);
                                     
-                                    if(isset($association))
-                                    {
-                                        $sourceTable   = $association->source();
-                                        $targetTable   = $association->target();
+                                    $this->addJoin($query, $association);
+                                    
+//                                     if(isset($association))
+//                                     {
+//                                         $sourceTable   = $association->source();
+//                                         $targetTable   = $association->target();
                                         
-                                        if(is_a($association, 'Cake\ORM\Association\BelongsTo'))
-                                        {
-                                            $query->join([$targetTable->alias() => [
-                                                'table'      => $targetTable->schema()->name(),
-                                                'conditions' => $targetTable->alias() . '.' . $targetTable->primaryKey() . ' = ' . $sourceTable->alias() . '.' . $association->foreignKey()
-                                            ]]);
-                                        }
-                                        elseif(is_a($association, 'Cake\ORM\Association\HasMany'))
-                                        {
-                                            $query->join([$targetTable->alias() => [
-                                                'table'      => $targetTable->schema()->name(),
-                                                'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $targetTable->alias() . '.' . $association->foreignKey()
-                                            ]]);
-                                        }
-                                        elseif(is_a($association, 'Cake\ORM\Association\BelongsToMany'))
-                                        {
-                                            /*
-                                             * Force 2 INNER JOIN to reach the target table (model -> association_table -> target table)
-                                             */
-                                            $junctionTable = $association->junction();
+//                                         if(is_a($association, 'Cake\ORM\Association\BelongsTo'))
+//                                         {
+//                                             $query->join([$targetTable->alias() => [
+//                                                 'table'      => $targetTable->schema()->name(),
+//                                                 'conditions' => $targetTable->alias() . '.' . $targetTable->primaryKey() . ' = ' . $sourceTable->alias() . '.' . $association->foreignKey()
+//                                             ]]);
+//                                         }
+//                                         elseif(is_a($association, 'Cake\ORM\Association\HasMany'))
+//                                         {
+//                                             $query->join([$targetTable->alias() => [
+//                                                 'table'      => $targetTable->schema()->name(),
+//                                                 'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $targetTable->alias() . '.' . $association->foreignKey()
+//                                             ]]);
+//                                         }
+//                                         elseif(is_a($association, 'Cake\ORM\Association\BelongsToMany'))
+//                                         {
+//                                             /*
+//                                              * Force 2 INNER JOIN to reach the target table (model -> association_table -> target table)
+//                                              */
+//                                             $junctionTable = $association->junction();
                                             
-                                            $query->join([$junctionTable->alias() => [
-                                                'table'      => $junctionTable->schema()->name(),
-                                                'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $junctionTable->alias() . '.' . $association->foreignKey()
-                                            ]]);
+//                                             $query->join([$junctionTable->alias() => [
+//                                                 'table'      => $junctionTable->schema()->name(),
+//                                                 'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $junctionTable->alias() . '.' . $association->foreignKey()
+//                                             ]]);
                                             
-                                            $query->join([$targetTable->alias() => [
-                                                'table'      => $targetTable->schema()->name(),
-                                                'conditions' => $junctionTable->alias() . '.' . $association->targetForeignKey() . ' = ' . $targetTable->alias() . '.' . $targetTable->primaryKey()
-                                            ]]);
-                                        }
-                                    }
+//                                             $query->join([$targetTable->alias() => [
+//                                                 'table'      => $targetTable->schema()->name(),
+//                                                 'conditions' => $junctionTable->alias() . '.' . $association->targetForeignKey() . ' = ' . $targetTable->alias() . '.' . $targetTable->primaryKey()
+//                                             ]]);
+//                                         }
+//                                     }
                                 }
                             }
                         }
@@ -350,6 +352,51 @@ class FilterComponent extends Component
         /******/
         
         return $query;
+    }
+    
+    public function addJoin($query, $association, $type = 'INNER')
+    {
+        if(isset($query) && isset($association))
+        {
+            $sourceTable   = $association->source();
+            $targetTable   = $association->target();
+            
+            if(is_a($association, 'Cake\ORM\Association\BelongsTo'))
+            {
+                $query->join([$targetTable->alias() => [
+                    'table'      => $targetTable->schema()->name(),
+                    'conditions' => $targetTable->alias() . '.' . $targetTable->primaryKey() . ' = ' . $sourceTable->alias() . '.' . $association->foreignKey(),
+                    'type'       => $type
+                ]]);
+            }
+            elseif(is_a($association, 'Cake\ORM\Association\HasMany'))
+            {
+                $query->join([$targetTable->alias() => [
+                    'table'      => $targetTable->schema()->name(),
+                    'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $targetTable->alias() . '.' . $association->foreignKey(),
+                    'type'       => $type
+                ]]);
+            }
+            elseif(is_a($association, 'Cake\ORM\Association\BelongsToMany'))
+            {
+                /*
+                 * Force 2 INNER JOIN to reach the target table (model -> association_table -> target table)
+                 */
+                $junctionTable = $association->junction();
+                
+                $query->join([$junctionTable->alias() => [
+                    'table'      => $junctionTable->schema()->name(),
+                    'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $junctionTable->alias() . '.' . $association->foreignKey(),
+                    'type'       => $type
+                ]]);
+                
+                $query->join([$targetTable->alias() => [
+                    'table'      => $targetTable->schema()->name(),
+                    'conditions' => $junctionTable->alias() . '.' . $association->targetForeignKey() . ' = ' . $targetTable->alias() . '.' . $targetTable->primaryKey(),
+                    'type'       => $type
+                ]]);
+            }
+        }
     }
     
     /**
