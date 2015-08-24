@@ -239,44 +239,6 @@ class FilterComponent extends Component
                                     $association = $table->association($modelNames[$i + 1]);
                                     
                                     $this->addJoin($query, $association);
-                                    
-//                                     if(isset($association))
-//                                     {
-//                                         $sourceTable   = $association->source();
-//                                         $targetTable   = $association->target();
-                                        
-//                                         if(is_a($association, 'Cake\ORM\Association\BelongsTo'))
-//                                         {
-//                                             $query->join([$targetTable->alias() => [
-//                                                 'table'      => $targetTable->schema()->name(),
-//                                                 'conditions' => $targetTable->alias() . '.' . $targetTable->primaryKey() . ' = ' . $sourceTable->alias() . '.' . $association->foreignKey()
-//                                             ]]);
-//                                         }
-//                                         elseif(is_a($association, 'Cake\ORM\Association\HasMany'))
-//                                         {
-//                                             $query->join([$targetTable->alias() => [
-//                                                 'table'      => $targetTable->schema()->name(),
-//                                                 'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $targetTable->alias() . '.' . $association->foreignKey()
-//                                             ]]);
-//                                         }
-//                                         elseif(is_a($association, 'Cake\ORM\Association\BelongsToMany'))
-//                                         {
-//                                             /*
-//                                              * Force 2 INNER JOIN to reach the target table (model -> association_table -> target table)
-//                                              */
-//                                             $junctionTable = $association->junction();
-                                            
-//                                             $query->join([$junctionTable->alias() => [
-//                                                 'table'      => $junctionTable->schema()->name(),
-//                                                 'conditions' => $sourceTable->alias() . '.' . $sourceTable->primaryKey() . ' = ' . $junctionTable->alias() . '.' . $association->foreignKey()
-//                                             ]]);
-                                            
-//                                             $query->join([$targetTable->alias() => [
-//                                                 'table'      => $targetTable->schema()->name(),
-//                                                 'conditions' => $junctionTable->alias() . '.' . $association->targetForeignKey() . ' = ' . $targetTable->alias() . '.' . $targetTable->primaryKey()
-//                                             ]]);
-//                                         }
-//                                     }
                                 }
                             }
                         }
@@ -659,7 +621,7 @@ class FilterComponent extends Component
                 
                 $query->where(function($exp) use ($fieldName, $date1, $fake_date2){
                     return $exp->gte($fieldName, $date1->toDateTimeString())
-                               ->lte($fieldName, $fake_date2->toDateTimeString());
+                               ->lt($fieldName, $fake_date2->toDateTimeString());
                 });
                 
             }

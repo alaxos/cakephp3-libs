@@ -3,6 +3,7 @@ namespace Alaxos\View\Widget;
 
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Form\ContextInterface;
+use Cake\Core\Configure;
 
 class Datetime implements WidgetInterface
 {
@@ -24,6 +25,20 @@ class Datetime implements WidgetInterface
         ];
         $data['value'] = $data['val'];
         unset($data['val']);
+        
+        if(isset($data['value']) && is_a($data['value'], 'Cake\I18n\Time'))
+        {
+            $display_timezone = null;
+            if(Configure::check('display_timezone')){
+                $display_timezone = Configure::read('display_timezone');
+            }elseif(Configure::check('default_display_timezone')){
+                $display_timezone = Configure::read('default_display_timezone');
+            }
+            
+            if(isset($display_timezone)){
+                $data['value']->setTimezone($display_timezone); //it doesn't change the timezone internally, but it changes the tz used for display
+            }
+        }
         
         unset($data['year']);
         unset($data['month']);
