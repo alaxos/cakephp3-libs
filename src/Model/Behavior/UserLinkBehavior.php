@@ -15,9 +15,32 @@ use Cake\Database\Query;
 class UserLinkBehavior extends Behavior 
 {
     protected $_defaultConfig = [
-          'get_user_id_function' => null //a function that return the user id 
+          'get_user_id_function'     => null,           // a function that return the user id 
+          'creator_association_name' => 'Creator',      // set value to null to prevent automatic association
+          'editor_association_name'  => 'Editor',       // set value to null to prevent automatic association
+          'creator_foreignKey'       => 'created_by',
+          'editor_foreignKey'        => 'modified_by',
+          'users_className'          => 'Users'
     ];
     
+    public function initialize(array $config)
+    {
+        if($this->config('creator_association_name') != null)
+        {
+            $this->_table->belongsTo($this->config('creator_association_name'), [
+                'foreignKey' => $this->config('creator_foreignKey'),
+                'className'  => $this->config('users_className')
+            ]);
+        }
+        
+        if($this->config('editor_association_name') != null)
+        {
+            $this->_table->belongsTo($this->config('editor_association_name'), [
+                'foreignKey' => $this->config('editor_foreignKey'),
+                'className'  => $this->config('users_className')
+            ]);
+        }
+    }
     
     public function beforeSave(Event $event, Entity $entity) {
         
