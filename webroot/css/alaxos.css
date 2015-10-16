@@ -26,6 +26,11 @@ tr.filterHeader td
     vertical-align:bottom !important;
 } 
 
+.flash-message-row .flash-message
+{
+	cursor:pointer;
+}
+
 /*** BOOTSTRAP ***/
 .navbar
 {
