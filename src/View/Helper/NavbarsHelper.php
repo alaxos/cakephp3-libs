@@ -449,6 +449,10 @@ class NavbarsHelper extends Helper
         {
             $li = '<li class="active">';
         }
+        elseif(isset($element['role']) && $element['role'] == 'separator')
+        {
+            $li = '<li role="separator" class="divider">';
+        }
         else
         {
             $li = '<li>';
