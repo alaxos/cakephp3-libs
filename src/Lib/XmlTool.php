@@ -246,6 +246,43 @@ class XmlTool
     }
     
     /**
+     * Not all UTF-8 chars are allowed in XML. This function replaces invalid chars by a valid UTF-8 char representing a question mark
+     *
+     * @param string $text
+     * @return string
+     */
+    public static function stripInvalidUTF8Chars($text)
+    {
+        $ret = '';
+        $current;
+        if (empty($text))
+        {
+            return $ret;
+        }
+        
+        $length = strlen($text);
+        for ($i=0; $i < $length; $i++)
+        {
+            $current = ord($text{$i});
+            if (($current == 0x9) ||
+                ($current == 0xA) ||
+                ($current == 0xD) ||
+                (($current >= 0x20) && ($current <= 0xD7FF)) ||
+                (($current >= 0xE000) && ($current <= 0xFFFD)) ||
+                (($current >= 0x10000) && ($current <= 0x10FFFF)))
+            {
+                $ret .= chr($current);
+            }
+            else
+            {
+                $ret .= '⍰';
+            }
+        }
+        
+        return $ret;
+    }
+        
+    /**
      * Replace the content of a node by a TextNode containing the given text
      * 
      * Note:
