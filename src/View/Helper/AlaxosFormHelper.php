@@ -24,7 +24,7 @@ class AlaxosFormHelper extends FormHelper
         $this->AlaxosHtml->includeAlaxosJS();
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
         
-        $date_locale_options = $this->get_date_locale();
+        $date_locale_options = $this->getDateLocale();
         $options             = array_merge($options, $date_locale_options);
         
         $options = $this->_initInputField($fieldName, $options);
@@ -33,7 +33,7 @@ class AlaxosFormHelper extends FormHelper
         return $this->widget('date', $options);
     }
     
-    public function get_date_locale()
+    public function getDateLocale()
     {
         $options = [];
         
@@ -78,7 +78,7 @@ class AlaxosFormHelper extends FormHelper
         $this->AlaxosHtml->includeAlaxosJS();
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
         
-        $date_locale_options = $this->get_date_locale();
+        $date_locale_options = $this->getDateLocale();
         $options             = array_merge($options, $date_locale_options);
         
         $options = $this->_initInputField($fieldName, $options);
