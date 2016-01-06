@@ -12,69 +12,36 @@ use Cake\I18n\I18n;
  */
 class AlaxosFormHelper extends FormHelper
 {
-	public $helpers = ['Url', 'AlaxosHtml'];
-	
-	public function date($fieldName, array $options = [])
-	{
-	    $default_options = ['format_on_blur'  => true];
-	    
-	    $options = array_merge($default_options, $options);
-	    
-	    $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
-	    $this->AlaxosHtml->includeAlaxosJS();
-	    $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
-	    
-	    $defaultLocale = I18n::locale();
-	    $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
-	    $defaultLocale = strtolower($defaultLocale);
-	    $defaultLocale = str_replace('-', '_', $defaultLocale);
-	    
-	    switch($defaultLocale)
-	    {
-	        case 'fr':
-	        case 'fr_fr':
-	            echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr.min', ['block' => true]);
-	            $options['language']           = 'fr';
-	            $options['alaxos_js_format']   = 'd/m/y'; //format for Alaxos JS date parsing
-	            $options['datepicker_format']  = 'd/m/Y';
-	            break;
-	        case 'fr_ch':
-	            echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr-CH.min', ['block' => true]);
-	            $options['language']           = 'fr';
-	            $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
-	            $options['datepicker_format']  = 'd.m.Y';
-	            break;
-	    
-	        default:
-	            $options['language']           = 'en';
-	            $options['alaxos_js_format']   = 'y/m/d'; //format for Alaxos JS date parsing
-	            $options['datepicker_format']  = 'Y/m/d';
-	            break;
-	    }
-	    
-	    $options = $this->_initInputField($fieldName, $options);
-	    
-	    $this->addWidget('date', ['Alaxos\View\Widget\Date']);
-	    return $this->widget('date', $options);
-	}
-	
-    public function dateTime($fieldName, array $options = array()) {
-        
+    public $helpers = ['Url', 'AlaxosHtml'];
+    
+    public function date($fieldName, array $options = [])
+    {
         $default_options = ['format_on_blur'  => true];
         
         $options = array_merge($default_options, $options);
-        
-        //debug($options);
         
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
         $this->AlaxosHtml->includeAlaxosJS();
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
         
+        $date_locale_options = $this->get_date_locale();
+        $options             = array_merge($options, $date_locale_options);
+        
+        $options = $this->_initInputField($fieldName, $options);
+        
+        $this->addWidget('date', ['Alaxos\View\Widget\Date']);
+        return $this->widget('date', $options);
+    }
+    
+    public function get_date_locale()
+    {
+        $options = [];
+        
         $defaultLocale = I18n::locale();
         $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
         $defaultLocale = strtolower($defaultLocale);
         $defaultLocale = str_replace('-', '_', $defaultLocale);
-        
+         
         switch($defaultLocale)
         {
             case 'fr':
@@ -90,13 +57,29 @@ class AlaxosFormHelper extends FormHelper
                 $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
                 $options['datepicker_format']  = 'd.m.Y';
                 break;
-                
+                 
             default:
                 $options['language']           = 'en';
                 $options['alaxos_js_format']   = 'y/m/d'; //format for Alaxos JS date parsing
                 $options['datepicker_format']  = 'Y/m/d';
                 break;
         }
+        
+        return $options;
+    }
+    
+    public function dateTime($fieldName, array $options = array()) {
+        
+        $default_options = ['format_on_blur'  => true];
+        
+        $options = array_merge($default_options, $options);
+        
+        $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
+        $this->AlaxosHtml->includeAlaxosJS();
+        $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
+        
+        $date_locale_options = $this->get_date_locale();
+        $options             = array_merge($options, $date_locale_options);
         
         $options = $this->_initInputField($fieldName, $options);
         
@@ -121,39 +104,39 @@ class AlaxosFormHelper extends FormHelper
     
     public function textarea($fieldName, array $options = array())
     {
-    	$default_options = [
-    		'autosize' => true
-    	];
-    	
-    	$options = array_merge($default_options, $options);
-    	
-    	$script_block = null;
-    	if($options['autosize'])
-    	{
-    		$this->AlaxosHtml->includeTextareaAutosizeJS();
-    		
-    		if(isset($options['id']))
-    		{
-    			$dom_id = $options['id'];
-    		}
-    		else
-    		{
-    			$dom_id = $this->_domId($fieldName);
-    		}
-    		
-    		$script = [];
-    		$script[]  = $this->AlaxosHtml->config('jquery_variable') . '(document).ready(function(){';
-    		$script[]  = '  if(typeof(' . $this->AlaxosHtml->config('jquery_variable') . '("#' . $dom_id . '").autosize) != "undefined"){';
-    		$script[]  = '    ' . $this->AlaxosHtml->config('jquery_variable') . '("#' . $dom_id . '").autosize();';
-    		$script[]  = '  }';
-    		$script[]  = '});';
-    		
-    		$script_block = $this->AlaxosHtml->scriptBlock(implode("\n", $script));
-    	}
-    	
-    	unset($options['autosize']);
-    	
-    	return parent :: textarea($fieldName, $options) . $script_block;
+        $default_options = [
+            'autosize' => true
+        ];
+        
+        $options = array_merge($default_options, $options);
+        
+        $script_block = null;
+        if($options['autosize'])
+        {
+            $this->AlaxosHtml->includeTextareaAutosizeJS();
+            
+            if(isset($options['id']))
+            {
+                $dom_id = $options['id'];
+            }
+            else
+            {
+                $dom_id = $this->_domId($fieldName);
+            }
+            
+            $script = [];
+            $script[]  = $this->AlaxosHtml->config('jquery_variable') . '(document).ready(function(){';
+            $script[]  = '  if(typeof(' . $this->AlaxosHtml->config('jquery_variable') . '("#' . $dom_id . '").autosize) != "undefined"){';
+            $script[]  = '    ' . $this->AlaxosHtml->config('jquery_variable') . '("#' . $dom_id . '").autosize();';
+            $script[]  = '  }';
+            $script[]  = '});';
+            
+            $script_block = $this->AlaxosHtml->scriptBlock(implode("\n", $script));
+        }
+        
+        unset($options['autosize']);
+        
+        return parent :: textarea($fieldName, $options) . $script_block;
     }
     
     /*******************************/
@@ -200,8 +183,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterSelect($fieldName, array $options = array())
     {
-    	$fieldName = $this->completeFilterFieldname($fieldName);
-    	
+        $fieldName = $this->completeFilterFieldname($fieldName);
+        
         $default_options = ['type'  => 'select',
                             'empty' => true,
                             'label' => false,
@@ -214,8 +197,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterText($fieldName, array $options = array())
     {
-    	$fieldName = $this->completeFilterFieldname($fieldName);
-    	
+        $fieldName = $this->completeFilterFieldname($fieldName);
+        
         $default_options = ['type'  => 'text',
                             'label' => false,
                             'class' => 'form-control'];
@@ -227,8 +210,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterDate($fieldName, array $options = array())
     {
-    	$fieldName = $this->completeFilterFieldname($fieldName);
-    	
+        $fieldName = $this->completeFilterFieldname($fieldName);
+        
         $default_options = ['type'  => 'datetime', 
                             'label' => false, 
                             'class' => 'form-control'];
@@ -247,8 +230,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterInteger($fieldName, array $options = array())
     {
-    	$fieldName = $this->completeFilterFieldname($fieldName);
-    	
+        $fieldName = $this->completeFilterFieldname($fieldName);
+        
         $default_options = ['type'  => 'number',
                             'label' => false,
                             'class' => 'form-control'];
@@ -265,8 +248,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterFloat($fieldName, array $options = array())
     {
-    	$fieldName = $this->completeFilterFieldname($fieldName);
-    	
+        $fieldName = $this->completeFilterFieldname($fieldName);
+        
         $default_options = ['type'    => 'number',
                             'decimal' => true, 
                             'label'   => false,
@@ -284,8 +267,8 @@ class AlaxosFormHelper extends FormHelper
     
     public function filterBoolean($fieldName, array $options = array())
     {
-    	$fieldName = $this->completeFilterFieldname($fieldName);
-    	
+        $fieldName = $this->completeFilterFieldname($fieldName);
+        
         $default_options = ['type'    => 'select',
                             'options' => [1 =>__d('alaxos', 'yes'), 0 => __d('alaxos', 'no')],
                             'empty'   => true,
@@ -299,9 +282,9 @@ class AlaxosFormHelper extends FormHelper
     
     private function completeFilterFieldname($fieldName)
     {
-    	$fieldName = StringTool::ensure_start_with($fieldName, 'Filter.');
-    	
-    	return $fieldName;
+        $fieldName = StringTool::ensure_start_with($fieldName, 'Filter.');
+        
+        return $fieldName;
     }
     
     /*******************************/
