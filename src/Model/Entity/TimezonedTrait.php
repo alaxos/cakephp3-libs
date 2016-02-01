@@ -38,33 +38,9 @@ trait TimezonedTrait
                 return $value;
             }
         }
-        elseif($fieldtype == 'date')
+        else
         {
-            $defaultLocale = I18n::locale();
-            $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
-            $defaultLocale = strtolower($defaultLocale);
-            $defaultLocale = str_replace('-', '_', $defaultLocale);
-            
-            switch($defaultLocale)
-            {
-                case 'fr':
-                case 'fr_fr':
-                    $format = 'd/m/Y';
-                    break;
-                    
-                case 'fr_ch':
-                    $format = 'd.m.Y';
-                    break;
-                    
-                default:
-                    $format = 'Y/m/d';
-                    break;
-            }
-            
-            if(isset($value))
-            {
-                return $value->format($format);
-            }
+            return $value;
         }
     }
 }
