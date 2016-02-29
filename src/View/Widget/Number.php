@@ -19,7 +19,6 @@ class Number implements WidgetInterface
         $data += [
             'name' => '',
             'val' => null,
-            'type' => 'number',
             'escape' => true,
             'decimal' => false
         ];
