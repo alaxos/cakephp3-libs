@@ -20,9 +20,11 @@ class Datetime implements WidgetInterface
         $data += [
             'name' => '',
             'val' => null,
-            'type' => 'text',
             'escape' => true,
         ];
+        
+        $data['type'] = 'text'; // force type to text to prevent default browser date support
+        
         $data['value'] = $data['val'];
         unset($data['val']);
         
