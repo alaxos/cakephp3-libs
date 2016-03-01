@@ -43,7 +43,7 @@ var Alaxos = (function($j) {
 	{
 		if(typeof(date_format) == "undefined" || date_format == null || date_format.length == 0)
 		{
-			date_format = "y-m-d";
+			date_format = Alaxos.DEFAULT_DATE_FORMAT;
 		}
 		
 		var separator1 = '';
@@ -302,6 +302,65 @@ var Alaxos = (function($j) {
 		// February has 29 days in any year evenly divisible by four,
 	    // EXCEPT for centurial years which are not also divisible by 400.
 	    return (year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0));
+	}
+	
+	function date_field(dom_id, language, format)
+	{
+		language = "fr";
+		format   = "d.m.y"
+		
+		$(dom_id).datepicker({language : language, forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false});
+
+		$(dom_id).blur(function(){
+			var value = $(this).val();
+			if(value != null && value.length > 0){
+				var completed_date = Alaxos.get_complete_date_object(value, format);
+			}
+			
+			date_on_blur_timeout = setTimeout(function(){
+				
+				if($(".datepicker:visible").length == 0){
+					$(dom_id).datepicker("setDate", completed_date);
+				}
+				
+			}, 30);
+		});
+		
+		$(dom_id).keypress(function(e){
+			
+			var value = $(this).val();
+			
+			if(value != null && value.length > 0){
+				
+				if(e.which == 13){
+					
+					$(dom_id).datepicker("hide");
+					
+					var completed_date = Alaxos.get_complete_date_object(value, format);
+					
+					$(dom_id).datepicker("setDate", completed_date);
+					
+					var newvalue = $(this).val();
+					
+					if(newvalue != value)
+					{
+						e.preventDefault();
+					}
+				}
+			}
+		});
+		
+		$(dom_id).datepicker().on("changeDate", function(){
+			
+			clearTimeout(date_on_blur_timeout);
+			
+		});
+
+		$(dom_id + "-group-addon").click(function(e){
+			
+			$(dom_id).datepicker("show");
+			
+		});
 	}
 	
 	/********************************************************************
@@ -678,6 +737,7 @@ var Alaxos = (function($j) {
     	DEFAULT_DATE_FORMAT					:	DEFAULT_DATE_FORMAT,
     	pleaseSelectAtLeastOneItem			:	pleaseSelectAtLeastOneItem,
     	
+    	date_field							:	date_field,
     	get_date_format						:	get_date_format,
     	get_complete_date_object			:	get_complete_date_object,
     	explode_date_parts					:	explode_date_parts,
