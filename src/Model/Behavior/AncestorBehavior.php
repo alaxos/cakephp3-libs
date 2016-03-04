@@ -237,8 +237,11 @@ class AncestorBehavior extends Behavior
 		$child_nodes = $ancestor_table->find()->where(['ancestor_id' => $entity->{$primaryKey}]);
 		$child_nodes_ids = $child_nodes->extract('node_id')->toArray();
 		
-		$query     = $ancestor_table->query()->delete()->where(['node_id IN' => $child_nodes_ids]);
-		$statement = $query->execute();
+		if(!empty($child_nodes_ids))
+		{
+		    $query     = $ancestor_table->query()->delete()->where(['node_id IN' => $child_nodes_ids]);
+		    $statement = $query->execute();
+		}
 		
 		return true;
 	}
