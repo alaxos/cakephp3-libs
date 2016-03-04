@@ -371,37 +371,11 @@ var Alaxos = (function($j) {
 	{
 		$j(dom_id).keypress(function(e){
 			
-			var k = e.key;
 			var w = e.which;
 			
 			if(e.ctrlKey){
 				return true;
 			}
-			
-			/*
-			 * The following code is disactivated as it mixes up with previous posted values proposal
-			 */
-//			/*
-//			 * Mimic HTML5 input type="number" Up and Down arrows
-//			 */
-//			if(w == 0 && (k == "Up" || k == "Down"))
-//			{
-//				if($j(this).val() == "")
-//				{
-//					$j(this).val(0);
-//				}
-//				
-//				if(k == "Up"){
-//					$j(this).val( (parseInt($j(this).val(), 10) + 1) );
-//				}
-//				else if(k == "Down"){
-//					$j(this).val( (parseInt($j(this).val(), 10) - 1) );
-//				}
-//				
-//				e.preventDefault();
-//				e.stopPropagation();
-//			}
-				
 			
 			/*
 			 * Allows arrows + back + enter keys
@@ -414,20 +388,35 @@ var Alaxos = (function($j) {
 			/*
 			 * Allow numbers and minus sign
 			 */
-		    var allowed = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-"];
+		    var allowed_keycodes = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 45];
+		    /*
+		    0 	48
+		    1 	49
+		    2 	50
+		    3 	51
+		    4 	52
+		    5 	53
+		    6 	54
+		    7 	55
+		    8 	56 
+		    9	57
+		    
+		    -	45
+		    .   46
+		    */
 		    
 		    if(allow_decimal){
-		    	allowed.push(".");
+		    	allowed_keycodes.push(46);
 		    }
 		    
 		    var valid = false;
 		    
-		    if ($j.inArray(k, allowed) != -1){
+		    if ($j.inArray(w, allowed_keycodes) != -1){
 		        valid = true;
 		    }
 		    
 		    var value = $j(dom_id).val();
-		    if(value == "" && k == "-"){
+		    if(value == "" && w == 45){
 		    	valid = true;
 		    }
 		    
