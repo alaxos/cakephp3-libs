@@ -97,6 +97,10 @@ class FilterComponent extends Component
                 {
                    $filter_data = $this->getStoredQuery($current_path, $options);
                 }
+                else
+                {
+                    $this->clearStoredQuery($current_path);
+                }
             }
             else
             {
