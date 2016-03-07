@@ -8,6 +8,7 @@ use Alaxos\Lib\StringTool;
 use Cake\Network\Exception\NotImplementedException;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Time;
+use Cake\Event\Event;
 
 class LoggerComponent extends Component
 {
@@ -50,7 +51,10 @@ class LoggerComponent extends Component
         parent::__construct($collection, $config);
         
         $this->controller = $collection->getController();
-        
+    }
+    
+    public function startup(Event $event)
+    {
         /*
          * Call functions that must called automatically
          */
@@ -90,16 +94,18 @@ class LoggerComponent extends Component
     
     public function visit()
     {
-        if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'GET' && $this->isHumanRequest() && $this->mustCountVisitForUrl() && isset($this->controller->Session))
+        $session = $this->request->session();
+        
+        if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'GET' && $this->isHumanRequest() && $this->mustCountVisitForUrl() && isset($session))
         {
             /***
              * Check if visit is already counted
              */
-            if(!$this->controller->Session->check('Alaxos.Logger.visit_counted'))
+            if(!$session->check('Alaxos.Logger.visit_counted'))
             {
                 $this->info('visit', $this->_configRead('log_categories.visit'));
                 
-                $this->controller->Session->write('Alaxos.Logger.visit_counted', true);
+                $session->write('Alaxos.Logger.visit_counted', true);
             }
         }
     }
@@ -289,11 +295,12 @@ class LoggerComponent extends Component
 	        if(!empty($log_categories_to_keep))
 	        {
 	            $query->where(function($exp) use ($log_categories_to_keep){
-	                return $exp->not(['log_category_id' => $log_categories_to_keep]);
+	                return $exp->not(['log_category_id IN' => $log_categories_to_keep]);
 	            });
 	        }
 	        
 	        //$query->connection()->logQueries(true);
+	        //debug($query->__debugInfo()['sql']);
 	        
 	        $statement = $query->execute();
 	        $deleted_total = $statement->rowCount();
