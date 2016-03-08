@@ -63,6 +63,7 @@ class FilterComponent extends Component
     public function getFilterQuery(array $options = array())
     {
         $default_options = ['check_referer'        => true,
+                            'keep_filter_actions'  => ['add', 'copy', 'edit', 'view', 'delete'],
                             'auto_wildcard_string' => true];
         
         $options = array_merge($default_options, $options);
@@ -91,15 +92,13 @@ class FilterComponent extends Component
             
             if($options['check_referer'])
             {
-                $referer_path = $this->getComparisonPath(Router::parse($this->request->referer(true)));
-                
-                if($referer_path == $current_path)
+                if($this->filterMustBeCleared($options))
                 {
-                   $filter_data = $this->getStoredQuery($current_path, $options);
+                    $this->clearStoredQuery($current_path);
                 }
                 else
                 {
-                    $this->clearStoredQuery($current_path);
+                    $filter_data = $this->getStoredQuery($current_path, $options);
                 }
             }
             else
@@ -452,6 +451,47 @@ class FilterComponent extends Component
         {
             return null;
         }
+    }
+    
+    protected function filterMustBeCleared($options)
+    {
+        $current_path = $this->getComparisonPath($this->request->params);
+        $referer_path = $this->getComparisonPath(Router::parse($this->request->referer(true)));
+        
+        if($current_path == $referer_path)
+        {
+            return false;
+        }
+        else
+        {
+            $plugin     = isset($this->request->params['plugin']) ? $this->request->params['plugin'] : null;
+            $prefix     = isset($this->request->params['prefix']) ? $this->request->params['prefix'] : null;
+            $controller = $this->request->params['controller'];
+            $action     = $this->request->params['action'];
+            $pass       = isset($this->request->params['pass']) ? $this->request->params['pass'] : [];
+            $query      = isset($this->request->params['?'])    ? $this->request->params['?']    : [];
+            
+            $referer            = Router::parse($this->request->referer(true));
+            $referer_plugin     = isset($referer['plugin']) ? $referer['plugin'] : null;
+            $referer_prefix     = isset($referer['prefix']) ? $referer['prefix'] : null;
+            $referer_controller = $referer['controller'];
+            $referer_action     = $referer['action'];
+            $referer_pass       = isset($referer['pass']) ? $referer['pass'] : [];
+            $referer_query      = isset($referer['?'])    ? $referer['?']    : [];
+            
+            if($plugin == $referer_plugin && $prefix == $referer_prefix && $controller == $referer_controller)
+            {
+                if(isset($options['keep_filter_actions']) && is_array($options['keep_filter_actions']))
+                {
+                    if(in_array($referer_action, $options['keep_filter_actions']))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
     }
     
     /********************************************************************************/
