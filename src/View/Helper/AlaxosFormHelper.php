@@ -49,19 +49,22 @@ class AlaxosFormHelper extends FormHelper
                 echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr.min', ['block' => true]);
                 $options['language']           = 'fr';
                 $options['alaxos_js_format']   = 'd/m/y'; //format for Alaxos JS date parsing
-                $options['datepicker_format']  = 'd/m/Y';
+                $options['datepicker_format']  = 'dd/mm/yyyy';
+                $options['php_date_format']    = 'd/m/Y';
                 break;
             case 'fr_ch':
                 echo $this->AlaxosHtml->script('Alaxos.bootstrap/datepicker/locales/bootstrap-datepicker.fr-CH.min', ['block' => true]);
                 $options['language']           = 'fr';
                 $options['alaxos_js_format']   = 'd.m.y'; //format for Alaxos JS date parsing
-                $options['datepicker_format']  = 'd.m.Y';
+                $options['datepicker_format']  = 'dd.mm.yyyy';
+                $options['php_date_format']    = 'd.m.Y';
                 break;
                  
             default:
                 $options['language']           = 'en';
                 $options['alaxos_js_format']   = 'y/m/d'; //format for Alaxos JS date parsing
-                $options['datepicker_format']  = 'Y/m/d';
+                $options['datepicker_format']  = 'yyyy/mm/dd';
+                $options['php_date_format']    = 'Y/m/d';
                 break;
         }
         
@@ -156,6 +159,9 @@ class AlaxosFormHelper extends FormHelper
             switch($type)
             {
                 case 'datetime':
+                    $filter .= $this->filterDatetime($fieldName, $options);
+                    break;
+                    
                 case 'date':
                     $filter .= $this->filterDate($fieldName, $options);
                     break;
@@ -208,11 +214,39 @@ class AlaxosFormHelper extends FormHelper
         return $this->input($fieldName, $options);
     }
     
+    public function filterDatetime($fieldName, array $options = array())
+    {
+        $fieldName = $this->completeFilterFieldname($fieldName);
+        
+        $default_options = ['type'  => 'datetime',
+                            'label' => false,
+                            'class' => 'form-control'];
+        
+        $options = array_merge($default_options, $options);
+        
+        $endId   = $fieldName . '.__end__';
+        
+        $endsWithBrackets = '';
+        if (substr($endId, -2) === '[]') {
+            $endId = substr($endId, 0, -2);
+            $endsWithBrackets = '[]';
+        }
+        $parts = explode('.', $endId);
+        $first = array_shift($parts);
+        $endName = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+        
+        $filter  = '';
+        $filter .= $this->input($fieldName . '.__start__', $options + ['placeholder' => __d('alaxos', 'from or equal'), 'upper_datepicker_name' => $endName]);
+        $filter .= $this->input($fieldName . '.__end__', $options + ['placeholder' => __d('alaxos', 'to')]);
+        
+        return $filter;
+    }
+    
     public function filterDate($fieldName, array $options = array())
     {
         $fieldName = $this->completeFilterFieldname($fieldName);
         
-        $default_options = ['type'  => 'datetime', 
+        $default_options = ['type'  => 'date', 
                             'label' => false, 
                             'class' => 'form-control'];
         
