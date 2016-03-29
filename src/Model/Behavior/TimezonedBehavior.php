@@ -60,6 +60,13 @@ class TimezonedBehavior extends Behavior
                             $value->setTimezone($server_default_timezone);
                         }
                     }
+                    elseif($fieldtype == 'date')
+                    {
+                        if(is_string($value))
+                        {
+                            $data[$field] = Time::parse($value, $display_timezone);
+                        }
+                    }
                 }
             }
         }

@@ -74,7 +74,7 @@ td.actions
 
 div.alaxos-date
 {
-	width:150px;
+	max-width:150px;
 }
 
 div.alaxos-datetime

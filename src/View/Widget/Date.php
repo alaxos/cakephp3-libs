@@ -13,8 +13,8 @@ class Date implements WidgetInterface
     }
     
     public function render(array $data, ContextInterface $context) {
-        //debug($data);
-        //debug($this->_templates);
+//         debug($data);
+//         debug($this->_templates);
         
         $data += [
             'name' => '',
@@ -39,7 +39,7 @@ class Date implements WidgetInterface
         
         if(isset($data['value']) && is_a($data['value'], 'DateTime'))
         {
-        	$data['value'] = $data['value']->format($data['datepicker_format']);
+            $data['value'] = $data['value']->format($data['php_date_format']);
         }
         
         /***********/
