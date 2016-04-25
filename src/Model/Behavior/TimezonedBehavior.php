@@ -45,7 +45,7 @@ class TimezonedBehavior extends Behavior
         {
             foreach($data as $field => $value)
             {
-                if(isset($value))
+                if(isset($value) && !empty($value))
                 {
                     $fieldtype = $this->_table->schema()->column($field)['type'];
                     
