@@ -63,9 +63,13 @@ class ShibbolethAuthenticate extends BaseAuthenticate
 	        /*
 	         * When CsrfComponent is used, a '_csrfToken' key exist in $request->params and it prevents urls comparison
 	         * -> remove it
+	         * 
+	         * Since CakePHP 3.2.11 a '_matchedRoute' key may exist in $request->params, also preventing urls comparison
+	         * -> remove it
 	         */
 	        $request_params = $request->params;
 	        unset($request_params['_csrfToken']);
+	        unset($request_params['_matchedRoute']);
 	        
 	        $normalized_login_url   = StringTool::remove_trailing(Router::normalize(Router::url($login_url)), '?');
 	        $normalized_current_url = StringTool::remove_trailing(Router::normalize(Router::url($request_params)), '?');
