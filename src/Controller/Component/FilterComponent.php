@@ -68,12 +68,15 @@ class FilterComponent extends Component
         
         $options = array_merge($default_options, $options);
         
+        $options['modelClass'] = isset($options['modelClass']) ? $options['modelClass'] : $this->controller->modelClass;
+        
+        list(, $alias) = pluginSplit($options['modelClass'], true);
+        $options['alias'] = $alias;
+        
         /*
          * Prepare Entity used to display search filters in the view
          */
         $this->prepareSearchEntity($options);
-        
-        $options['modelClass'] = isset($options['modelClass']) ? $options['modelClass'] : $this->controller->modelClass;
         
         /******/
         
@@ -109,7 +112,7 @@ class FilterComponent extends Component
         
         /******/
         
-        $query = $this->controller->{$options['modelClass']}->find();
+        $query = $this->controller->{$alias}->find();
         
         if(isset($options['contain']))
         {
@@ -132,16 +135,16 @@ class FilterComponent extends Component
                      * Conditions on main model
                      */
                     
-                    $flat_filter_data[$options['modelClass']] = isset($flat_filter_data[$options['modelClass']]) ? $flat_filter_data[$options['modelClass']] : array();
+                    $flat_filter_data[$alias] = isset($flat_filter_data[$alias]) ? $flat_filter_data[$alias] : array();
                     
-                    $flat_filter_data[$options['modelClass']][$fieldName] = $value;
+                    $flat_filter_data[$alias][$fieldName] = $value;
                 }
                 else
                 {
                     /*
                      * Conditions on linked model
                      */
-                    $flat_filter_data[$options['modelClass'] . '.' . $fieldName] = isset($flat_filter_data[$options['modelClass'] . '.' . $fieldName]) ? $flat_filter_data[$options['modelClass'] . '.' . $fieldName] : array();
+                    $flat_filter_data[$alias . '.' . $fieldName] = isset($flat_filter_data[$alias . '.' . $fieldName]) ? $flat_filter_data[$alias . '.' . $fieldName] : array();
                     
                     foreach($value as $linked_model_fieldname => $linked_value)
                     {
@@ -150,11 +153,11 @@ class FilterComponent extends Component
                             /*
                              * Case of LinkedModels.title
                              */
-                            $flat_filter_data[$options['modelClass'] . '.' . $fieldName][$linked_model_fieldname] = $linked_value;
+                            $flat_filter_data[$alias . '.' . $fieldName][$linked_model_fieldname] = $linked_value;
                         }
                         else
                         {
-                            $flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname] = isset($flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname]) ? $flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname] : array();
+                            $flat_filter_data[$alias . '.' . $fieldName . '.' . $linked_model_fieldname] = isset($flat_filter_data[$alias . '.' . $fieldName . '.' . $linked_model_fieldname]) ? $flat_filter_data[$alias . '.' . $fieldName . '.' . $linked_model_fieldname] : array();
                             
                             foreach($linked_value as $linked_model_2_fieldname => $linked_value_2)
                             {
@@ -163,7 +166,7 @@ class FilterComponent extends Component
                                     /*
                                      * Case of LinkedModels.LinkedModels.title
                                      */
-                                    $flat_filter_data[$options['modelClass'] . '.' . $fieldName . '.' . $linked_model_fieldname][$linked_model_2_fieldname] = $linked_value_2;
+                                    $flat_filter_data[$alias . '.' . $fieldName . '.' . $linked_model_fieldname][$linked_model_2_fieldname] = $linked_value_2;
                                 }
                                 else
                                 {
@@ -251,7 +254,7 @@ class FilterComponent extends Component
                              * Main model
                              */
                             
-                            $schema = $this->controller->{$options['modelClass']}->schema();
+                            $schema = $this->controller->{$alias}->schema();
                             $condition_fieldname = $fieldName;
                         }
                         
@@ -371,11 +374,11 @@ class FilterComponent extends Component
      */
     public function prepareSearchEntity(array $options = array())
     {
-        $options['modelClass'] = isset($options['modelClass']) ? $options['modelClass'] : $this->controller->modelClass;
+        $alias = $options['alias'];
         
-        $search_entity = $this->controller->{$options['modelClass']}->newEntity();
+        $search_entity = $this->controller->{$alias}->newEntity();
         $search_entity->accessible('*', true);
-        $this->controller->{$options['modelClass']}->patchEntity($search_entity, $this->request->data);
+        $this->controller->{$alias}->patchEntity($search_entity, $this->request->data);
         $this->controller->set(compact('search_entity'));
     }
     
