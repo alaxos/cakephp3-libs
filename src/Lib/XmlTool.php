@@ -60,7 +60,7 @@ class XmlTool
      *
      * @param DOMNode $node
      * @param string $xpath_query
-     * @return DOMNode
+     * @return \DOMNode
      */
     public static function getFirstElementByXpath($node, $xpath_query, $namespaces = array())
     {

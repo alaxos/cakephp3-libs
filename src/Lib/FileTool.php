@@ -87,14 +87,25 @@ class FileTool
     {
         if(is_numeric($bytes))
         {
-            $size = $bytes/1024;
-            if($size < 1000)
-            {
-                $printable_size = round($size) . ' Kb';
-            }
-            else
-            {
-                $printable_size =  round($size/1024, 1) . ' MB';
+            /*
+             * 1000 bytes is rounded to "1 Kb"
+             */
+            if($bytes >= 1000) {
+                
+                $size = $bytes/1024;
+                if($size < 1000)
+                {
+                    $printable_size = round($size, 1) . ' Kb';
+                }
+                else
+                {
+                    $printable_size =  round($size/1024, 1) . ' MB';
+                }
+                
+            } elseif ($bytes < 2) {
+                $printable_size = $bytes . ' ' . __d('alaxos', 'byte');
+            } else {
+                $printable_size = $bytes . ' ' . __d('alaxos', 'bytes');
             }
             
             return $printable_size;
