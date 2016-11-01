@@ -497,9 +497,9 @@ class NavbarsHelper extends Helper
     {
         if(is_array($url))
         {
-            $clean_url = [];
+            $clean_url = ['plugin' => null, 'prefix' => null];
             foreach($url as $k => $v){
-                if(in_array($k, ['prefix', 'controller', 'action', 'pass'])){
+                if(in_array($k, ['plugin', 'prefix', 'controller', 'action', 'pass'])){
                     $clean_url[$k] = $v;
                 }
             }
