@@ -33,7 +33,7 @@ class UserLinkComponent extends Component
 
         $this->controller = $this->getController();
 
-        if(!in_array('Auth', $this->getController()->components)) {
+        if (!$this->getController()->components()->has('Auth')) {
             throw new \Exception('Auth component must be loaded to use the Alaxos.UserLinkComponent');
         }
 
