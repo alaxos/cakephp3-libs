@@ -33,6 +33,10 @@ class UserLinkComponent extends Component
 
         $this->controller = $this->getController();
 
+        if(!in_array('Auth', $this->getController()->components)) {
+            throw new \Exception('Auth component must be loaded to use the Alaxos.UserLinkComponent');
+        }
+
         /*
          * Register event listener in the constructor (and not in the startup() method)
          * to ensure the listener is set when code in Controller->beforeFilter() is executed
