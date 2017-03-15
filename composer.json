@@ -1,16 +1,16 @@
 {
     "name": "alaxos/cakephp3-libs",
-    "description": "Custom libraries for CakePHP 3.x framework",
+    "description": "Custom libraries for CakePHP framework (>= v3.4)",
     "type": "cakephp-plugin",
     "keywords" : ["cakephp", "libraries"],
     "homepage": "https://github.com/alaxos/cakephp3-libs",
     "license": "MIT",
     "require": {
-        "cakephp/cakephp": "~3.0",
+        "cakephp/cakephp": "~3.4",
         "cakephp/plugin-installer": "*"
     },
     "require-dev": {
-		"phpunit/phpunit": "4.1.*"
+		"phpunit/phpunit": "^5.7|^6.0"
 	},
     "autoload": {
         "psr-4": {
