@@ -47,7 +47,7 @@ class FilterComponent extends Component
     public function getFilterQuery(array $options = array())
     {
         $default_options = ['check_referer'        => true,
-                            'keep_filter_actions'  => ['add', 'copy', 'edit', 'view', 'delete'],
+                            'keep_filter_actions'  => ['index', 'add', 'copy', 'edit', 'view', 'delete'],
                             'auto_wildcard_string' => true];
 
         $options = array_merge($default_options, $options);
@@ -464,6 +464,7 @@ class FilterComponent extends Component
             unset($url['pass']);
             unset($url['_Token']);
             unset($url['_csrfToken']);
+            unset($url['_matchedRoute']);
 
             $path = Router::url($url);
 
