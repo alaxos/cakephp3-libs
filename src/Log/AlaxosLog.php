@@ -4,21 +4,22 @@ namespace Alaxos\Log;
 use Cake\ORM\TableRegistry;
 use Cake\Log\Log;
 use Alaxos\Model\Table\LogEntriesTable;
+use Cake\ORM\Entity;
 
 /**
- * Logger that logs messages in database and can add HTTP request informations 
- * 
+ * Logger that logs messages in database and can add HTTP request informations
+ *
  * @author rodn
  */
 class AlaxosLog {
-    
+
     protected static $_config = ['log_request'   => true,
                                  'log_post_data' => true,
                                  'log_cookies'   => false,
                                  'log_session'   => false,
                                  'log_headers'   => false,
                                 ];
-    
+
     /**
      * Log levels as detailed in RFC 5424
      * http://tools.ietf.org/html/rfc5424
@@ -35,7 +36,7 @@ class AlaxosLog {
         LOG_INFO => 'info',
         LOG_DEBUG => 'debug',
     );
-    
+
     /**
      * Mapped log levels
      *
@@ -51,20 +52,27 @@ class AlaxosLog {
         'info' => LOG_INFO,
         'debug' => LOG_DEBUG,
     );
-    
+
     /**
-     * 
+     *
      * @var Alaxos\Model\Table\LogEntriesTable
      */
     static $LogEntries;
-    
+
     /************************************************************************/
-    
+
+    /**
+     *
+     * @param int $level
+     * @param string $message
+     * @param array $options
+     * @return \Cake\ORM\Entity
+     */
     public static function getLogEntry($level, $message, $options = array()){
-        
+
         $options = array_merge(static::$_config, $options);
         //debug($options);
-        
+
         $log_category_id = null;
         $url             = null;
         $user_agent      = null;
@@ -76,56 +84,63 @@ class AlaxosLog {
         $headers         = null;
         $cookies         = null;
         $session_data    = null;
-        
+
         if(isset($options['log_category'])){
             $log_category_id = $options['log_category'];
         }
-        
+
         if($options['log_request']){
             list($url, $user_agent, $ip_address, $hostname, $referer, $request_method) = static :: getRequestInfos();
         }
-        
+
         if($options['log_post_data'] && !empty($_POST)){
             $post_data = static :: getPostData();
         }
-        
+
         if($options['log_headers']){
             $headers = static :: getHeaders();
         }
-        
+
         if($options['log_cookies']){
             $cookies = static :: getCookies();
         }
-        
+
         if($options['log_session']){
             $session_data = static :: getSessionData();
         }
-        
+
         $log_data = [
             'log_level_id'     => $level,
             'log_category_id'  => $log_category_id,
             'message'          => $message,
-            
+
             'url'              => $url,
             'client_ip'        => $ip_address,
             'http_method'      => $request_method,
             'client_hostname'  => $hostname,
             'user_agent'       => $user_agent,
             'referer'          => $referer,
-            
+
             'post_data'        => $post_data,
             'headers'          => $headers,
             'cookies'          => $cookies,
             'session'          => $session_data,
         ];
-        
+
         return static::getLogEntriesTable()->newEntity($log_data);
-    } 
-    
+    }
+
+    /**
+     *
+     * @param int $level
+     * @param string $message
+     * @param array $options
+     * @return boolean
+     */
     public static function write($level, $message, $options = array()){
-        
+
         $log_entry = static :: getLogEntry($level, $message, $options);
-        
+
         if(static::getLogEntriesTable()->save($log_entry)){
             return true;
         }
@@ -133,21 +148,29 @@ class AlaxosLog {
             return false;
         }
     }
-    
+
     /************************************************************************/
-    
+
+    /**
+     * @return \Alaxos\Model\Table\LogEntriesTable
+     */
     protected static function getLogEntriesTable(){
-        
+
         if(!isset(static::$LogEntries))
         {
             static::$LogEntries = TableRegistry::get('Alaxos.LogEntries');
         }
-        
+
         return static::$LogEntries;
     }
-    
+
     /************************************************************************/
-    
+
+    /**
+     * Return an array populated with $_SERVER request infos
+     *
+     * @return array
+     */
     protected static function getRequestInfos()
     {
         $url            = static :: getRequestUrl();
@@ -156,18 +179,23 @@ class AlaxosLog {
         $hostname       = @gethostbyaddr($ip_address);
         $referer        = isset($_SERVER["HTTP_REFERER"])    ? $_SERVER["HTTP_REFERER"]    : null;
         $request_method = isset($_SERVER["REQUEST_METHOD"])  ? $_SERVER["REQUEST_METHOD"]  : null;
-        
+
         return [$url, $user_agent, $ip_address, $hostname, $referer, $request_method];
     }
-    
+
+    /**
+     * Returns the request url based on $_SERVER infos
+     *
+     * @return string|NULL
+     */
     protected static function getRequestUrl()
     {
         $hostname = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : null);
-        
+
         if(isset($hostname))
         {
             $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
-            
+
             if(!isset($_SERVER['REQUEST_URI']))
             {
                 if(isset($_SERVER['QUERY_STRING']))
@@ -189,7 +217,12 @@ class AlaxosLog {
             return null;
         }
     }
-    
+
+    /**
+     * Return a JSON encoded string containing the $_POST data. Passwords fields are hidden.
+     *
+     * @return string
+     */
     protected static function getPostData()
     {
         $post_data = '-';
@@ -199,9 +232,9 @@ class AlaxosLog {
              * Clean posted data to hide passwords
             */
             $password_subtexts = ['password', 'pwd'];
-            
+
             $post = $_POST;
-            
+
             foreach($post as $field => $value)
             {
                 if(is_string($value))
@@ -227,13 +260,13 @@ class AlaxosLog {
                     }
                 }
             }
-            
+
             $post_data = json_encode($post);
-            
+
             return $post_data;
         }
     }
-    
+
     protected static function getHeaders()
     {
         $headers = '-';
@@ -242,10 +275,10 @@ class AlaxosLog {
         {
             $headers = json_encode($headers_got);
         }
-        
+
         return $headers;
     }
-    
+
     protected static function getCookies()
     {
         $cookies = '-';
@@ -253,10 +286,10 @@ class AlaxosLog {
         {
             $cookies = json_encode($_COOKIE);
         }
-        
+
         return $cookies;
     }
-    
+
     protected static function getSessionData()
     {
         $session_data = '-';
@@ -268,40 +301,40 @@ class AlaxosLog {
                 $session_data = json_encode($session_data);
             }
         }
-        
+
         return $session_data;
     }
-    
+
     /************************************************************************/
-    
+
     public static function emergency($message, $options = array()) {
         return static::write(static::$_levelMap['emergency'], $message, $options);
     }
-    
+
     public static function alert($message, $options = array()) {
         return static::write(static::$_levelMap['alert'], $message, $options);
     }
-    
+
     public static function critical($message, $options = array()) {
         return static::write(static::$_levelMap['critical'], $message, $options);
     }
-    
+
     public static function error($message, $options = array()) {
         return static::write(static::$_levelMap['error'], $message, $options);
     }
-    
+
     public static function warning($message, $options = array()) {
         return static::write(static::$_levelMap['warning'], $message, $options);
     }
-    
+
     public static function notice($message, $options = array()) {
         return static::write(static::$_levelMap['notice'], $message, $options);
     }
-    
+
     public static function debug($message, $options = array()) {
         return static::write(static::$_levelMap['debug'], $message, $options);
     }
-    
+
     public static function info($message, $options = array()) {
         return static::write(static::$_levelMap['info'], $message, $options);
     }

@@ -9,16 +9,13 @@ use Cake\I18n\Time;
 class Datetime implements WidgetInterface
 {
     protected $_templates;
-    
+
     public function __construct($templates) {
         $this->_templates = $templates;
     }
-    
+
     public function render(array $data, ContextInterface $context) {
-        
-//         debug($data);
-//         debug($this->_templates);
-        
+
         $date_data   = ['type'                  => 'text',
                         'name'                  => $data['name'] . '__date__',
                         'id'                    => $this->get_dom_id($data['name'] . '-date'),
@@ -30,20 +27,18 @@ class Datetime implements WidgetInterface
                         'alaxos_js_format'      => $data['alaxos_js_format'],
                         'class'                 => 'form-control inputDate',
         ];
-        
-//         debug($date_data);
-        
+
         $time_data   = ['type'                  => 'text',
                         'name'                  => $data['name'] . '__time__',
                         'id'                    => $this->get_dom_id($data['name'] . '-time'),
                         'class'                 => 'form-control inputTime'
         ];
-        
+
         $hidden_data = ['type'                  => 'hidden',
                         'name'                  => $data['name'],
                         'id'                    => $this->get_dom_id($data['name'] . '-hidden')
         ];
-        
+
         $display_timezone = null;
         if(Configure::check('display_timezone'))
         {
@@ -53,7 +48,7 @@ class Datetime implements WidgetInterface
         {
             $display_timezone = Configure::read('default_display_timezone');
         }
-        
+
         /*
          * Case of posted data
          */
@@ -61,38 +56,38 @@ class Datetime implements WidgetInterface
         {
             $data['val'] = Time::parse($data['val'], $display_timezone);
         }
-        
+
         if(isset($data['val']) && (is_a($data['val'], 'Cake\I18n\Time') || is_a($data['val'], 'Cake\I18n\FrozenTime')))
         {
             if(isset($display_timezone))
             {
                 $data['val']->setTimezone($display_timezone); //it doesn't change the timezone internally, but it changes the tz used for display
             }
-            
+
             $datetime = $data['val'];
-            
+
             $date_data['value']   = $datetime->format($data['php_date_format']);
             $time_data['value']   = $datetime->format('H:i');
             $hidden_data['value'] = $date_data['value'] . ' ' . $time_data['value'];
         }
-        
+
         $input  = $this->get_html_code($date_data, $time_data, $hidden_data);
         $input .= $this->get_js_code($date_data, $time_data, $hidden_data);
-        
+
         return $input;
     }
-    
+
     protected function get_html_code($date_data, $time_data, $hidden_data)
     {
         $input  = '<div class="alaxos-datetime">';
-        
+
         /*
          * Date field
          */
         $input .= '<div class="time alaxos-datepart">';
-        
+
         $input .= '<div class="input-group date alaxos-date" id="' . $date_data['id'] . '-container">';
-        
+
         $input .= $this->_templates->format('input', [
                                                         'name' => $date_data['name'],
                                                         'type' => $date_data['type'],
@@ -101,20 +96,20 @@ class Datetime implements WidgetInterface
                                                             ['name', 'type', 'alaxos_js_format', 'format_on_blur', 'language', 'datepicker_format']
                                                         ),
         ]);
-        
+
         $input .= '<span class="input-group-addon" id="' .  $date_data['id'] . '-group-addon"><i class="glyphicon glyphicon-th"></i></span>';
-        
+
         $input .= '</div>';
-        
+
         $input .= '</div>';
-        
+
         /*
          * Time field
          */
         $input .= '<div class="time alaxos-timepart">';
-        
+
         $input .= '<span class="glyphicon glyphicon-time time-icon"></span>';
-        
+
         $input .= $this->_templates->format('input', [
                                                         'name' => $time_data['name'],
                                                         'type' => $time_data['type'],
@@ -123,11 +118,11 @@ class Datetime implements WidgetInterface
                                                             ['name', 'type']
                                                         ),
         ]);
-        
+
         $input .= '</div>';
-        
+
         $input .= '</div>';
-        
+
         /*
          * Hidden field
          */
@@ -139,10 +134,10 @@ class Datetime implements WidgetInterface
                 ['name', 'type']
             ),
         ]);
-        
+
         return $input;
     }
-    
+
     protected function get_js_code($date_data, $time_data, $hidden_data)
     {
         $js = [];
@@ -150,16 +145,16 @@ class Datetime implements WidgetInterface
         $js[] = '';
         $js[] = 'date_on_blur_timeout = null;';
         $js[] = '';
-        
+
         $js[] = '$(document).ready(function(){';
         $js[] = '';
-        
+
         /*
          * Set the datepicker language
          */
         $js[] = 'var language = "' . (isset($date_data['language']) ? $date_data['language'] : 'en') . '";';
         $js[] = '';
-        
+
         /*
          * Start datepicker + date selected in datepicker --> update hidden field
          */
@@ -169,7 +164,7 @@ class Datetime implements WidgetInterface
         $js[] = '   ';
         $js[] = '   Alaxos.updateDatetimeHiddenField("' . $hidden_data['name'] . '");';
         $js[] = '   ';
-        
+
         /*
          * Change date may set the lower limit of another datepicker
          */
@@ -185,16 +180,16 @@ class Datetime implements WidgetInterface
             $js[] = '          Alaxos.updateDatetimeHiddenField("' . $date_data['upper_datepicker_name'] . '");';
             $js[] = '      }';
         }
-        
+
         $js[] = '});';
-        
+
         /*
          * Click on icon opens the datepicker
          */
         $js[] = '        $("#' .  $date_data['id'] . '-group-addon").click(function(e){';
         $js[] = '            $("#' .  $date_data['id'] . '").datepicker("show");';
         $js[] = '        });';
-        
+
         if(isset($date_data['format_on_blur']) && $date_data['format_on_blur'])
         {
             /*
@@ -206,7 +201,7 @@ class Datetime implements WidgetInterface
             $js[] = '';
             $js[] = '});';
         }
-        
+
         /*
          * On date 'enter' key press: format date, update hidden field, then only submit the form
          */
@@ -224,7 +219,7 @@ class Datetime implements WidgetInterface
         $js[] = '      });';
         $js[] = '    }';
         $js[] = '});';
-        
+
         /*
          * Start time field and update he hidden field on blur
          */
@@ -233,7 +228,7 @@ class Datetime implements WidgetInterface
         $js[] = '   Alaxos.updateDatetimeHiddenField("' . $hidden_data['name'] . '");';
         $js[] = '   ';
         $js[] = '});';
-        
+
         /*
          * On time enter key press: format time, update hidden field, then submit the form
          */
@@ -250,10 +245,10 @@ class Datetime implements WidgetInterface
         $js[] = '       ';
         $js[] = '    }';
         $js[] = '});';
-        
+
         $js[] = '    });';
         $js[] = '    ';
-        
+
         /*
          * Init lower limit of another datepicker
          */
@@ -267,21 +262,21 @@ class Datetime implements WidgetInterface
             $js[] = '  }, 1000);';
             $js[] = '  ';
         }
-        
+
         $js[] = '    ';
         $js[] = '    </script>';
-        
+
         return implode("\n", $js);
     }
-    
+
     protected function get_dom_id($name)
     {
         $name = str_replace('[', '___', $name);
         $name = str_replace(']', '___', $name);
-        
+
         return $name;
     }
-    
+
     public function secureFields(array $data)
     {
         return [$data['name']];

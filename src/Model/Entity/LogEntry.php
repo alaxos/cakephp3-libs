@@ -4,9 +4,9 @@ namespace Alaxos\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * LogEntry Entity.
+ * LogEntry entity
  */
 class LogEntry extends Entity {
-    
-    
+
+
 }

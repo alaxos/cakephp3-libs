@@ -156,7 +156,7 @@ class ShibbolethAuthenticate extends BaseAuthenticate
              * At the time of writing, primary key may be an array containing only one value
              * (bug in 3.0-DEV ?)
              */
-            $pk = $table->primaryKey();
+            $pk = $table->getPrimaryKey();
             if(is_array($pk) && count($pk) == 1)
             {
                 $pk = $pk[0];

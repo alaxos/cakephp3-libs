@@ -7,45 +7,43 @@ use Cake\View\Form\ContextInterface;
 class Date implements WidgetInterface
 {
     protected $_templates;
-    
+
     public function __construct($templates) {
         $this->_templates = $templates;
     }
-    
+
     public function render(array $data, ContextInterface $context) {
-//         debug($data);
-//         debug($this->_templates);
-        
+
         $data += [
             'name' => '',
             'val' => null,
             'escape' => true,
         ];
-        
-        $data['type'] = 'text'; // force type to text to prevent default browser date support 
+
+        $data['type'] = 'text'; // force type to text to prevent default browser date support
 
         $data['value'] = $data['val'];
         unset($data['val']);
-        
+
         unset($data['year']);
         unset($data['month']);
         unset($data['day']);
         unset($data['hour']);
         unset($data['minute']);
         unset($data['meridian']);
-        
+
         $upper_datepicker_id = isset($data['upper_datepicker_id']) ? $data['upper_datepicker_id'] : null;
         unset($data['upper_datepicker_id']);
-        
+
         if(isset($data['value']) && is_a($data['value'], 'DateTime'))
         {
             $data['value'] = $data['value']->format($data['php_date_format']);
         }
-        
+
         /***********/
-        
+
         $input  = '<div class="input-group date alaxos-date" id="' . $data['id'] . '-container">';
-        
+
         $input .= $this->_templates->format('input', [
             'name' => $data['name'],
             'type' => $data['type'],
@@ -54,12 +52,12 @@ class Date implements WidgetInterface
                 ['name', 'type']
             ),
         ]);
-        
+
         $input .= '<span class="input-group-addon" id="' .  $data['id'] . '-group-addon"><i class="glyphicon glyphicon-th"></i></span>';
         $input .= '</div>';
-        
+
         /***********/
-        
+
         $js_code   = [];
         $js_code[] = '<script type="text/javascript">';
         $js_code[] = '';
@@ -71,7 +69,7 @@ class Date implements WidgetInterface
         $js_code[] = '  ';
         $js_code[] = '  $("#' . $data['id'] . '").datepicker({language : language, forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false});';
         $js_code[] = '';
-        
+
         if(isset($data['format_on_blur']) && $data['format_on_blur'])
         {
             $js_code[] = '  $("#' . $data['id'] . '").blur(function(){';
@@ -89,7 +87,7 @@ class Date implements WidgetInterface
             $js_code[] = '      }, 30);';
             $js_code[] = '  });';
             $js_code[] = '  ';
-            
+
             $js_code[] = '  $("#' . $data['id'] . '").keypress(function(e){';
             $js_code[] = '      ';
             $js_code[] = '      var value = $(this).val();';
@@ -115,12 +113,12 @@ class Date implements WidgetInterface
             $js_code[] = '      }';
             $js_code[] = '  });';
             $js_code[] = '  ';
-            
+
             $js_code[] = '  $("#' . $data['id'] . '").datepicker().on("changeDate", function(){';
             $js_code[] = '      ';
             $js_code[] = '      clearTimeout(date_on_blur_timeout);';
             $js_code[] = '      ';
-            
+
             if(isset($upper_datepicker_id))
             {
                 $js_code[] = '      $("#' . $upper_datepicker_id . '").datepicker("setStartDate", $("#' . $data['id'] . '").datepicker("getDate"));';
@@ -130,14 +128,14 @@ class Date implements WidgetInterface
                 $js_code[] = '      if(upper_date == null){';
                 $js_code[] = '          $("#' . $upper_datepicker_id . '").datepicker("update", "");';
                 $js_code[] = '      }';
-                
+
             }
-            
+
             $js_code[] = '  });';
         }
-        
+
         $js_code[] = '';
-        
+
         /*
          * Click on icon -> show
          */
@@ -155,8 +153,8 @@ class Date implements WidgetInterface
         $js_code[] = '      ';
         $js_code[] = '  });';
         $js_code[] = '  ';
-        
-        
+
+
         if(isset($upper_datepicker_id))
         {
             $js_code[] = '  /*';
@@ -167,8 +165,8 @@ class Date implements WidgetInterface
             $js_code[] = '  }, 1000);';
             $js_code[] = '  ';
         }
-        
-        
+
+
 //         /*
 //          * Open -> set datepicker open id
 //          */
@@ -179,7 +177,7 @@ class Date implements WidgetInterface
 //         $js_code[] = '      window.console.log("opened_bootstrap_datepicker_id = \"' . $data['id'] . '\"");';
 //         $js_code[] = '  });';
 //         $js_code[] = '  ';
-        
+
 //         /*
 //          * Close -> set datepicker open id
 //          */
@@ -191,16 +189,15 @@ class Date implements WidgetInterface
 //         $js_code[] = '      ';
 //         $js_code[] = '  });';
 //         $js_code[] = '  ';
-        
+
         $js_code[] = '});';
         $js_code[] = '</script>';
-        
+
         $input .= implode("\n", $js_code);
-        //debug($context->fieldNames());
-        
+
         return $input;
     }
-    
+
     public function secureFields(array $data)
     {
         return [$data['name']];
