@@ -70,9 +70,11 @@ msgstr "à"
 msgid "filter"
 msgstr "filtrer"
 
-msgid ""
-msgstr ""
+msgid "previous"
+msgstr "précédent"
 
+msgid "next"
+msgstr "suivant"
 
 msgid ""
 msgstr ""
