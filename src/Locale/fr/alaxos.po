@@ -76,6 +76,9 @@ msgstr "précédent"
 msgid "next"
 msgstr "suivant"
 
+msgid "submit"
+msgstr "envoyer"
+
 msgid ""
 msgstr ""
 
