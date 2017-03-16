@@ -40,6 +40,9 @@ msgstr "copier"
 msgid "delete"
 msgstr "effacer"
 
+msgid "delete all"
+msgstr "tout effacer"
+
 msgid "list"
 msgstr "liste"
 
@@ -64,8 +67,8 @@ msgstr "de ou égal à"
 msgid "to"
 msgstr "à"
 
-msgid ""
-msgstr ""
+msgid "filter"
+msgstr "filtrer"
 
 msgid ""
 msgstr ""
