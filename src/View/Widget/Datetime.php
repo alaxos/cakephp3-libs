@@ -279,6 +279,10 @@ class Datetime implements WidgetInterface
 
     public function secureFields(array $data)
     {
-        return [$data['name']];
+        return [
+            $data['name'] . '__date__',
+            $data['name'] . '__time__',
+            $data['name']
+        ];
     }
 }
