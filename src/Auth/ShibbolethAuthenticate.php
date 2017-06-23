@@ -7,6 +7,7 @@ use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;
+use Cake\Log\Log;
 
 class ShibbolethAuthenticate extends BaseAuthenticate
 {
