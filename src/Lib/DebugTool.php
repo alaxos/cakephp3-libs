@@ -12,12 +12,12 @@ use DOMDocument;
 class DebugTool
 {
     public static $enabled = true;
-    
+
     private static $start_microtime;
     private static $last_microtime;
     private static $alert_threshold;
     private static $force_show_file;
-    
+
     public static function show($object, $title = null, $backtrace_index = 0)
     {
         if(DebugTool::$enabled)
@@ -26,16 +26,16 @@ class DebugTool
             {
                 echo '<pre>';
             }
-            
+
             $calledFrom = debug_backtrace();
             echo "\n" . $calledFrom[$backtrace_index]['file'];
             echo ' (line ' . $calledFrom[$backtrace_index]['line'] . ")\n";
-            
+
             if (isset($title))
             {
                 echo "\n" . $title . "\n";
             }
-            
+
             if (is_array($object))
             {
                 print_r($object);
@@ -43,11 +43,11 @@ class DebugTool
             elseif (is_a($object, 'DOMDocument'))
             {
                 echo 'DOMDocument:' . "\n\n";
-                
+
                 $object->formatOutput = true;
                 $object->preserveWhiteSpace = false;
                 $xml_string = $object->saveXML();
-                
+
                 if(PHP_SAPI != 'cli')
                 {
                     echo htmlentities($xml_string) . "\n";
@@ -62,11 +62,11 @@ class DebugTool
                 $dom = new DOMDocument();
                 $debugElement = $dom->createElement('debug');
                 $dom->appendChild($debugElement);
-                
+
                 if (is_a($object, 'DOMNodeList'))
                 {
                     echo 'DOMNodeList:'."\n\n";
-                    
+
                     foreach ($object as $node)
                     {
                         $node = $dom->importNode($node, true);
@@ -76,15 +76,15 @@ class DebugTool
                 elseif (is_a($object, 'DOMElement'))
                 {
                     echo 'DOMElement:'."\n\n";
-                    
+
                     $node = $dom->importNode($object, true);
                     $debugElement->appendChild($node);
                 }
-                
+
                 $dom->formatOutput = true;
                 $dom->preserveWhiteSpace = false;
                 $xml_string = $dom->saveXML();
-                
+
                 if(PHP_SAPI != 'cli')
                 {
                     echo htmlentities($xml_string) . "\n";
@@ -102,7 +102,7 @@ class DebugTool
             {
                 echo $object . "\n";
             }
-            
+
             if(PHP_SAPI != 'cli')
             {
                 echo '</pre>';
@@ -125,7 +125,7 @@ class DebugTool
             DebugTool :: $force_show_file  = $force_show_file;
         }
     }
-    
+
     public static function microtime($title = null, $data = null)
     {
         if(DebugTool::$enabled)
@@ -134,42 +134,67 @@ class DebugTool
             {
                 DebugTool :: init_microtime();
             }
-            
-            $current_microtime           = microtime(true);
-            
-            echo '<pre class="debug">';
-            
-            echo (isset($title) ? $title . ': ' : null);
-            echo number_format(($current_microtime - DebugTool :: $start_microtime), 3);
-            echo ' (';
-            
-            $last_operation_time = $current_microtime - DebugTool :: $last_microtime;
-            if(isset(DebugTool::$alert_threshold) && $last_operation_time > DebugTool::$alert_threshold)
+
+            $current_microtime              = microtime(true);
+            $elapsed_time                   = number_format(($current_microtime - DebugTool :: $start_microtime), 3);
+            $last_operation_time            = $current_microtime - DebugTool :: $last_microtime;
+            $formatted_last_operation_time  = number_format($last_operation_time, 5);
+            $calledFrom                     = debug_backtrace();
+
+            if(PHP_SAPI != 'cli')
             {
-                $calledFrom = debug_backtrace();
-                echo '<span style="color:red">' . $calledFrom[0]['file'] . ' (line ' . $calledFrom[0]['line'] . ') ' . number_format($last_operation_time, 5) . '</span>';
-            }
-            elseif(DebugTool::$force_show_file)
-            {
-                $calledFrom = debug_backtrace();
-                echo $calledFrom[0]['file'] . ' (line ' . $calledFrom[0]['line'] . ') ' . number_format($last_operation_time, 5);
+                echo '<pre class="debug">';
+
+                echo (isset($title) ? $title . ': ' : null);
+                echo $elapsed_time;
+                echo ' (';
+
+                if (isset(DebugTool::$alert_threshold) && $last_operation_time > DebugTool::$alert_threshold) {
+                    echo '<span style="color:red">' . $calledFrom[0]['file'] . ' (line ' . $calledFrom[0]['line'] . ') ' . number_format($last_operation_time, 5) . '</span>';
+                } elseif (DebugTool::$force_show_file) {
+                    echo $calledFrom[0]['file'] . ' (line ' . $calledFrom[0]['line'] . ') ' . number_format($last_operation_time, 5);
+                } else {
+                    echo number_format($last_operation_time, 5);
+                }
+
+                echo ')';
+
+                if (isset($data)) {
+                    echo '<div style="padding-left:30px">';
+                    DebugTool::show($data, null, 1);
+                    echo '</div>';
+                }
+
+                echo '</pre>';
             }
             else
             {
-                echo number_format($last_operation_time, 5);
+                $lines   = [];
+                $lines[] = '';
+
+                $line1 = (isset($title) ? $title . ': ' . $elapsed_time : $elapsed_time);
+
+                $line1 .= ' (';
+                if (isset(DebugTool::$alert_threshold) && $last_operation_time > DebugTool::$alert_threshold) {
+                    $line1 .= ShellTool::red($calledFrom[0]['file'] . ' (line ' . $calledFrom[0]['line'] . ') ' . $formatted_last_operation_time);
+                } elseif(DebugTool::$force_show_file) {
+                    $line1 .= $calledFrom[0]['file'] . ' (line ' . $calledFrom[0]['line'] . ') ' . $formatted_last_operation_time;
+                } else {
+                    $line1 .= $formatted_last_operation_time;
+                }
+                $line1 .= ')';
+
+                $lines[] = $line1;
+
+                echo implode("\n", $lines);
+
+                if (isset($data)) {
+                    DebugTool::show($data, null, 1);
+
+                    $lines[] = '';
+                }
             }
-            
-            echo ')';
-            
-            if(isset($data))
-            {
-                echo '<div style="padding-left:30px">';
-                DebugTool::show($data, null, 1);
-                echo '</div>';
-            }
-            
-            echo '</pre>';
-            
+
             DebugTool :: $last_microtime = $current_microtime;
         }
     }
