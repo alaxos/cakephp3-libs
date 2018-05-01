@@ -49,11 +49,11 @@ class UserLinkBehavior extends Behavior
 
             $user_id = call_user_func($get_user_id_function);
 
-            if($entity->isNew() && $entity->accessible($this->getConfig('creator_foreignKey'))){
+            if($entity->isNew() && $entity->isAccessible($this->getConfig('creator_foreignKey'))){
                 $entity->created_by = $user_id;
             }
 
-            if(!$entity->isNew() && $entity->accessible($this->getConfig('editor_foreignKey'))){
+            if(!$entity->isNew() && $entity->isAccessible($this->getConfig('editor_foreignKey'))){
                 $entity->modified_by = $user_id;
             }
         }
