@@ -37,7 +37,7 @@ class AlaxosFormHelper extends FormHelper
     {
         $options = [];
 
-        $defaultLocale = I18n::locale();
+        $defaultLocale = I18n::getLocale();
         $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
         $defaultLocale = strtolower($defaultLocale);
         $defaultLocale = str_replace('-', '_', $defaultLocale);

@@ -279,7 +279,7 @@ class NavbarsHelper extends Helper
         
         $select_options          = [];
         $select_options['id']    = 'select_pagination_limit';
-        $select_options['value'] = isset($this->request->query['limit']) ? $this->request->query['limit'] : $this->Paginator->param('perPage');
+        $select_options['value'] = $this->request->getQuery('limit') !== null ? $this->request->getQuery('limit') : $this->Paginator->param('perPage');
         
         $select_limit =  $this->Form->select('_Tech.pagination_limit', array_combine($options['pagination_limits'], $options['pagination_limits']), $select_options);
         
@@ -287,7 +287,7 @@ class NavbarsHelper extends Helper
         $js[] = '<script type="text/javascript">';
         $js[] = '$(document).ready(function(){';
         $js[] = '   $("#select_pagination_limit").change(function(){';
-        $js[] = '       window.location = "' . $this->request->here . '" + "?limit=" +$(this).val();';
+        $js[] = '       window.location = "' . $this->request->getAttribute('here') . '" + "?limit=" +$(this).val();';
         $js[] = '   });';
         $js[] = '});';
         $js[] = '</script>';

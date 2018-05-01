@@ -68,14 +68,11 @@ class FilterComponent extends Component
 
         if($this->controller->request->is('post') || $this->controller->request->is('put'))
         {
-            if(isset($this->controller->request->data['Filter']) && !empty($this->controller->request->data['Filter']))
-            {
-                $filter_data = $this->controller->request->data['Filter'];
-            }
+            $filter_data = $this->controller->request->getData('Filter');
         }
         elseif($this->controller->request->is('get'))
         {
-            $current_path = $this->getComparisonPath($this->controller->request->params);
+            $current_path = $this->getComparisonPath($this->controller->request);
 
             if($options['check_referer'])
             {
@@ -260,7 +257,7 @@ class FilterComponent extends Component
                         }
                         else
                         {
-                            $columnType = $schema->columnType($fieldName);
+                            $columnType = $schema->getColumnType($fieldName);
                         }
 
                         /******/
@@ -294,16 +291,16 @@ class FilterComponent extends Component
              * Store Query in session in order to be able to navigate to other list pages
              * without loosing the filters
              */
-            $path = $this->getComparisonPath($this->controller->request->params);
+            $path = $this->getComparisonPath($this->controller->request);
             $this->storeQuery($path, $filter_data);
 
             /*
              * Set request data if no already filled
              * (this is the case when navigating from page to page with pagination)
              */
-            if(!isset($this->controller->request->data['Filter']))
+            if($this->controller->request->getData('Filter') === null)
             {
-                $this->controller->request->data['Filter'] = $filter_data;
+                $this->controller->request = $this->controller->request->withData('Filter', $filter_data);
             }
         }
 
@@ -378,7 +375,7 @@ class FilterComponent extends Component
         $search_entity = $this->controller->{$alias}->newEntity();
 
         $search_entity->setAccess('*', true);
-        $this->controller->{$alias}->patchEntity($search_entity, $this->controller->request->data);
+        $this->controller->{$alias}->patchEntity($search_entity, $this->controller->request->getData());
         $this->controller->set(compact('search_entity'));
     }
 
@@ -392,7 +389,7 @@ class FilterComponent extends Component
      */
     protected function storeQuery($path, $data)
     {
-        $session = $this->controller->request->session();
+        $session = $this->controller->request->getSession();
 
         if(isset($session))
         {
@@ -425,7 +422,7 @@ class FilterComponent extends Component
      */
     protected function getStoredQuery($path)
     {
-        $session = $this->controller->request->session();
+        $session = $this->controller->request->getSession();
 
         if(isset($session))
         {
@@ -456,18 +453,18 @@ class FilterComponent extends Component
      * @param array $url
      * @return string|NULL
      */
-    protected function getComparisonPath($url = array())
+    protected function getComparisonPath(ServerRequest $request)
     {
-        if(is_array($url))
+        if(isset($request))
         {
-            unset($url['?']);
-            unset($url['pass']);
-            unset($url['_Token']);
-            unset($url['_csrfToken']);
-            unset($url['_matchedRoute']);
-
+            $url               = [];
+            $url['plugin']     = $request->getParam('plugin');
+            $url['controller'] = $request->getParam('controller');
+            $url['action']     = $request->getParam('action');
+            $url['_ext']       = $request->getParam('_ext');
+            $url['pass']       = $request->getParam('pass');
+            
             $path = Router::url($url);
-
             return $path;
         }
         else
@@ -485,14 +482,19 @@ class FilterComponent extends Component
     {
         $referer = $this->controller->request->referer(true);
         $refererRequestParams = Router::parseRequest(new ServerRequest($referer));
-        $currentRequestParams = $this->controller->request->params;
-
+//         $currentRequestParams = $this->controller->request->params;
+        
         $refererRequestParams['prefix'] = isset($refererRequestParams['prefix']) ? $refererRequestParams['prefix'] : null;
-        $currentRequestParams['prefix'] = isset($currentRequestParams['prefix']) ? $currentRequestParams['prefix'] : null;
+        
+        $currentRequestPrefix     = $this->controller->request->getParam('prefix');
+        $currentRequestPlugin     = $this->controller->request->getParam('plugin');
+        $currentRequestController = $this->controller->request->getParam('controller');
+        
+        
 
-        if ($refererRequestParams['plugin'] == $currentRequestParams['plugin'] &&
-            $refererRequestParams['prefix'] == $currentRequestParams['prefix'] &&
-            $refererRequestParams['controller'] == $currentRequestParams['controller']) {
+        if ($refererRequestParams['plugin']     == $currentRequestPlugin &&
+            $refererRequestParams['prefix']     == $currentRequestPrefix &&
+            $refererRequestParams['controller'] == $currentRequestController) {
 
             if (isset($options['keep_filter_actions']) && is_array($options['keep_filter_actions'])) {
 

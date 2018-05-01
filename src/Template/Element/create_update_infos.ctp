@@ -38,7 +38,7 @@ if(isset($entity))
 	$date_format   = null;
 	$time_format   = null;
 
-	$locale        = I18n::locale();
+	$locale        = I18n::getLocale();
 	$defaultLocale = isset($locale) ? $locale : 'en';
 	$defaultLocale = strtolower($defaultLocale);
 	$defaultLocale = str_replace('-', '_', $defaultLocale);

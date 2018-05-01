@@ -10,7 +10,7 @@ trait TimezonedTrait
     public function to_display_timezone($field)
     {
         $table = TableRegistry::get($this->_registryAlias);
-        $fieldtype = $table->getSchema()->column($field)['type'];
+        $fieldtype = $table->getSchema()->getColumn($field)['type'];
 
         $value = $this->get($field);
 
