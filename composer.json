@@ -6,7 +6,7 @@
     "homepage": "https://github.com/alaxos/cakephp3-libs",
     "license": "MIT",
     "require": {
-        "cakephp/cakephp": "~3.4",
+        "cakephp/cakephp": "~3.6",
         "cakephp/plugin-installer": "*"
     },
     "require-dev": {
