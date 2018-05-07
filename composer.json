@@ -1,6 +1,6 @@
 {
     "name": "alaxos/cakephp3-libs",
-    "description": "Custom libraries for CakePHP framework (>= v3.4)",
+    "description": "Custom libraries for CakePHP framework",
     "type": "cakephp-plugin",
     "keywords" : ["cakephp", "libraries"],
     "homepage": "https://github.com/alaxos/cakephp3-libs",
