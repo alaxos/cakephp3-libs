@@ -2,12 +2,12 @@
 namespace Alaxos\Auth;
 
 use Cake\Auth\BaseAuthenticate;
-use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;
 use Cake\Log\Log;
+use Cake\Http\ServerRequest;
+use Cake\Http\Response;
 
 class ShibbolethAuthenticate extends BaseAuthenticate
 {
@@ -22,12 +22,12 @@ class ShibbolethAuthenticate extends BaseAuthenticate
 
     protected $is_new_user = false;
 
-    public function authenticate(Request $request, Response $response)
+    public function authenticate(ServerRequest $request, Response $response)
     {
         return $this->getExistingUser($request);
     }
 
-    public function getUser(Request $request)
+    public function getUser(ServerRequest $request)
     {
         return $this->getExistingUser($request);
     }
@@ -37,7 +37,7 @@ class ShibbolethAuthenticate extends BaseAuthenticate
         return $this->is_new_user;
     }
 
-    protected function getExistingUser(Request $request)
+    protected function getExistingUser(ServerRequest $request)
     {
         $login_url              = isset($this->_config['login_url']) ? $this->_config['login_url'] : null;
         $server_unique_id_field = $this->_config['unique_id'];
@@ -59,24 +59,15 @@ class ShibbolethAuthenticate extends BaseAuthenticate
             /*
              * A specific url is given for login. Check if it matches the current request
              */
-
-            /*
-             * When CsrfComponent is used, a '_csrfToken' key exist in $request->params and it prevents urls comparison
-             * -> remove it
-             *
-             * Since CakePHP 3.2.11 a '_matchedRoute' key may exist in $request->params, also preventing urls comparison
-             * -> remove it
-             *
-             * Since CakePHP 3.4 the redirect URL is stored in a query string instead of the session.
-             * -> remove it
-             */
-            $request_params = $request->params;
-            unset($request_params['_csrfToken']);
-            unset($request_params['_matchedRoute']);
-            unset($request_params['?']['redirect']);
+            $url               = [];
+            $url['plugin']     = $request->getParam('plugin');
+            $url['controller'] = $request->getParam('controller');
+            $url['action']     = $request->getParam('action');
+            $url['_ext']       = $request->getParam('_ext');
+            $url['pass']       = $request->getParam('pass');
 
             $normalized_login_url   = StringTool::remove_trailing(Router::normalize(Router::url($login_url)), '?');
-            $normalized_current_url = StringTool::remove_trailing(Router::normalize(Router::url($request_params)), '?');
+            $normalized_current_url = StringTool::remove_trailing(Router::normalize(Router::url($url)),       '?');
 
             if($normalized_login_url == $normalized_current_url)
             {
@@ -117,7 +108,7 @@ class ShibbolethAuthenticate extends BaseAuthenticate
         return false;
     }
 
-    protected function createNewUser(Request $request)
+    protected function createNewUser(ServerRequest $request)
     {
         $user_data = [];
         foreach($this->_config['mapping'] as $env_property => $user_fieldname)
@@ -147,7 +138,7 @@ class ShibbolethAuthenticate extends BaseAuthenticate
         }
     }
 
-    protected function updateUserAttributes(Request $request, $user)
+    protected function updateUserAttributes(ServerRequest $request, $user)
     {
         if(!empty($this->_config['updatable_properties']))
         {
@@ -200,14 +191,14 @@ class ShibbolethAuthenticate extends BaseAuthenticate
      *
      * @param string $name
      */
-    protected function get_server_value(Request $request, $attribute_name)
+    protected function get_server_value(ServerRequest $request, $attribute_name)
     {
         $repeat = 0;
         $value  = null;
 
         while(!isset($value) && $repeat < 5)
         {
-            $value = $request->env($this->mod_rewrite_prefix . $attribute_name);
+            $value = $request->getEnv($this->mod_rewrite_prefix . $attribute_name);
 
             if(isset($value))
             {

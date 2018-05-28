@@ -5,10 +5,10 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Alaxos\Log\AlaxosLog;
 use Alaxos\Lib\StringTool;
-use Cake\Network\Exception\NotImplementedException;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Time;
 use Cake\Event\Event;
+use Cake\Http\Exception\NotImplementedException;
 
 class LoggerComponent extends Component
 {
@@ -94,7 +94,7 @@ class LoggerComponent extends Component
 
     public function visit()
     {
-        $session = $this->controller->request->session();
+        $session = $this->controller->getRequest()->getSession();
 
         if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'GET' && $this->isHumanRequest() && $this->mustCountVisitForUrl() && isset($session))
         {
@@ -115,12 +115,9 @@ class LoggerComponent extends Component
 	 */
 	public function mustCountVisitForUrl()
 	{
-	    if(!empty($this->controller->request->params['ext']))
-	    {
-	        if(in_array($this->controller->request->params['ext'], $this->_configRead('ignore_visit_for_extensions')))
-	        {
-	            return false;
-	        }
+	    $ext = $this->controller->getRequest()->getParam('ext');
+	    if(!empty($ext) && in_array($ext, $this->_configRead('ignore_visit_for_extensions'))){
+            return false;
 	    }
 
 	    return true;
@@ -139,12 +136,11 @@ class LoggerComponent extends Component
 	 */
 	public function isRssRequest()
 	{
-	    if(!$this->isBotRequest() && StringTool :: end_with($this->controller->request->url, '.rss'))
-	    {
+	    $path = $this->controller->getRequest()->getPath();
+
+	    if(!$this->isBotRequest() && StringTool :: end_with($path, '.rss')) {
 	        return true;
-	    }
-	    else
-	    {
+	    } else {
 	        return false;
 	    }
 	}
