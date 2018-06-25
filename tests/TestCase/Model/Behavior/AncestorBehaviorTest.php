@@ -62,7 +62,7 @@ class AncestorBehaviorTest extends TestCase {
 		$this->Nodes->addBehavior('Timestamp');
 		$this->Nodes->addBehavior('Alaxos.Ancestor');
 
-		$this->Nodes->validator()
+		$this->Nodes->getValidator()
 			->add('id', 'valid', ['rule' => 'numeric'])
 			->allowEmpty('id', 'create')
 			->add('parent_id', 'valid', ['rule' => 'numeric'])
@@ -95,7 +95,7 @@ class AncestorBehaviorTest extends TestCase {
  */
 	public function testAddValidationRules() {
 
-		$rules = $this->Nodes->validator()->field('parent_id')->rules();
+		$rules = $this->Nodes->getValidator()->field('parent_id')->rules();
 
 		$this->assertArrayHasKey('child_of_itself', $rules);
 		$this->assertArrayHasKey('child_of_child', $rules);
@@ -510,7 +510,8 @@ class AncestorBehaviorTest extends TestCase {
 		$result = $this->Nodes->save($entity_3);
 
 		$this->assertFalse($result);
-		$this->assertEquals(['parent_id' => ['child_of_itself' => 'a node can not be child of itself']], $entity_3->errors());
+		$errors = $entity_3->getErrors();
+		$this->assertEquals(['parent_id' => ['child_of_itself' => 'a node can not be child of itself']], $errors);
 	}
 
 	/**
@@ -532,7 +533,8 @@ class AncestorBehaviorTest extends TestCase {
 		$result = $this->Nodes->save($entity_3);
 
 		$this->assertFalse($result);
-		$this->assertEquals(['parent_id' => ['child_of_child' => 'a node can not be child of one of its children']], $entity_3->errors());
+		$errors = $entity_3->getErrors();
+		$this->assertEquals(['parent_id' => ['child_of_child' => 'a node can not be child of one of its children']], $errors);
 	}
 
 	/**

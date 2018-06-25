@@ -35,7 +35,7 @@ class AncestorBehavior extends Behavior
 
 		if($add_validation_rules){
 
-			$this->_table->validator()->add('parent_id', 'child_of_itself', ['rule' => function($value, $context){
+			$this->_table->getValidator()->add('parent_id', 'child_of_itself', ['rule' => function($value, $context){
 
 // 			                                                                     debug($context);
 																				if(!$context['newRecord'] && $context['data']['parent_id'] == $context['data']['id']){
@@ -46,7 +46,7 @@ class AncestorBehavior extends Behavior
 																			},
 																			'message' => __d('alaxos', 'a node can not be child of itself')]);
 
-			$this->_table->validator()->add('parent_id', 'child_of_child', ['rule' => function($value, $context){
+            $this->_table->getValidator()->add('parent_id', 'child_of_child', ['rule' => function($value, $context){
 
 																				if(!$context['newRecord']){
 																					$child_nodes  = $context['providers']['table']->find('children', ['for' => $context['data']['id']]);
@@ -90,7 +90,7 @@ class AncestorBehavior extends Behavior
 
 			$parent_id_fieldname = $this->getConfig('model_parent_id_fieldname');
 
-			if($entity->accessible($parent_id_fieldname))
+			if($entity->isAccessible($parent_id_fieldname))
 			{
 				$parent_id = $entity->{$parent_id_fieldname};
 				$id        = $entity->{$primaryKey};

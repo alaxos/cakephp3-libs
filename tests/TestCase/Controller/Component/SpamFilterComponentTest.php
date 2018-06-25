@@ -4,11 +4,10 @@ namespace Alaxos\Test\TestCase\Controller\Component;
 use Cake\Controller\Controller;
 use Alaxos\Controller\Component\SpamFilterComponent;
 use Cake\TestSuite\TestCase;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\ServerRequest;
+use Cake\Http\Response;
 use Cake\Event\Event;
 use Alaxos\Lib\SecurityTool;
-use Cake\Http\ServerRequest;
 
 /**
  * Alaxos\Controller\Component\SpamFilterComponent Test Case
@@ -40,14 +39,14 @@ class SpamFilterComponentTest extends TestCase {
 		parent::setUp();
 
 		$controller = $this->getMockBuilder('Cake\Controller\Controller')
-                           ->setConstructorArgs([new Request(), new Response()])
+                           ->setConstructorArgs([new ServerRequest(), new Response()])
                            ->setMethods(['redirect'])
                            ->getMock();
 
 		$controller->loadComponent('Alaxos.SpamFilter');
 		$this->controller = $controller;
 		$this->component  = $controller->SpamFilter;
-		$this->request    = $controller->request;
+		$this->request    = $controller->getRequest();
 	}
 
 /**
@@ -118,13 +117,13 @@ class SpamFilterComponentTest extends TestCase {
 
 	public function testStartupClearSessionSalt() {
 
-	    $this->controller->request->session()->write('Alaxos.SpamFilterComponent.salt', '12345');
-	    $this->assertTrue($this->controller->request->session()->check('Alaxos.SpamFilterComponent.salt'));
+	    $this->controller->getRequest()->getSession()->write('Alaxos.SpamFilterComponent.salt', '12345');
+	    $this->assertTrue($this->controller->getRequest()->getSession()->check('Alaxos.SpamFilterComponent.salt'));
 
 	    $this->component->setConfig('use_session_salt', false);
 	    $this->component->startup(new Event('Test'));
 
-	    $this->assertFalse($this->controller->request->session()->check('Alaxos.SpamFilterComponent.salt'));
+	    $this->assertFalse($this->controller->getRequest()->getSession()->check('Alaxos.SpamFilterComponent.salt'));
 	}
 
 /**
@@ -145,7 +144,7 @@ class SpamFilterComponentTest extends TestCase {
 		$is_spam = $this->component->request_is_spam();
 		$this->assertTrue($is_spam);
 
-		$this->request->data = [$fieldname => $fieldname];
+		$this->request = $this->request->withData($fieldname, $fieldname);
 		$is_spam = $this->component->request_is_spam();
 		$this->assertFalse($is_spam);
 
@@ -160,7 +159,7 @@ class SpamFilterComponentTest extends TestCase {
 		$is_spam = $this->component->request_is_spam();
 		$this->assertTrue($is_spam);
 
-		$this->request->data = [$fieldname => $fieldname];
+		$this->request = $this->request->withData($fieldname, $fieldname);
 		$is_spam = $this->component->request_is_spam();
 		$this->assertFalse($is_spam);
 	}
@@ -183,7 +182,7 @@ class SpamFilterComponentTest extends TestCase {
 		$is_spam = $this->component->request_is_spam();
 		$this->assertTrue($is_spam);
 
-		$this->request->data = [$fieldname => $fieldname];
+		$this->request = $this->request->withData($fieldname, $fieldname);
 		$is_spam = $this->component->request_is_spam();
 		$this->assertFalse($is_spam);
 
@@ -198,7 +197,7 @@ class SpamFilterComponentTest extends TestCase {
 		$is_spam = $this->component->request_is_spam();
 		$this->assertTrue($is_spam);
 
-		$this->request->data = [$fieldname => $fieldname];
+		$this->request = $this->request->withData($fieldname, $fieldname);
 		$is_spam = $this->component->request_is_spam();
 		$this->assertFalse($is_spam);
 	}

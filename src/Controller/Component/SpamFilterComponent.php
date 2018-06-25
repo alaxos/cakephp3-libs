@@ -28,7 +28,7 @@ use Cake\Utility\Text;
  *
  *		Controller
  *		----------
- *		if ($this->request->is('post')) {
+ *		if ($this->getRequest()->is('post')) {
  *			$entity->is_spam = $this->SpamFilter->request_is_spam();
  *			...
  *		}
@@ -58,14 +58,14 @@ class SpamFilterComponent extends Component
     {
         if($this->getConfig('use_session_salt'))
         {
-            if(!$this->controller->request->session()->check('Alaxos.SpamFilterComponent.salt'))
+            if(!$this->controller->getRequest()->getSession()->check('Alaxos.SpamFilterComponent.salt'))
             {
-                $this->controller->request->session()->write('Alaxos.SpamFilterComponent.salt', Text::uuid());
+                $this->controller->getRequest()->getSession()->write('Alaxos.SpamFilterComponent.salt', Text::uuid());
             }
         }
-        elseif($this->controller->request->session()->check('Alaxos.SpamFilterComponent.salt'))
+        elseif($this->controller->getRequest()->getSession()->check('Alaxos.SpamFilterComponent.salt'))
         {
-            $this->controller->request->session()->delete('Alaxos.SpamFilterComponent.salt');
+            $this->controller->getRequest()->getSession()->delete('Alaxos.SpamFilterComponent.salt');
         }
 
         $salt = $this->get_session_salt();
@@ -90,11 +90,14 @@ class SpamFilterComponent extends Component
 
         $is_spam = true;
 
-        if(isset($this->controller->request->data[$today_fieldname]) && $this->controller->request->data[$today_fieldname] == $today_fieldname)
+        $today_fieldname_data     = $this->controller->getRequest()->getData($today_fieldname);
+        $yesterday_fieldname_data = $this->controller->getRequest()->getData($yesterday_fieldname);
+
+        if(!empty($today_fieldname_data) && $today_fieldname_data == $today_fieldname)
         {
             $is_spam = false;
         }
-        elseif(isset($this->controller->request->data[$yesterday_fieldname]) && $this->controller->request->data[$yesterday_fieldname] == $yesterday_fieldname)
+        elseif(!empty($yesterday_fieldname_data) && $yesterday_fieldname_data == $yesterday_fieldname)
         {
             $is_spam = false;
         }
@@ -132,6 +135,6 @@ class SpamFilterComponent extends Component
 
     public function get_session_salt()
     {
-        return $this->controller->request->session()->read('Alaxos.SpamFilterComponent.salt');
+        return $this->controller->getRequest()->getSession()->read('Alaxos.SpamFilterComponent.salt');
     }
 }
