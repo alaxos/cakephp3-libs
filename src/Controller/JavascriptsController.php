@@ -3,7 +3,7 @@
 namespace Alaxos\Controller;
 
 use Cake\Event\Event;
-use Cake\Error\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 
 class JavascriptsController extends AppController {
 
@@ -21,9 +21,6 @@ class JavascriptsController extends AppController {
 
     /**
      * Return a JS that will complete an HTML form with a hidden field that changes every day
-     *
-     * @param string $form_dom_id The dom id of the form to secure
-     * @param unknown_type $model_name The model name of the data
      */
     function antispam()
     {

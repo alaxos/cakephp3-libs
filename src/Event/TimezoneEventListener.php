@@ -60,7 +60,7 @@ class TimezoneEventListener implements EventListenerInterface {
      *
      * @param Event $event
      * @param EntityInterface $entity
-     * @param unknown $options
+     * @param array $options
      * @param Validator $validator
      * @return boolean
      */

@@ -1,7 +1,8 @@
-<?php 
+<?php
 namespace Alaxos\Lib;
 
 use Cake\Core\Configure;
+
 class I18nTool
 {
     public static function set_current_locale($locale)
@@ -12,7 +13,7 @@ class I18nTool
             {
                 $locale   = strtolower($locale);
                 $language = null;
-                
+
                /*
                 * Depending on the server configuration, the locale that the method 'setlocale()'
                 * is waiting for may be different.
@@ -38,7 +39,7 @@ class I18nTool
                 	    $locale   = array('fr_CH.UTF-8', 'fr_CH', 'fr_FR.UTF-8', 'fr_FR');
                 	    $language = 'fra';
                 	    break;
-        
+
                 	case 'en':
                 	case 'eng':
                 	case 'english':
@@ -53,7 +54,7 @@ class I18nTool
                 	    $locale = array('en_US.UTF-8', 'en_US', 'en_EN.UTF-8', 'en_EN');
                 	    $language = 'en';
                 	    break;
-                	    	
+
                 	case 'ger':
                 	case 'de':
                 	case 'german':
@@ -64,7 +65,7 @@ class I18nTool
                 	    $locale = array('de_CH.UTF-8', 'de_CH', 'de_DE.UTF-8', 'de_DE', 'de_DE@euro');
                 	    $language = 'ger';
                 	    break;
-                	    	
+
                 	case 'es':
                 	case 'spa':
                 	case 'spanish':
@@ -73,30 +74,27 @@ class I18nTool
                 	    $locale = array('es_ES.UTF-8', 'es_ES', 'es_ES@euro');
                 	    $language = 'spa';
                 	    break;
-                	    	
+
                 	default:
                 	    $locale = array($locale);
                 	    break;
                 }
             }
-            
+
             $new_locale = setlocale(LC_ALL, $locale);
-            
+
             if(isset($language))
             {
                 Configure::write('Config.language', $language);
             }
-            
-            
-            
+
             if(stripos(strtolower($new_locale), 'utf-8') !== false)
             {
                 header('Content-Type: text/html; charset=UTF-8');
             }
-            
-            
+
             return $new_locale;
         }
     }
-    
+
 }

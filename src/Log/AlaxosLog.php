@@ -2,9 +2,7 @@
 namespace Alaxos\Log;
 
 use Cake\ORM\TableRegistry;
-use Cake\Log\Log;
 use Alaxos\Model\Table\LogEntriesTable;
-use Cake\ORM\Entity;
 
 /**
  * Logger that logs messages in database and can add HTTP request informations
@@ -55,7 +53,7 @@ class AlaxosLog {
 
     /**
      *
-     * @var Alaxos\Model\Table\LogEntriesTable
+     * @var LogEntriesTable
      */
     static $LogEntries;
 

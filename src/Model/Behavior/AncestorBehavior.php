@@ -673,7 +673,7 @@ class AncestorBehavior extends Behavior
 	 * - direct: Boolean, whether to return only the direct (true), or all (false) children,
 	 *           defaults to false (all children).
 	 *
-	 * @param unknown $id
+	 * @param int $id
 	 * @param array $options
 	 * @return number
 	 */

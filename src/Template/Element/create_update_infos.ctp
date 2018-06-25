@@ -1,5 +1,4 @@
 <?php
-use Cake\I18n\Time;
 use Cake\I18n\I18n;
 
 if(isset($entity))

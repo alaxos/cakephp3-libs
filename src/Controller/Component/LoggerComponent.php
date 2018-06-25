@@ -219,8 +219,8 @@ class LoggerComponent extends Component
      *   $this->Logger->setConfig('log_categories.pouet', ['id' => 5, 'level' => AlaxosLog::$_levelMap['notice']]);
      *   $this->Logger->pouet();
 	 *
-	 * @param unknown $name
-	 * @param unknown $arguments
+	 * @param string $name
+	 * @param array $arguments
 	 * @throws NotImplementedException
 	 * @return boolean
 	 */

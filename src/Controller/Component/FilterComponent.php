@@ -3,15 +3,13 @@ namespace Alaxos\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\Database\Query;
 use Cake\Routing\Router;
-use Cake\ORM\Table;
-use Cake\ORM\Entity;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
+use Cake\Http\Exception\NotImplementedException;
 
 class FilterComponent extends Component
 {
@@ -463,7 +461,7 @@ class FilterComponent extends Component
             $url['action']     = $request->getParam('action');
             $url['_ext']       = $request->getParam('_ext');
             $url['pass']       = $request->getParam('pass');
-            
+
             $path = Router::url($url);
             return $path;
         }
@@ -483,14 +481,14 @@ class FilterComponent extends Component
         $referer = $this->controller->request->referer(true);
         $refererRequestParams = Router::parseRequest(new ServerRequest($referer));
 //         $currentRequestParams = $this->controller->request->params;
-        
+
         $refererRequestParams['prefix'] = isset($refererRequestParams['prefix']) ? $refererRequestParams['prefix'] : null;
-        
+
         $currentRequestPrefix     = $this->controller->request->getParam('prefix');
         $currentRequestPlugin     = $this->controller->request->getParam('plugin');
         $currentRequestController = $this->controller->request->getParam('controller');
-        
-        
+
+
 
         if ($refererRequestParams['plugin']     == $currentRequestPlugin &&
             $refererRequestParams['prefix']     == $currentRequestPrefix &&

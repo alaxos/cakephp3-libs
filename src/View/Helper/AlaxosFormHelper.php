@@ -6,6 +6,7 @@ use Cake\Routing\Router;
 use Alaxos\Lib\StringTool;
 use Alaxos\Lib\SecurityTool;
 use Cake\I18n\I18n;
+use Cake\Utility\Hash;
 
 /**
  * @property \Alaxos\View\Helper\AlaxosHtmlHelper $AlaxosHtml
