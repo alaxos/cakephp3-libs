@@ -287,7 +287,16 @@ class NavbarsHelper extends Helper
         $js[] = '<script type="text/javascript">';
         $js[] = '$(document).ready(function(){';
         $js[] = '   $("#select_pagination_limit").change(function(){';
-        $js[] = '       window.location = "' . $this->request->getAttribute('here') . '" + "?limit=" +$(this).val();';
+
+        $here  = $this->request->getAttribute('here');
+        $query = $this->request->getQuery();
+        unset($query['limit']);
+        $queryString = '';
+        foreach ($query as $key => $value) {
+            $queryString .= '&' . urlencode($key) . '=' . urlencode($value);
+        }
+
+        $js[] = '       window.location = "' . $here .'?' . $queryString . '" + "&limit=" +$(this).val();';
         $js[] = '   });';
         $js[] = '});';
         $js[] = '</script>';
