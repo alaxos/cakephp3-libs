@@ -195,7 +195,7 @@ class FilterComponent extends Component
                     {
                         $schema = null;
 
-                        if(stripos($modelName, '.') !== -1)
+                        if(stripos($modelName, '.') !== false)
                         {
                             /*
                              * Case of linked models
@@ -264,6 +264,7 @@ class FilterComponent extends Component
                         {
                             case 'integer':
                             case 'float':
+                            case 'smallinteger':
                                 $this->_addNumericCondition($query, $condition_fieldname, $value, $options);
                                 break;
 
@@ -462,8 +463,7 @@ class FilterComponent extends Component
             $url['_ext']       = $request->getParam('_ext');
             $url['pass']       = $request->getParam('pass');
 
-            $path = Router::url($url);
-            return $path;
+            return Router::url($url);
         }
         else
         {
@@ -480,7 +480,6 @@ class FilterComponent extends Component
     {
         $referer = $this->controller->request->referer(true);
         $refererRequestParams = Router::parseRequest(new ServerRequest($referer));
-//         $currentRequestParams = $this->controller->request->params;
 
         $refererRequestParams['prefix'] = isset($refererRequestParams['prefix']) ? $refererRequestParams['prefix'] : null;
 
@@ -579,9 +578,6 @@ class FilterComponent extends Component
         {
             $display_timezone = Configure::read('default_display_timezone');
         }
-
-//         $default_timezone = date_default_timezone_get();
-//         $display_timezone = !empty($display_timezone) ? $display_timezone : $default_timezone;
 
         $date1 = null;
         $date2 = null;
