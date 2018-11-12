@@ -227,7 +227,7 @@ class FilterComponent extends Component
 
                                 if(isset($nextModelName))
                                 {
-                                    $association = $table->association($modelNames[$i + 1]);
+                                    $association = $table->getAssociation($modelNames[$i + 1]);
 
                                     $this->addJoin($query, $association);
                                 }
