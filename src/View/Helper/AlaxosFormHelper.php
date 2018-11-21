@@ -7,6 +7,7 @@ use Alaxos\Lib\StringTool;
 use Alaxos\Lib\SecurityTool;
 use Cake\I18n\I18n;
 use Cake\Utility\Hash;
+use Cake\I18n\Time;
 
 /**
  * @property \Alaxos\View\Helper\AlaxosHtmlHelper $AlaxosHtml
@@ -38,8 +39,10 @@ class AlaxosFormHelper extends FormHelper
     {
         $options = [];
 
-        $defaultLocale = I18n::getLocale();
+        $defaultLocale = Time::getDefaultLocale();
+        $defaultLocale = !empty($defaultLocale) ? $defaultLocale : I18n::getLocale();
         $defaultLocale = isset($defaultLocale) ? $defaultLocale : 'en';
+
         $defaultLocale = strtolower($defaultLocale);
         $defaultLocale = str_replace('-', '_', $defaultLocale);
 
