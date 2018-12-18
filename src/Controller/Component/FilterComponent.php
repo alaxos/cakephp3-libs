@@ -240,7 +240,7 @@ class FilterComponent extends Component
                              */
 
                             $schema = $this->controller->{$alias}->getSchema();
-                            $condition_fieldname = $fieldName;
+                            $condition_fieldname = $alias . '.' . $fieldName;
                         }
 
                         /******/
