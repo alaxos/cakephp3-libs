@@ -196,6 +196,7 @@ class AlaxosFormHelper extends FormHelper
         $fieldName = $this->completeFilterFieldname($fieldName);
 
         $default_options = ['type'  => 'select',
+                            'schemaDefault' => false,
                             'empty' => true,
                             'label' => false,
                             'class' => 'form-control'];
@@ -309,6 +310,7 @@ class AlaxosFormHelper extends FormHelper
 
         $default_options = ['type'    => 'select',
                             'options' => [1 =>__d('alaxos', 'yes'), 0 => __d('alaxos', 'no')],
+                            'schemaDefault' => false,
                             'empty'   => true,
                             'label'   => false,
                             'class'   => 'form-control'];
