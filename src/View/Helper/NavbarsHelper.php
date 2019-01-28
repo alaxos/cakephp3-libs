@@ -4,6 +4,10 @@ namespace Alaxos\View\Helper;
 use Cake\View\Helper;
 use Cake\Routing\Router;
 
+/**
+ * @property \Cake\Datasource\Paginator $Paginator
+ *
+ */
 class NavbarsHelper extends Helper
 {
     var $helpers = ['Html', 'Form', 'Paginator'];
@@ -279,7 +283,7 @@ class NavbarsHelper extends Helper
 
         $select_options          = [];
         $select_options['id']    = 'select_pagination_limit';
-        $select_options['value'] = $this->request->getQuery('limit') !== null ? $this->request->getQuery('limit') : $this->Paginator->param('perPage');
+        $select_options['value'] = $this->getView()->getRequest()->getQuery('limit') !== null ? $this->getView()->getRequest()->getQuery('limit') : $this->Paginator->param('perPage');
 
         $select_limit =  $this->Form->select('_Tech.pagination_limit', array_combine($options['pagination_limits'], $options['pagination_limits']), $select_options);
 
@@ -288,8 +292,8 @@ class NavbarsHelper extends Helper
         $js[] = '$(document).ready(function(){';
         $js[] = '   $("#select_pagination_limit").change(function(){';
 
-        $here  = $this->request->getAttribute('here');
-        $query = $this->request->getQuery();
+        $here  = $this->getView()->getRequest()->getAttribute('here');
+        $query = $this->getView()->getRequest()->getQuery();
         unset($query['limit']);
         $queryString = '';
         foreach ($query as $key => $value) {
@@ -499,11 +503,11 @@ class NavbarsHelper extends Helper
         $comparison_path_link = $this->getComparisonPath($link_array);
 
         $current_link_array = [
-            'plugin'     => $this->request->getParam('plugin'),
-            'prefix'     => $this->request->getParam('prefix'),
-            'controller' => $this->request->getParam('controller'),
-            'action'     => $this->request->getParam('action'),
-            'pass'       => $this->request->getParam('pass')
+            'plugin'     => $this->getView()->getRequest()->getParam('plugin'),
+            'prefix'     => $this->getView()->getRequest()->getParam('prefix'),
+            'controller' => $this->getView()->getRequest()->getParam('controller'),
+            'action'     => $this->getView()->getRequest()->getParam('action'),
+            'pass'       => $this->getView()->getRequest()->getParam('pass')
         ];
 
         $comparison_path_url  = $this->getComparisonPath($current_link_array);
