@@ -134,7 +134,7 @@ class ShibbolethAuthenticate extends BaseAuthenticate
         }
         else
         {
-            Log::error('ShibbolethAuthenticate->createNewUser() : ' . print_r($user->errors(), true));
+            Log::error('ShibbolethAuthenticate->createNewUser() : ' . print_r($user->getErrors(), true));
         }
     }
 

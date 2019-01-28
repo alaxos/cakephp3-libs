@@ -2,9 +2,9 @@
 use Cake\Routing\Router;
 
 Router::plugin('Alaxos', function($routes) {
-    
-    $routes->extensions(['js']);
-    
+
+    $routes->setExtensions(['js']);
+
     /**
      * Connect a route for the index action of any controller.
      * And a more general catch all route for any action.
@@ -16,8 +16,8 @@ Router::plugin('Alaxos', function($routes) {
      * You can remove these routes once you've connected the
      * routes you want in your application.
     */
-    
+
     $routes->connect('/as', ['controller' => 'Javascripts', 'action' => 'antispam'], ['routeClass' => 'InflectedRoute']);
-    
+
     $routes->fallbacks();
 });
