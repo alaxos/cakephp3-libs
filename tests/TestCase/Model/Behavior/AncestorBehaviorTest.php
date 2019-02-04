@@ -16,8 +16,8 @@ class AncestorBehaviorTest extends TestCase {
 	 * @var array
 	 */
 	public $fixtures = [
-		'plugin.alaxos.alaxos_test_nodes',
-		'plugin.alaxos.alaxos_test_nodes_ancestors',
+		'plugin.Alaxos.AlaxosTestNodes',
+		'plugin.Alaxos.AlaxosTestNodesAncestors',
 	];
 
 /**
