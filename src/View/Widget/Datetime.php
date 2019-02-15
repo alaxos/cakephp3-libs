@@ -69,6 +69,15 @@ class Datetime implements WidgetInterface
             $date_data['value']   = $datetime->format($data['php_date_format']);
             $time_data['value']   = $datetime->format('H:i');
             $hidden_data['value'] = $date_data['value'] . ' ' . $time_data['value'];
+        } else {
+
+            if (isset($data['dateVal'])) {
+                $date_data['value'] = $data['dateVal'];
+            }
+
+            if (isset($data['timeVal'])) {
+                $time_data['value'] = $data['timeVal'];
+            }
         }
 
         $input  = $this->get_html_code($date_data, $time_data, $hidden_data);
