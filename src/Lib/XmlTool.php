@@ -2,6 +2,8 @@
 namespace Alaxos\Lib;
 
 use DOMDocument;
+use DOMNode;
+use DOMNodeList;
 use DOMXPath;
 use Alaxos\Lib\DebugTool;
 

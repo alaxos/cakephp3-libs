@@ -90,6 +90,25 @@ class AlaxosFormHelper extends FormHelper
 
         $options = $this->_initInputField($fieldName, $options);
 
+        /*
+         * If value is not found, we may be in the case of posted data
+         * with only one of both fields (date or time) filled
+         * --> we show the data in the filled field again
+         */
+        if ((!isset($options['val']) || empty($options['val'])) && ($this->request->is('post') || $this->request->is('put'))) {
+
+            $dateVal = $this->getSourceValue($fieldName . '__date__');
+            $timeVal = $this->getSourceValue($fieldName . '__time__');
+
+            if (!empty($dateVal)) {
+                $options['dateVal'] = $dateVal;
+            }
+
+            if (!empty($timeVal)) {
+                $options['timeVal'] = $timeVal;
+            }
+        }
+
         $this->addWidget('datetime', ['Alaxos\View\Widget\Datetime']);
         return $this->widget('datetime', $options);
     }
