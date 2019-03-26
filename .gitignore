@@ -7,3 +7,4 @@
 /logs/*
 /clover.xml
 /junit.xml
+*.iml
