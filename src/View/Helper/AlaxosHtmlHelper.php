@@ -238,7 +238,7 @@ class AlaxosHtmlHelper extends HtmlHelper
 			$js_code .= ($i < strlen($email) - 1) ? '+' : '';
 		}
 
-		if(!$this->request->is('ajax'))
+		if(!$this->getView()->getRequest()->is('ajax'))
 		{
 			$js_code .= ';' . $this->getConfig('jquery_variable') . '(document).ready(function(){	' . $this->getConfig('jquery_variable') . '("#' . $email_id . '").attr("href", "mailto:" + alaxos_' . $email_id . ');' . $this->getConfig('jquery_variable') . '("#' . $email_id . '").html(alaxos_' . $email_id . ');	});</script><a id="' . $email_id . '"><em>missing email</em></a>';
 		}

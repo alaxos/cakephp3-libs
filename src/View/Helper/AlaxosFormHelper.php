@@ -95,7 +95,7 @@ class AlaxosFormHelper extends FormHelper
          * with only one of both fields (date or time) filled
          * --> we show the data in the filled field again
          */
-        if ((!isset($options['val']) || empty($options['val'])) && ($this->request->is('post') || $this->request->is('put'))) {
+        if ((!isset($options['val']) || empty($options['val'])) && ($this->getView()->getRequest()->is('post') || $this->getView()->getRequest()->is('put'))) {
 
             $dateVal = $this->getSourceValue($fieldName . '__date__');
             $timeVal = $this->getSourceValue($fieldName . '__time__');
