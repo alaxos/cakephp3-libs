@@ -15,8 +15,8 @@ class SecurityTool
 
     public static function get_valid_fieldnames()
     {
-        $today_fieldname     = $this->get_today_fieldname();
-        $yesterday_fieldname = $this->get_yesterday_fieldname();
+        $today_fieldname     = SecurityTool::get_today_fieldname();
+        $yesterday_fieldname = SecurityTool::get_yesterday_fieldname();
 
         return array($today_fieldname, $yesterday_fieldname);
     }
