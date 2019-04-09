@@ -171,15 +171,15 @@ class AlaxosFormHelper extends FormHelper
     {
         $filter = '';
 
-        $type = $this->_context->type($fieldName);
+        $internalType = $this->_context->type($fieldName);
 
-        if(preg_match('/_id$/', $fieldName))
+        if (preg_match('/_id$/', $fieldName))
         {
             $filter .= $this->filterSelect($fieldName, $options);
         }
         else
         {
-            switch($type)
+            switch ($internalType)
             {
                 case 'datetime':
                     $filter .= $this->filterDatetime($fieldName, $options);
@@ -190,10 +190,13 @@ class AlaxosFormHelper extends FormHelper
                     break;
 
                 case 'integer':
+                case 'tinyinteger':
+                case 'smallinteger':
                     $filter .= $this->filterInteger($fieldName, $options);
                     break;
 
                 case 'float':
+                case 'decimal':
                     $filter .= $this->filterFloat($fieldName, $options);
                     break;
 
