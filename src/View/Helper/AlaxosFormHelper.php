@@ -8,6 +8,7 @@ use Alaxos\Lib\SecurityTool;
 use Cake\I18n\I18n;
 use Cake\Utility\Hash;
 use Cake\I18n\Time;
+use Cake\View\View;
 
 /**
  * @property \Alaxos\View\Helper\AlaxosHtmlHelper $AlaxosHtml
@@ -15,6 +16,15 @@ use Cake\I18n\Time;
 class AlaxosFormHelper extends FormHelper
 {
     public $helpers = ['Url', 'AlaxosHtml'];
+
+    public function __construct(View $View, array $config = [])
+    {
+        parent::__construct($View, $config);
+
+        $typeMap = $this->getConfig('typeMap');
+        $typeMap['biginteger'] = 'number';
+        $this->setConfig('typeMap', $typeMap);
+    }
 
     public function date($fieldName, array $options = [])
     {
@@ -121,7 +131,7 @@ class AlaxosFormHelper extends FormHelper
 
         $type = $this->_context->type($fieldName);
 
-        if($type == 'float'){
+        if (in_array($type, ['float', 'decimal'])) {
             $options['decimal'] = true;
         }
 
@@ -192,6 +202,7 @@ class AlaxosFormHelper extends FormHelper
                 case 'integer':
                 case 'tinyinteger':
                 case 'smallinteger':
+                case 'biginteger':
                     $filter .= $this->filterInteger($fieldName, $options);
                     break;
 

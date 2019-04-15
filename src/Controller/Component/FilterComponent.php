@@ -263,8 +263,11 @@ class FilterComponent extends Component
                         switch($columnType)
                         {
                             case 'integer':
-                            case 'float':
+                            case 'tinyinteger':
                             case 'smallinteger':
+                            case 'biginteger':
+                            case 'float':
+                            case 'decimal':
                                 $this->_addNumericCondition($query, $condition_fieldname, $value, $options);
                                 break;
 
