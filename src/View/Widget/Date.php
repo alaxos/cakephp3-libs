@@ -67,7 +67,7 @@ class Date implements WidgetInterface
         $js_code[] = '  ';
         $js_code[] = '  var language = "' . (isset($data['language']) ? $data['language'] : 'en') . '";';
         $js_code[] = '  ';
-        $js_code[] = '  $("#' . $data['id'] . '").datepicker({language : language, forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false});';
+        $js_code[] = '  $("#' . $data['id'] . '").datepicker({language : language, format : "' . $data['datepicker_format'] . '", forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false});';
         $js_code[] = '';
 
         if(isset($data['format_on_blur']) && $data['format_on_blur'])
