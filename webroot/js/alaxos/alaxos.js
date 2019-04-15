@@ -211,61 +211,77 @@ var Alaxos = (function($j) {
         return day;
 	}
 	
-	function get_checked_month(value)
+	function get_checked_month(value, auto_complete_date, auto_correct_invalid_values)
 	{
-		month = null;
-		if(value != null && value.length > 0 && !isNaN(value) && value >= 1 && value <= 12)
-		{
-			month = value;
-		}
-		else
-		{
-	    	date = new Date();
-	    	month = date.getMonth();
-	    	month = month + 1;
-		}
-	
-		if(month < 10 && month.length != 2)
-		{
-			month = month * 1; //manage the case of leading zeros (e.g. '0007')
-			month = '0' + month;
-		}
-	
-		return month;
+        var month = null;
+
+        if (value == null || value.length == 0) {
+            if (auto_complete_date) {
+                var date = new Date();
+                month = date.getMonth();
+                month = month + 1;
+            } else {
+                throw "month is empty";
+            }
+        } else {
+            if (isNaN(value) || value < 1 || value > 12) {
+                if(auto_correct_invalid_values) {
+                    var date = new Date();
+                    month = date.getMonth();
+                    month = month + 1;
+                } else {
+                    throw "month is invalid";
+                }
+            } else {
+                month = value;
+            }
+        }
+
+        return month;
 	}
 	
-	function get_checked_year(value)
+	function get_checked_year(value, auto_complete_date, auto_correct_invalid_values)
 	{
-		if(value != null && value.length > 0 && !isNaN(value))
-		{
-			complete_year = Alaxos.get_complete_year(value);
-	
-			current_date = new Date();
-			current_year = current_date.getFullYear();
-			year_diff = complete_year - current_year;
-	
-			if(year_diff > 15)
-			{
-				return Alaxos.get_complete_year(complete_year - 100);
-			}
-			else
-			{
-				return complete_year;
-			}
-		}
-		else
-		{
-			date = new Date();
-			year = date.getFullYear();
-			return year;
-		}
+	    var year = null;
+
+        if (value == null || value.length == 0) {
+            if (auto_complete_date) {
+                var date = new Date();
+                year = date.getFullYear();
+            } else {
+                throw "year is empty";
+            }
+        } else {
+            if (isNaN(value)) {
+                if(auto_correct_invalid_values) {
+                    var date = new Date();
+                    year = date.getFullYear();
+                } else {
+                    throw "year is invalid";
+                }
+            } else {
+                var complete_year = Alaxos.get_complete_year(value);
+
+                var current_date = new Date();
+                var current_year = current_date.getFullYear();
+                var year_diff = complete_year - current_year;
+
+                if (year_diff > 15) {
+                    year = Alaxos.get_complete_year(complete_year - 100);
+                } else {
+                    year = complete_year;
+                }
+            }
+        }
+
+	    return year;
 	}
 	
 	function get_complete_year(year)
 	{
-		date = new Date(year, 1, 1);
+		var date = new Date(year, 1, 1);
 	
-		full_date = date.getFullYear();
+		var full_date = date.getFullYear();
 	
 		if(year.length < 4 && full_date < 2000)
 		{
