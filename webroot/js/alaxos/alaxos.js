@@ -25,15 +25,18 @@ var Alaxos = (function($j) {
 		return date_format;
 	}
 	
-	function get_complete_date_object(date_str, date_format)
+	function get_complete_date_object(date_str, date_format, auto_complete_date, auto_correct_invalid_values)
 	{
+        auto_complete_date = (auto_complete_date != null && typeof(auto_complete_date) != "undefined") ? auto_complete_date : true;
+        auto_correct_invalid_values = (auto_correct_invalid_values != null && typeof(auto_correct_invalid_values) != "undefined") ? auto_correct_invalid_values : false;
+
 		date_format = Alaxos.get_date_format(date_format);
 		
 		var exploded_date_parts  = Alaxos.explode_date_parts(date_str, date_format);
-		var completed_date_parts = Alaxos.get_date_parts(exploded_date_parts, date_format)
+		var completed_date_parts = Alaxos.get_date_parts(exploded_date_parts, date_format, auto_complete_date, auto_correct_invalid_values)
 		
 		var year  = completed_date_parts["year"];
-		var month = completed_date_parts["month"] -1; //month is zeroo based in Date object
+		var month = completed_date_parts["month"] -1; //month is zero based in Date object
 		var day   = completed_date_parts["day"];
 		
 		return new Date(year, month, day);
@@ -106,7 +109,7 @@ var Alaxos = (function($j) {
 		}
 	}
 	
-	function get_date_parts(exploded_date_parts, date_format)
+	function get_date_parts(exploded_date_parts, date_format, auto_complete_date, auto_correct_invalid_values)
 	{
 		var date_part1 = date_format.substring(0, 1);
 		var separator1 = date_format.substring(1, 2);
@@ -114,9 +117,9 @@ var Alaxos = (function($j) {
 		var separator2 = date_format.substring(3, 4);
 		var date_part3 = date_format.substring(4, 5);
 		
-		var date_part_value1 = Alaxos.get_date_part_value(exploded_date_parts["value1"], date_part1);
-		var date_part_value2 = Alaxos.get_date_part_value(exploded_date_parts["value2"], date_part2);
-		var date_part_value3 = Alaxos.get_date_part_value(exploded_date_parts["value3"], date_part3);
+		var date_part_value1 = Alaxos.get_date_part_value(exploded_date_parts["value1"], date_part1, auto_complete_date, auto_correct_invalid_values);
+		var date_part_value2 = Alaxos.get_date_part_value(exploded_date_parts["value2"], date_part2, auto_complete_date, auto_correct_invalid_values);
+		var date_part_value3 = Alaxos.get_date_part_value(exploded_date_parts["value3"], date_part3, auto_complete_date, auto_correct_invalid_values);
 	
 		var day = null;
 		var month = null;
@@ -165,42 +168,47 @@ var Alaxos = (function($j) {
 		}
 	}
 	
-	function get_date_part_value(value, date_part)
+	function get_date_part_value(value, date_part, auto_complete_date, auto_correct_invalid_values)
 	{
 		switch(date_part)
 		{
 			case 'd':
-				return Alaxos.get_checked_day(value);
+				return Alaxos.get_checked_day(value, auto_complete_date, auto_correct_invalid_values);
 				break;
 			case 'm':
-				return Alaxos.get_checked_month(value);
+				return Alaxos.get_checked_month(value, auto_complete_date, auto_correct_invalid_values);
 				break;
 			case 'y':
-				return Alaxos.get_checked_year(value);
+				return Alaxos.get_checked_year(value, auto_complete_date, auto_correct_invalid_values);
 				break;
 		}
 	}
 	
-	function get_checked_day(value)
+	function get_checked_day(value, auto_complete_date, auto_correct_invalid_values)
 	{
-		day = null;
-		if(value != null && value.length > 0 && !isNaN(value) && value >= 1 && value <= 31)
-		{
-			day = value;
-		}
-		else
-		{
-	    	date = new Date();
-	    	day = date.getDate();
-		}
-	
-		if(day < 10 && day.length != 2)
-		{
-			day = day * 1; //manage the case of leading zeros (e.g. '0007')
-			day = '0' + day;
-		}
-	
-		return day;
+        var day = null;
+
+        if (value == null || value.length == 0) {
+          if (auto_complete_date) {
+              var date = new Date();
+              day = date.getDate();
+          } else {
+              throw "day is empty";
+          }
+        } else {
+            if (isNaN(value) || value < 1 || value > 31) {
+                if(auto_correct_invalid_values) {
+                    var date = new Date();
+                    day = date.getDate();
+                } else {
+                    throw "day is invalid";
+                }
+            } else {
+                day = value;
+            }
+        }
+
+        return day;
 	}
 	
 	function get_checked_month(value)
@@ -303,66 +311,7 @@ var Alaxos = (function($j) {
 	    // EXCEPT for centurial years which are not also divisible by 400.
 	    return (year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0));
 	}
-	
-//	function date_field(dom_id, language, format)
-//	{
-//		language = "fr";
-//		format   = "d.m.y"
-//		
-//		$(dom_id).datepicker({language : language, forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false});
-//
-//		$(dom_id).blur(function(){
-//			var value = $(this).val();
-//			if(value != null && value.length > 0){
-//				var completed_date = Alaxos.get_complete_date_object(value, format);
-//			}
-//			
-//			date_on_blur_timeout = setTimeout(function(){
-//				
-//				if($(".datepicker:visible").length == 0){
-//					$(dom_id).datepicker("setDate", completed_date);
-//				}
-//				
-//			}, 30);
-//		});
-//		
-//		$(dom_id).keypress(function(e){
-//			
-//			var value = $(this).val();
-//			
-//			if(value != null && value.length > 0){
-//				
-//				if(e.which == 13){
-//					
-//					$(dom_id).datepicker("hide");
-//					
-//					var completed_date = Alaxos.get_complete_date_object(value, format);
-//					
-//					$(dom_id).datepicker("setDate", completed_date);
-//					
-//					var newvalue = $(this).val();
-//					
-//					if(newvalue != value)
-//					{
-//						e.preventDefault();
-//					}
-//				}
-//			}
-//		});
-//		
-//		$(dom_id).datepicker().on("changeDate", function(){
-//			
-//			clearTimeout(date_on_blur_timeout);
-//			
-//		});
-//
-//		$(dom_id + "-group-addon").click(function(e){
-//			
-//			$(dom_id).datepicker("show");
-//			
-//		});
-//	}
-	
+
 	/********************************************************************
      * 
      */
@@ -920,7 +869,6 @@ var Alaxos = (function($j) {
     	DEFAULT_DATE_FORMAT					:	DEFAULT_DATE_FORMAT,
     	pleaseSelectAtLeastOneItem			:	pleaseSelectAtLeastOneItem,
     	
-//    	date_field							:	date_field,
     	get_date_format						:	get_date_format,
     	get_complete_date_object			:	get_complete_date_object,
     	explode_date_parts					:	explode_date_parts,

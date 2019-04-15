@@ -40,6 +40,8 @@ class Date implements WidgetInterface
             $data['value'] = $data['value']->format($data['php_date_format']);
         }
 
+        $data['placeholder'] = $data['datepicker_format'];
+
         /***********/
 
         $input  = '<div class="input-group date alaxos-date" id="' . $data['id'] . '-container">';
@@ -49,11 +51,14 @@ class Date implements WidgetInterface
             'type' => $data['type'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
-                ['name', 'type']
+                ['name', 'type', 'format_on_blur', 'empty', 'language', 'alaxos_js_format', 'datepicker_format', 'php_date_format']
             ),
         ]);
 
         $input .= '<span class="input-group-addon" id="' .  $data['id'] . '-group-addon"><i class="glyphicon glyphicon-th"></i></span>';
+        $input .= '</div>';
+
+        $input .= '<div id="' .  $data['id'] . '-js-error" class="error">';
         $input .= '</div>';
 
         /***********/
@@ -73,18 +78,25 @@ class Date implements WidgetInterface
         if(isset($data['format_on_blur']) && $data['format_on_blur'])
         {
             $js_code[] = '  $("#' . $data['id'] . '").blur(function(){';
-            $js_code[] = '      var value = $(this).val();';
-            $js_code[] = '      if(value != null && value.length > 0){';
-            $js_code[] = '          var completed_date = Alaxos.get_complete_date_object(value, "' . $data['alaxos_js_format'] . '");';
-            $js_code[] = '      }';
             $js_code[] = '      ';
-            $js_code[] = '      date_on_blur_timeout = setTimeout(function(){';
+            $js_code[] = '      $("#' .  $data['id'] . '-js-error").html("");';
             $js_code[] = '      ';
-            $js_code[] = '          if($(".datepicker:visible").length == 0){';
-            $js_code[] = '              $("#' . $data['id'] . '").datepicker("setDate", completed_date);';
+            $js_code[] = '      try {';
+            $js_code[] = '          var value = $(this).val();';
+            $js_code[] = '          if(value != null && value.length > 0){';
+            $js_code[] = '              var completed_date = Alaxos.get_complete_date_object(value, "' . $data['alaxos_js_format'] . '");';
             $js_code[] = '          }';
-            $js_code[] = '      ';
-            $js_code[] = '      }, 30);';
+            $js_code[] = '          ';
+            $js_code[] = '          date_on_blur_timeout = setTimeout(function(){';
+            $js_code[] = '          ';
+            $js_code[] = '              if($(".datepicker:visible").length == 0){';
+            $js_code[] = '                  $("#' . $data['id'] . '").datepicker("setDate", completed_date);';
+            $js_code[] = '              }';
+            $js_code[] = '          ';
+            $js_code[] = '          }, 30);';
+            $js_code[] = '      } catch (err) {';
+            $js_code[] = '          $("#' .  $data['id'] . '-js-error").html(err);';
+            $js_code[] = '      }';
             $js_code[] = '  });';
             $js_code[] = '  ';
 
