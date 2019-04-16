@@ -28,18 +28,11 @@ class AlaxosFormHelper extends FormHelper
 
     public function date($fieldName, array $options = [])
     {
-        $default_options = ['format_on_blur'  => true];
-
-        $options = array_merge($default_options, $options);
-
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
-        $this->AlaxosHtml->includeAlaxosJS();
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
 
-        $date_locale_options = $this->getDateLocale();
-        $options             = array_merge($options, $date_locale_options);
-
         $options = $this->_initInputField($fieldName, $options);
+        $options['locale_options'] = $this->getDateLocale();
 
         $this->addWidget('date', ['Alaxos\View\Widget\Date']);
         return $this->widget('date', $options);

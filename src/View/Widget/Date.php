@@ -12,7 +12,53 @@ class Date implements WidgetInterface
         $this->_templates = $templates;
     }
 
-    public function render(array $data, ContextInterface $context) {
+    public function render(array $data, ContextInterface $context)
+    {
+        $name                = $data['name'];
+        $php_date_format     = $data['locale_options']['php_date_format'];
+        if(isset($data['val']) && is_a($data['val'], 'DateTime')) {
+            $value = $data['val']->format($php_date_format);
+        } else {
+            $value = $data['val'];
+        }
+
+        $js_options = isset($data['js_options']) ? $data['js_options'] : [];
+
+        i
+
+        /*************
+         * HTML
+         */
+
+        $input = $this->_templates->format('input', [
+            'name' => $name,
+            'type' => 'text',
+            'attrs' => $this->_templates->formatAttributes([
+                    'value' => $value,
+                    'id'    => $data['id'],
+                    'class' => 'form-control input-date alaxos-date'
+                ]
+            )
+        ]);
+
+        $js_code   = [];
+        $js_code[] = '<script type="text/javascript">';
+        $js_code[] = '$(document).ready(function(){';
+        $js_code[] = '  $("#' . $data['id'] . '").datewidget(';
+        $js_code[] = json_encode($js_options);
+        $js_code[] = '  );';
+        $js_code[] = '});';
+        $js_code[] = '</script>';
+
+        /*************
+         * Merge HTML + JS
+         */
+
+        $input .= implode("\n", $js_code);
+        return $input;
+    }
+
+    public function render_OLD(array $data, ContextInterface $context) {
 
         $data += [
             'name' => '',
