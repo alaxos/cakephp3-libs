@@ -30,6 +30,7 @@ class AlaxosFormHelper extends FormHelper
     {
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
         $this->AlaxosHtml->includeAlaxosJQueryUI();
+        $this->AlaxosHtml->includeDateWidgetJS();
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
 
         $options = $this->_initInputField($fieldName, $options);

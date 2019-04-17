@@ -17,6 +17,7 @@ class AlaxosHtmlHelper extends HtmlHelper
         $this->_defaultConfig['jquery_variable']          = '$';
         $this->_defaultConfig['jquery_js']                = 'Alaxos.jquery/jquery-1.11.1.min';
         $this->_defaultConfig['jquery_ui_js']             = 'Alaxos.jquery/jquery-ui-1.12.1.min';
+        $this->_defaultConfig['alaxos_date_widget_js']    = 'Alaxos.alaxos/dateWidget';
         $this->_defaultConfig['alaxos_js']                = 'Alaxos.alaxos/alaxos';
         $this->_defaultConfig['alaxos_encode']            = 'Alaxos.alaxos/encode';
         $this->_defaultConfig['bootstrap_js']             = 'Alaxos.bootstrap/bootstrap.min';
@@ -53,6 +54,17 @@ class AlaxosHtmlHelper extends HtmlHelper
         $options = array_merge($default_options, $options);
 
         return $this->script($this->getConfig('jquery_ui_js'), $options);
+    }
+
+    public function includeDateWidgetJS(array $options = [])
+    {
+        $default_options = [
+            'block' => true
+        ];
+
+        $options = array_merge($default_options, $options);
+
+        return $this->script($this->getConfig('alaxos_date_widget_js'), $options);
     }
 
 	public function includeAlaxosJS(array $options = [])
