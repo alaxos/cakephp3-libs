@@ -46,6 +46,10 @@ class Date implements WidgetInterface
             $js_options['datepicker']['language'] = $data['locale_options']['language'];
         }
 
+        if (!isset($js_options['datepicker']['format']) && isset($data['locale_options']['datepicker_format'])) {
+            $js_options['datepicker']['format'] = $data['locale_options']['datepicker_format'];
+        }
+
         $js_code   = [];
         $js_code[] = '<script type="text/javascript">';
         $js_code[] = '$(document).ready(function(){';
