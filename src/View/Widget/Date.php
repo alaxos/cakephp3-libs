@@ -33,7 +33,9 @@ class Date implements WidgetInterface
             'attrs' => $this->_templates->formatAttributes([
                     'value' => $value,
                     'id'    => $data['id'],
-                    'class' => $class
+                    'class' => $class,
+                    'placeholder' => (isset($data['placeholder']) ? $data['placeholder'] : null),
+                    'style' => (isset($data['style']) ? $data['style'] : null)
                 ]
             )
         ]);
