@@ -62,7 +62,10 @@
             this.element.addClass("input-date");
 
             if (this.options["show_placeholder"]) {
-                this.element.prop("placeholder", this.options["datepicker"]["format"]);
+                var placeholder = this.element.prop("placeholder");
+                if (placeholder == null || placeholder.length == 0) {
+                    this.element.prop("placeholder", this.options["datepicker"]["format"]);
+                }
             }
 
             this.options["error_zone"] = $('<div class="error"></div>');
@@ -151,6 +154,8 @@
                 } catch (err) {
                     this._displayError(err);
                 }
+            } else {
+                this._manageUpperDatepicker();
             }
         },
 
