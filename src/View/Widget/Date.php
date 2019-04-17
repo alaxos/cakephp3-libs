@@ -16,19 +16,16 @@ class Date implements WidgetInterface
     {
         $name                = $data['name'];
         $php_date_format     = $data['locale_options']['php_date_format'];
-        if(isset($data['val']) && is_a($data['val'], 'DateTime')) {
+        if (isset($data['val']) && is_a($data['val'], 'DateTime')) {
             $value = $data['val']->format($php_date_format);
         } else {
             $value = $data['val'];
         }
 
-        $js_options = isset($data['js_options']) ? $data['js_options'] : [];
-
-        i
-
         /*************
          * HTML
          */
+        $class = isset($data['class']) ? $data['class'] : 'form-control input-date alaxos-date';
 
         $input = $this->_templates->format('input', [
             'name' => $name,
@@ -36,10 +33,18 @@ class Date implements WidgetInterface
             'attrs' => $this->_templates->formatAttributes([
                     'value' => $value,
                     'id'    => $data['id'],
-                    'class' => 'form-control input-date alaxos-date'
+                    'class' => $class
                 ]
             )
         ]);
+
+        /*************
+         * JS
+         */
+        $js_options = isset($data['js_options']) ? $data['js_options'] : [];
+        if (!isset($js_options['datepicker']['language']) && isset($data['locale_options']['language'])) {
+            $js_options['datepicker']['language'] = $data['locale_options']['language'];
+        }
 
         $js_code   = [];
         $js_code[] = '<script type="text/javascript">';
