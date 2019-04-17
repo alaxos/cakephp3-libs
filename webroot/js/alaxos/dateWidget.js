@@ -71,7 +71,11 @@
             this.options["error_zone"] = $('<div class="error"></div>');
             this.element.after(this.options["error_zone"]);
 
-            this.element.wrap('<div class="input-group date alaxos-date"></div>');
+            // calling wap() method makes the input field not visible in the posted form in soe situations (seen in filter fields)
+            // --> the surrounding div is created before calling the JS widget (in Date.php)
+            // This is not satisfying, but it works...
+            //
+            // this.element.wrap('<div class="input-group date alaxos-date"></div>');
 
             this.options["icon"] = $('<span class="input-group-addon" id="date-field-group-addon"><i class="glyphicon glyphicon-th"></i></span>');
             this.element.after(this.options["icon"]);

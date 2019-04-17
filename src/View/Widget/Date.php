@@ -27,7 +27,8 @@ class Date implements WidgetInterface
          */
         $class = isset($data['class']) ? $data['class'] : 'form-control input-date alaxos-date';
 
-        $input = $this->_templates->format('input', [
+        $input = '<div class="input-group date alaxos-date">';
+        $input .= $this->_templates->format('input', [
             'name' => $name,
             'type' => 'text',
             'attrs' => $this->_templates->formatAttributes([
@@ -39,7 +40,8 @@ class Date implements WidgetInterface
                 ]
             )
         ]);
-
+        $input .= '</div>';
+        
         /*************
          * JS
          */
