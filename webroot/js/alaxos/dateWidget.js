@@ -69,7 +69,8 @@
             }
 
             this.options["error_zone"] = $('<div class="error"></div>');
-            this.element.after(this.options["error_zone"]);
+            var input_group_div = this.element.closest("div");
+            input_group_div.after(this.options["error_zone"]);
 
             // calling wap() method makes the input field not visible in the posted form in soe situations (seen in filter fields)
             // --> the surrounding div is created before calling the JS widget (in Date.php)
