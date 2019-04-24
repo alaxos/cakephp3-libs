@@ -8,6 +8,16 @@
                 with_seconds : false,
                 auto_complete: true,
                 auto_correct_invalid_values : false
+            },
+            i18n : {
+                en : {
+                    hour_is_invalid   : "hour is invalid",
+                    minute_is_invalid : "minutes are invalid"
+                },
+                fr : {
+                    hour_is_invalid   : "l'heure est invalide",
+                    minute_is_invalid : "les minutes sont invalides"
+                }
             }
         },
 
@@ -61,10 +71,14 @@
             datetime_div.append(this.options["time_zone"]);
             datetime_div.append(this.options["hidden_field"]);
 
+            this._updateHiddenField();
+
             this.options["time_field"].blur($.proxy(this._formatTime, this));
         },
 
         _formatTime : function () {
+            this._clearError();
+
             var time_str = this.options["time_field"].val();
 
             if (time_str.length > 0) {
@@ -127,9 +141,13 @@
                 hour         = parseInt(hour, 10);
                 var hour_str = hour + "";
 
-                if (hour > 24) {
-                    hour     = hour % 24 + "";
-                    hour_str = hour + "";
+                if (hour > 23) {
+                    if (this.options["time"]["auto_correct_invalid_values"]) {
+                        hour = hour % 24 + "";
+                        hour_str = hour + "";
+                    } else {
+                        throw "hour_is_invalid";
+                    }
                 }
 
                 if (hour < 10 && hour_str.length < 2) {
@@ -145,9 +163,13 @@
                 min         = parseInt(min, 10);
                 var min_str = min + "";
 
-                if (min > 60) {
-                    min     = min % 60;
-                    min_str = min + "";
+                if (min > 59) {
+                    if (this.options["time"]["auto_correct_invalid_values"]) {
+                        min = min % 60;
+                        min_str = min + "";
+                    } else {
+                        throw "minute_is_invalid";
+                    }
                 }
 
                 if (min < 10 && min_str.length < 2) {
@@ -191,7 +213,11 @@
             var dateVal = this.element.val();
             var timeVal = this.options["time_field"].val();
 
-            this.options["hidden_field"].val(dateVal + " " + timeVal);
+            if (dateVal.length > 0 && timeVal.length > 0) {
+                this.options["hidden_field"].val(dateVal + " " + timeVal);
+            } else {
+                this.options["hidden_field"].val("");
+            }
         }
     });
 
