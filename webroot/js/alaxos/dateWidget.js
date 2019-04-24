@@ -145,7 +145,7 @@
 
             if (date_str.length > 0) {
                 try {
-                    var completedDate = this._getCompleteDateObject(date_str)
+                    var completedDate = this._getCompleteDateObject(date_str);
                     var me = this;
 
                     /*

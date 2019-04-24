@@ -14,20 +14,21 @@ class AlaxosHtmlHelper extends HtmlHelper
 
     public function __construct(View $View, array $config = array())
     {
-        $this->_defaultConfig['jquery_variable']          = '$';
-        $this->_defaultConfig['jquery_js']                = 'Alaxos.jquery/jquery-1.11.1.min';
-        $this->_defaultConfig['jquery_ui_js']             = 'Alaxos.jquery/jquery-ui-1.12.1.min';
-        $this->_defaultConfig['alaxos_date_widget_js']    = 'Alaxos.alaxos/dateWidget';
-        $this->_defaultConfig['alaxos_js']                = 'Alaxos.alaxos/alaxos';
-        $this->_defaultConfig['alaxos_encode']            = 'Alaxos.alaxos/encode';
-        $this->_defaultConfig['bootstrap_js']             = 'Alaxos.bootstrap/bootstrap.min';
-        $this->_defaultConfig['bootstrap_datepicker_js']  = 'Alaxos.bootstrap/datepicker/bootstrap-datepicker.min';
-        $this->_defaultConfig['textarea_autosize_js']     = 'Alaxos.jquery/jquery.autosize.min';
+        $this->_defaultConfig['jquery_variable']           = '$';
+        $this->_defaultConfig['jquery_js']                 = 'Alaxos.jquery/jquery-1.11.1.min';
+        $this->_defaultConfig['jquery_ui_js']              = 'Alaxos.jquery/jquery-ui-1.12.1.min';
+        $this->_defaultConfig['alaxos_date_widget_js']     = 'Alaxos.alaxos/dateWidget';
+        $this->_defaultConfig['alaxos_datetime_widget_js'] = 'Alaxos.alaxos/datetimeWidget';
+        $this->_defaultConfig['alaxos_js']                 = 'Alaxos.alaxos/alaxos';
+        $this->_defaultConfig['alaxos_encode']             = 'Alaxos.alaxos/encode';
+        $this->_defaultConfig['bootstrap_js']              = 'Alaxos.bootstrap/bootstrap.min';
+        $this->_defaultConfig['bootstrap_datepicker_js']   = 'Alaxos.bootstrap/datepicker/bootstrap-datepicker.min';
+        $this->_defaultConfig['textarea_autosize_js']      = 'Alaxos.jquery/jquery.autosize.min';
 
-        $this->_defaultConfig['alaxos_css']               = 'Alaxos.alaxos';
-        $this->_defaultConfig['bootstrap_min_css']        = 'Alaxos.bootstrap/bootstrap.min';
-        $this->_defaultConfig['bootstrap_theme_css']      = 'Alaxos.bootstrap/bootstrap-theme.min';
-        $this->_defaultConfig['bootstrap_datepicker_css'] = 'Alaxos.bootstrap/bootstrap-datepicker3.standalone';
+        $this->_defaultConfig['alaxos_css']                = 'Alaxos.alaxos';
+        $this->_defaultConfig['bootstrap_min_css']         = 'Alaxos.bootstrap/bootstrap.min';
+        $this->_defaultConfig['bootstrap_theme_css']       = 'Alaxos.bootstrap/bootstrap-theme.min';
+        $this->_defaultConfig['bootstrap_datepicker_css']  = 'Alaxos.bootstrap/bootstrap-datepicker3.standalone';
 
         parent::__construct($View, $config);
     }
@@ -65,6 +66,17 @@ class AlaxosHtmlHelper extends HtmlHelper
         $options = array_merge($default_options, $options);
 
         return $this->script($this->getConfig('alaxos_date_widget_js'), $options);
+    }
+
+    public function includeDatetimeWidgetJS(array $options = [])
+    {
+        $default_options = [
+            'block' => true
+        ];
+
+        $options = array_merge($default_options, $options);
+
+        return $this->script($this->getConfig('alaxos_datetime_widget_js'), $options);
     }
 
 	public function includeAlaxosJS(array $options = [])

@@ -80,20 +80,20 @@ class AlaxosFormHelper extends FormHelper
         return $options;
     }
 
-    public function dateTime($fieldName, array $options = array()) {
-
+    public function dateTime($fieldName, array $options = array())
+    {
         $default_options = ['format_on_blur'  => true];
 
         $options = array_merge($default_options, $options);
 
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerCSS();
-        $this->AlaxosHtml->includeAlaxosJS();
+        $this->AlaxosHtml->includeAlaxosJQueryUI();
+        $this->AlaxosHtml->includeDateWidgetJS();
+        $this->AlaxosHtml->includeDatetimeWidgetJS();
         $this->AlaxosHtml->includeAlaxosBootstrapDatepickerJS();
 
-        $date_locale_options = $this->getDateLocale();
-        $options             = array_merge($options, $date_locale_options);
-
         $options = $this->_initInputField($fieldName, $options);
+        $options['locale_options'] = $this->getDateLocale();
 
         /*
          * If value is not found, we may be in the case of posted data
@@ -424,12 +424,4 @@ class AlaxosFormHelper extends FormHelper
 
         return $this->AlaxosHtml->script(Router::url(['prefix' => false, 'plugin' => 'Alaxos', 'controller' => 'Javascripts', 'action' => 'antispam', '_ext' => 'js', '?' => ['fid' => $form_dom_id, 'token' => $token]], true), ['block' => true]);
     }
-
-    /*******************************/
-
-    public function domId($value)
-    {
-        return $this->_domId($value);
-    }
-
 }
