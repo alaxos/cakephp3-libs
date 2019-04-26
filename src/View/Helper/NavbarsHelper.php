@@ -297,7 +297,9 @@ class NavbarsHelper extends Helper
         unset($query['limit']);
         $queryString = '';
         foreach ($query as $key => $value) {
-            $queryString .= '&' . urlencode($key) . '=' . urlencode($value);
+            if ($key != 'page') {
+                $queryString .= '&' . urlencode($key) . '=' . urlencode($value);
+            }
         }
 
         $js[] = '       window.location = "' . $here .'?' . $queryString . '" + "&limit=" +$(this).val();';
