@@ -21,7 +21,7 @@ class Datetime implements WidgetInterface
         $date_data = [
             'type'        => 'text',
             'name'        => $data['name'] . '__date__',
-            'id'          => $this->getDomId($data['name'] . '-date'),
+            'id'          => $this->getDomId($data['name'] . '__date__'),
             'class'       => isset($data['date_class']) ? $data['date_class'] : 'form-control inputDate',
             'style'       => isset($data['date_style']) ? $data['date_style'] : null,
             'placeholder' => isset($data['date_placeholder']) ? $data['date_placeholder'] : null
@@ -30,7 +30,7 @@ class Datetime implements WidgetInterface
         $time_data = [
             'type'        => 'text',
             'name'        => $data['name'] . '__time__',
-            'id'          => $this->getDomId($data['name'] . '-time'),
+            'id'          => $this->getDomId($data['name'] . '__time__'),
             'class'       => isset($data['time_class']) ? $data['time_class'] : 'form-control inputTime',
             'style'       => isset($data['time_style']) ? $data['time_style'] : null,
             'placeholder' => isset($data['time_placeholder']) ? $data['time_placeholder'] : null
@@ -39,7 +39,7 @@ class Datetime implements WidgetInterface
         $hidden_data = [
             'type' => 'hidden',
             'name' => $data['name'],
-            'id'   => $this->getDomId($data['name'] . '-hidden')
+            'id'   => $this->getDomId($data['name'] . '__hidden__')
         ];
 
         $datetimeData = $this->getDatetimeData($data);
@@ -255,195 +255,6 @@ class Datetime implements WidgetInterface
         return $input;
     }
 
-//    protected function get_html_code($date_data, $time_data, $hidden_data)
-//    {
-//        $input = '<div class="alaxos-datetime">';
-//
-//        /*
-//         * Date field
-//         */
-//        $input .= '<div class="time alaxos-datepart">';
-//
-//        $input .= '<div class="input-group date alaxos-date" id="' . $date_data['id'] . '-container">';
-//
-//        $input .= $this->_templates->format('input', [
-//            'name' => $date_data['name'],
-//            'type' => $date_data['type'],
-//            'attrs' => $this->_templates->formatAttributes(
-//                $date_data,
-//                ['name', 'type', 'alaxos_js_format', 'format_on_blur', 'language', 'datepicker_format']
-//            ),
-//        ]);
-//
-//        $input .= '<span class="input-group-addon" id="' . $date_data['id'] . '-group-addon"><i class="glyphicon glyphicon-th"></i></span>';
-//
-//        $input .= '</div>';
-//
-//        $input .= '</div>';
-//
-//        /*
-//         * Time field
-//         */
-//        $input .= '<div class="time alaxos-timepart">';
-//
-//        $input .= '<span class="glyphicon glyphicon-time time-icon"></span>';
-//
-//        $input .= $this->_templates->format('input', [
-//            'name' => $time_data['name'],
-//            'type' => $time_data['type'],
-//            'attrs' => $this->_templates->formatAttributes(
-//                $time_data,
-//                ['name', 'type']
-//            ),
-//        ]);
-//
-//        $input .= '</div>';
-//
-//        $input .= '</div>';
-//
-//        /*
-//         * Hidden field
-//         */
-//        $input .= $this->_templates->format('input', [
-//            'name' => $hidden_data['name'],
-//            'type' => 'hidden',
-//            'attrs' => $this->_templates->formatAttributes(
-//                $hidden_data,
-//                ['name', 'type']
-//            ),
-//        ]);
-//
-//        return $input;
-//    }
-//
-//    protected function get_js_code($date_data, $time_data, $hidden_data)
-//    {
-//        $js = [];
-//        $js[] = '<script type="text/javascript">';
-//        $js[] = '';
-//        $js[] = 'date_on_blur_timeout = null;';
-//        $js[] = '';
-//
-//        $js[] = '$(document).ready(function(){';
-//        $js[] = '';
-//
-//        /*
-//         * Set the datepicker language
-//         */
-//        $js[] = 'var language = "' . (isset($date_data['language']) ? $date_data['language'] : 'en') . '";';
-//        $js[] = '';
-//
-//        /*
-//         * Start datepicker + date selected in datepicker --> update hidden field
-//         */
-//        $js[] = '$("#' . $date_data['id'] . '").datepicker({language : language, format : "' . $date_data['datepicker_format'] . '", forceParse : false, autoclose : true, todayHighlight: true, showOnFocus : false}).on("changeDate", function(){';
-//        $js[] = '   ';
-//        $js[] = '   clearTimeout(date_on_blur_timeout);';
-//        $js[] = '   ';
-//        $js[] = '   Alaxos.updateDatetimeHiddenField("' . $hidden_data['name'] . '");';
-//        $js[] = '   ';
-//
-//        /*
-//         * Change date may set the lower limit of another datepicker
-//         */
-//        if (isset($date_data['upper_datepicker_id'])) {
-//            $js[] = '      $("#' . $date_data['upper_datepicker_id'] . '").datepicker("setStartDate", $("#' . $date_data['id'] . '").datepicker("getDate"));';
-//            $js[] = '      ';
-//            $js[] = '      var upper_date = $("#' . $date_data['upper_datepicker_id'] . '").datepicker("getDate");';
-//            $js[] = '      ';
-//            $js[] = '      if(upper_date == null){';
-//            $js[] = '          $("#' . $date_data['upper_datepicker_id'] . '").datepicker("update", "");';
-//            $js[] = '          ';
-//            $js[] = '          Alaxos.updateDatetimeHiddenField("' . $date_data['upper_datepicker_name'] . '");';
-//            $js[] = '      }';
-//        }
-//
-//        $js[] = '});';
-//
-//        /*
-//         * Click on icon opens the datepicker
-//         */
-//        $js[] = '        $("#' . $date_data['id'] . '-group-addon").click(function(e){';
-//        $js[] = '            $("#' . $date_data['id'] . '").datepicker("show");';
-//        $js[] = '        });';
-//
-//        if (isset($date_data['format_on_blur']) && $date_data['format_on_blur']) {
-//            /*
-//             * Blur on date field --> autocomplete and format date + update hidden field
-//             */
-//            $js[] = '  $("#' . $date_data['id'] . '").blur(function(){';
-//            $js[] = '';
-//            $js[] = '      Alaxos.formatDateAndUpdateHiddenField("' . $hidden_data['name'] . '", $(this).attr("id"), "' . $date_data['alaxos_js_format'] . '");';
-//            $js[] = '';
-//            $js[] = '});';
-//        }
-//
-//        /*
-//         * On date 'enter' key press: format date, update hidden field, then only submit the form
-//         */
-//        $js[] = '$("#' . $date_data['id'] . '").bind("keydown", function(e){';
-//        $js[] = '    if(e.which == 13){';
-//        $js[] = '       ';
-//        $js[] = '       e.preventDefault();';
-//        $js[] = '       ';
-//        $js[] = '       var field = this;';
-//        $js[] = '       ';
-//        $js[] = '       Alaxos.formatDateAndUpdateHiddenField("' . $hidden_data['name'] . '", $(this).attr("id"), "' . $date_data['alaxos_js_format'] . '", function(){';
-//        $js[] = '       ';
-//        $js[] = '           $(field).closest("form").submit();';
-//        $js[] = '       ';
-//        $js[] = '      });';
-//        $js[] = '    }';
-//        $js[] = '});';
-//
-//        /*
-//         * Start time field and update he hidden field on blur
-//         */
-//        $js[] = 'Alaxos.time_field("#' . $time_data['id'] . '", function(){';
-//        $js[] = '   ';
-//        $js[] = '   Alaxos.updateDatetimeHiddenField("' . $hidden_data['name'] . '");';
-//        $js[] = '   ';
-//        $js[] = '});';
-//
-//        /*
-//         * On time enter key press: format time, update hidden field, then submit the form
-//         */
-//        $js[] = '$("#' . $time_data['id'] . '").bind("keydown", function(e){';
-//        $js[] = '    if(e.which == 13){';
-//        $js[] = '       ';
-//        $js[] = '       e.preventDefault();';
-//        $js[] = '       ';
-//        $js[] = '       Alaxos.format_time(this, false);';
-//        $js[] = '       ';
-//        $js[] = '       Alaxos.updateDatetimeHiddenField("' . $hidden_data['name'] . '");';
-//        $js[] = '       ';
-//        $js[] = '       $(this).closest("form").submit();';
-//        $js[] = '       ';
-//        $js[] = '    }';
-//        $js[] = '});';
-//
-//        $js[] = '    });';
-//        $js[] = '    ';
-//
-//        /*
-//         * Init lower limit of another datepicker
-//         */
-//        if (isset($date_data['upper_datepicker_id'])) {
-//            $js[] = '  /*';
-//            $js[] = '   * Setting the lower limit too early seems to brake the date format';
-//            $js[] = '   */';
-//            $js[] = '  initStartDate = setTimeout(function(){';
-//            $js[] = '      $("#' . $date_data['upper_datepicker_id'] . '").datepicker("setStartDate", $("#' . $date_data['id'] . '").datepicker("getDate"));';
-//            $js[] = '  }, 1000);';
-//            $js[] = '  ';
-//        }
-//
-//        $js[] = '    ';
-//        $js[] = '    </script>';
-//
-//        return implode("\n", $js);
-//    }
-
     protected function getDomId($name)
     {
         $name = str_replace('[', '___', $name);
@@ -452,8 +263,15 @@ class Datetime implements WidgetInterface
         return $name;
     }
 
+    protected function getName($name)
+    {
+
+    }
+
     public function secureFields(array $data)
     {
+        $debug = 'stop';
+
         return [
             $data['name'] . '__date__',
             $data['name'] . '__time__',

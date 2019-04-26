@@ -257,19 +257,20 @@ class AlaxosFormHelper extends FormHelper
 
         $options = array_merge($default_options, $options);
 
-        $endId   = $fieldName . '.__end__';
+        $endName = $fieldName . '.__end__';
+        $endId = $this->_getDomId($endName);
 
-        $endsWithBrackets = '';
-        if (substr($endId, -2) === '[]') {
-            $endId = substr($endId, 0, -2);
-            $endsWithBrackets = '[]';
-        }
-        $parts = explode('.', $endId);
-        $first = array_shift($parts);
-        $endName = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+//        $endsWithBrackets = '';
+//        if (substr($endId, -2) === '[]') {
+//            $endId = substr($endId, 0, -2);
+//            $endsWithBrackets = '[]';
+//        }
+//        $parts = explode('.', $endId);
+//        $first = array_shift($parts);
+//        $endName = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
 
         $filter  = '';
-        $filter .= $this->control($fieldName . '.__start__', $options + ['placeholder' => __d('alaxos', 'from or equal'), 'upper_datepicker_name' => $endName]);
+        $filter .= $this->control($fieldName . '.__start__', $options + ['placeholder' => __d('alaxos', 'from or equal'), 'upper_datepicker_selector' => $endId]);
         $filter .= $this->control($fieldName . '.__end__', $options + ['placeholder' => __d('alaxos', 'to')]);
 
         return $filter;

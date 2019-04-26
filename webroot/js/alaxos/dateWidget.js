@@ -127,11 +127,16 @@
                 if (e.which == 13) {
                     this._clearError();
 
-                    var completedDate = this._getCompleteDateObject(date_str)
-                    this.element.datepicker("setDate", completedDate);
+                    try {
+                        var completedDate = this._getCompleteDateObject(date_str)
+                        this.element.datepicker("setDate", completedDate);
 
-                    var newValue = this.element.val();
-                    if (newValue != date_str) {
+                        var newValue = this.element.val();
+                        if (newValue != date_str) {
+                            e.preventDefault();
+                        }
+                    } catch (err) {
+                        this._displayError(err);
                         e.preventDefault();
                     }
                 }
