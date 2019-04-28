@@ -57,9 +57,9 @@
 
             var dateFieldId = this.element.attr("id");
             var dateFieldName = this.element.attr("name");
-            var timeFieldId = dateFieldId.replace(/__date__/, "__time__");
+            var timeFieldId = dateFieldId.replace(/-date$/, "-time");
             var timeFieldName = dateFieldName.replace(/__date__/, "__time__");
-            var hiddenFieldId = dateFieldId.replace(/__date__/, "__hidden__");
+            var hiddenFieldId = dateFieldId.replace(/-date$/, "-hidden");
             var hiddenFieldName = dateFieldName.replace(/__date__/, "");
 
             this.options["time_field"] = $('<input type="text" name="' + timeFieldName + '" id="' + timeFieldId + '" class="form-control inputTime">');
@@ -252,18 +252,9 @@
 
             if (time_str != null && time_str.length > 0) {
                 if (e.which == 13) {
-                    this._clearError();
-
-                    try {
-                        var completedTime = this._getCompleteTime(time_str);
-                        this.options["time_field"].val(completedTime);
-
-                        var newValue = this.options["time_field"].val();
-                        if (newValue != time_str) {
-                            e.preventDefault();
-                        }
-                    } catch (err) {
-                        this._displayError(err);
+                    this._formatTime();
+                    var newValue = this.options["time_field"].val();
+                    if (newValue != time_str) {
                         e.preventDefault();
                     }
                 }

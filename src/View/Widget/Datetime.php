@@ -6,6 +6,7 @@ use Cake\View\Widget\WidgetInterface;
 use Cake\View\Form\ContextInterface;
 use Cake\Core\Configure;
 use Cake\I18n\Time;
+use Cake\Utility\Text;
 use Alaxos\Lib\StringTool;
 
 class Datetime implements WidgetInterface
@@ -22,7 +23,7 @@ class Datetime implements WidgetInterface
         $date_data = [
             'type'        => 'text',
             'name'        => $this->getDateName($data['name']),
-            'id'          => $this->getDomId($data['name'] . '__date__'),
+            'id'          => $this->getDomId($this->getDateName($data['name'])),
             'class'       => isset($data['date_class']) ? $data['date_class'] : 'form-control inputDate',
             'style'       => isset($data['date_style']) ? $data['date_style'] : null,
             'placeholder' => isset($data['date_placeholder']) ? $data['date_placeholder'] : null
@@ -31,7 +32,7 @@ class Datetime implements WidgetInterface
         $time_data = [
             'type'        => 'text',
             'name'        => $this->getTimeName($data['name']),
-            'id'          => $this->getDomId($data['name'] . '__time__'),
+            'id'          => $this->getDomId($this->getTimeName($data['name'])),
             'class'       => isset($data['time_class']) ? $data['time_class'] : 'form-control inputTime',
             'style'       => isset($data['time_style']) ? $data['time_style'] : null,
             'placeholder' => isset($data['time_placeholder']) ? $data['time_placeholder'] : null
@@ -258,10 +259,9 @@ class Datetime implements WidgetInterface
 
     protected function getDomId($name)
     {
-        $name = str_replace('[', '___', $name);
-        $name = str_replace(']', '___', $name);
+        $domId = mb_strtolower(Text::slug($name, '-'));
 
-        return $name;
+        return $domId;
     }
 
     protected function getDateName($name)
