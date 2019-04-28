@@ -59,6 +59,27 @@ class Datetime implements WidgetInterface
 
     private function getHtmlCode($date_data, $time_data, $hidden_data)
     {
+        /*
+        <div class="input datetime">
+        <div class="alaxos-datetime">
+
+        <div class="time alaxos-datepart">
+        <div class="input-group date alaxos-date" id="collectionBegin-date-container">
+        <input type="text" name="collectionBegin__date__" id="collectionBegin-date" upper_datepicker_id="collectionEnd-date" upper_datepicker_name="collectionEnd" class="form-control inputDate">
+        <span class="input-group-addon" id="collectionBegin-date-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+        </div>
+        </div>
+
+        <div class="time alaxos-timepart">
+        <span class="glyphicon glyphicon-time time-icon"></span>
+        <input type="text" name="collectionBegin__time__" id="collectionBegin-time" class="form-control inputTime">
+        </div>
+
+        </div>
+        <input type="hidden" name="collectionBegin" id="collectionBegin-hidden" value="">
+        </div>
+        */
+
         $input = '<div class="alaxos-datetime">';
 
         /************************
@@ -84,37 +105,36 @@ class Datetime implements WidgetInterface
         /************************
          * Time field
          */
-//        $input .= '<div class="time alaxos-timepart">';
-//        $input .= '<span class="glyphicon glyphicon-time time-icon"></span>';
-//        $input .= $this->_templates->format('input', [
-//            'name' => $time_data['name'],
-//            'type' => $time_data['type'],
-//            'attrs' => $this->_templates->formatAttributes([
-//                    'value'       => $time_data['value'],
-//                    'id'          => $time_data['id'],
-//                    'class'       => $time_data['class'],
-//                    'style'       => $time_data['style'],
-//                    'placeholder' => $time_data['placeholder']
-//                ]
-//            ),
-//        ]);
-//        $input .= '</div>';
-//        $input .= '</div>';
+        $input .= '<div class="time alaxos-timepart">';
+        $input .= '<span class="glyphicon glyphicon-time time-icon"></span>';
+        $input .= $this->_templates->format('input', [
+            'name' => $time_data['name'],
+            'type' => $time_data['type'],
+            'attrs' => $this->_templates->formatAttributes([
+                    'value'       => $time_data['value'],
+                    'id'          => $time_data['id'],
+                    'class'       => $time_data['class'],
+                    'style'       => $time_data['style'],
+                    'placeholder' => $time_data['placeholder']
+                ]
+            ),
+        ]);
+        $input .= '</div>';
+
+        $input .= '</div>';
 
         /************************
          * Hidden field
          */
-//        $input .= $this->_templates->format('input', [
-//            'name' => $hidden_data['name'],
-//            'type' => $hidden_data['type'],
-//            'attrs' => $this->_templates->formatAttributes([
-//                    'value'       => $time_data['value'],
-//                    'id'          => $time_data['id']
-//                ]
-//            ),
-//        ]);
-
-        $input .= '</div>';
+        $input .= $this->_templates->format('input', [
+            'name' => $hidden_data['name'],
+            'type' => $hidden_data['type'],
+            'attrs' => $this->_templates->formatAttributes([
+                    'value'       => $hidden_data['value'],
+                    'id'          => $hidden_data['id']
+                ]
+            ),
+        ]);
 
         return $input;
     }

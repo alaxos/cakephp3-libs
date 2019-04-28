@@ -22,7 +22,7 @@ class AlaxosHtmlHelper extends HtmlHelper
         $this->_defaultConfig['alaxos_js']                 = 'Alaxos.alaxos/alaxos';
         $this->_defaultConfig['alaxos_encode']             = 'Alaxos.alaxos/encode';
         $this->_defaultConfig['bootstrap_js']              = 'Alaxos.bootstrap/bootstrap.min';
-        $this->_defaultConfig['bootstrap_datepicker_js']   = 'Alaxos.bootstrap/datepicker/bootstrap-datepicker.min';
+        $this->_defaultConfig['bootstrap_datepicker_js']   = 'Alaxos.bootstrap/datepicker/bootstrap-datepicker';
         $this->_defaultConfig['textarea_autosize_js']      = 'Alaxos.jquery/jquery.autosize.min';
 
         $this->_defaultConfig['alaxos_css']                = 'Alaxos.alaxos';

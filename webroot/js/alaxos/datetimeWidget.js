@@ -28,64 +28,26 @@
 
             this._super();
 
+            // listening to clearDate event is useful to update hidden field when lower datepicker set the current one's value to null
+            this.element.datepicker().on("clearDate", $.proxy(this._datePickerClearDate, this));
+            
             this._completeHtml();
         },
 
         _completeHtml : function () {
             var time = this.options["time"]["value"];
 
-            /*
-            <div class="input datetime">
-                <div class="alaxos-datetime">
-
-                    <div class="time alaxos-datepart">
-                        <div class="input-group date alaxos-date" id="collectionBegin-date-container">
-                            <input type="text" name="collectionBegin__date__" id="collectionBegin-date" upper_datepicker_id="collectionEnd-date" upper_datepicker_name="collectionEnd" class="form-control inputDate">
-                            <span class="input-group-addon" id="collectionBegin-date-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-                        </div>
-                    </div>
-
-                    <div class="time alaxos-timepart">
-                        <span class="glyphicon glyphicon-time time-icon"></span>
-                        <input type="text" name="collectionBegin__time__" id="collectionBegin-time" class="form-control inputTime">
-                    </div>
-
-                </div>
-                <input type="hidden" name="collectionBegin" id="collectionBegin-hidden" value="">
-            </div>
-            */
-
             var dateFieldId = this.element.attr("id");
-            var dateFieldName = this.element.attr("name");
             var timeFieldId = dateFieldId.replace(/-date$/, "-time");
-            var timeFieldName = dateFieldName.replace(/__date__/, "__time__");
             var hiddenFieldId = dateFieldId.replace(/-date$/, "-hidden");
-            var hiddenFieldName = dateFieldName.replace(/__date__/, "");
-
-            this.options["time_field"] = $('<input type="text" name="' + timeFieldName + '" id="' + timeFieldId + '" class="form-control inputTime">');
-            this.options["time_zone"] = $('<div class="time alaxos-timepart"><span class="glyphicon glyphicon-time time-icon"></span></div>');
-            this.options["hidden_field"] = $('<input type="hidden" name="' + hiddenFieldName + '" id="' + hiddenFieldId + '" value="">');
-
-            this.options["time_field"].val(time);
-
-            if (this.options["time"]["show_placeholder"]) {
-                var placeholder = this.options["time_field"].prop("placeholder");
-                if (placeholder == null || placeholder.length == 0) {
-                    placeholder = this.options["time"]["with_seconds"] ? "hh:mm:ss" : "hh:mm";
-                    this.options["time_field"].prop("placeholder", placeholder);
-                }
-            }
-
-            this.options["time_zone"].append(this.options["time_field"]);
-
-            var datetime_div = this.element.closest(".alaxos-datetime");
-            datetime_div.append(this.options["time_zone"]);
-            datetime_div.append(this.options["hidden_field"]);
+            
+            this.options["time_field"] = $("#" + timeFieldId);
+            this.options["hidden_field"] = $("#" + hiddenFieldId);
+            
             //move error zone outside of date div part
+            var datetime_div = this.element.closest(".alaxos-datetime");
             datetime_div.append(this.options["error_zone"]);
-
-            this._updateHiddenField();
-
+            
             this.options["time_field"].blur($.proxy(this._formatTime, this));
             this.options["time_field"].keypress($.proxy(this._keyPressedInTimeField, this));
         },
@@ -231,10 +193,24 @@
 
         _datePickerChangeDate : function () {
             this._super();
+//            console.log(this.element.attr("id") + "._datePickerChangeDate()");
             this._updateHiddenField();
         },
-
+        
+        _datePickerClearDate : function () {
+//            console.log(this.element.attr("id") + "._datePickerClearDate()");
+            
+            var me = this;
+            setTimeout(function() {
+//                console.log(me.element.attr("id") + "._datePickerClearDate()   timeout");
+                me._updateHiddenField();
+            }, 50);
+            
+        },
+        
         _updateHiddenField : function () {
+//            console.log(this.element.attr("id") + "._updateHiddenField()");
+            
             var dateVal = this.element.val();
             var timeVal = this.options["time_field"].val();
 
@@ -252,11 +228,19 @@
 
             if (time_str != null && time_str.length > 0) {
                 if (e.which == 13) {
-                    this._formatTime();
-                    var newValue = this.options["time_field"].val();
-                    if (newValue != time_str) {
+                    this._clearError();
+                    try {
+                        var completedTime = this._getCompleteTime(time_str);
+                        this.options["time_field"].val(completedTime);
+                        
+                        if (time_str != completedTime) {
+                            e.preventDefault();
+                        }
+                    } catch (err) {
+                        this._displayError(err);
                         e.preventDefault();
                     }
+                    this._updateHiddenField();
                 }
             }
         }
