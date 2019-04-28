@@ -261,8 +261,8 @@ class AlaxosFormHelper extends FormHelper
         $endId = '#' . $this->_domId($endName);
 
         $filter  = '';
-        $filter .= $this->control($fieldName . '.__start__', $options + ['placeholder' => __d('alaxos', 'from or equal'), 'js_options' => ['upper_datepicker_selector' => $endId]]);
-        $filter .= $this->control($fieldName . '.__end__', $options + ['placeholder' => __d('alaxos', 'to')]);
+        $filter .= $this->control($fieldName . '.__start__', $options + ['date_placeholder' => __d('alaxos', 'from or equal'), 'js_options' => ['upper_datepicker_selector' => $endId]]);
+        $filter .= $this->control($fieldName . '.__end__', $options + ['date_placeholder' => __d('alaxos', 'to')]);
 
         return $filter;
     }

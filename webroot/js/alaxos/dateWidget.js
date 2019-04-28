@@ -72,7 +72,7 @@
             var input_group_div = this.element.closest("div");
             input_group_div.after(this.options["error_zone"]);
 
-            // calling wap() method makes the input field not visible in the posted form in soe situations (seen in filter fields)
+            // calling wap() method makes the input field not visible in the posted form in some situations (seen in filter fields)
             // --> the surrounding div is created before calling the JS widget (in Date.php)
             // This is not satisfying, but it works...
             //
