@@ -6,6 +6,7 @@ use Cake\View\Widget\WidgetInterface;
 use Cake\View\Form\ContextInterface;
 use Cake\Core\Configure;
 use Cake\I18n\Time;
+use Alaxos\Lib\StringTool;
 
 class Datetime implements WidgetInterface
 {
@@ -20,7 +21,7 @@ class Datetime implements WidgetInterface
     {
         $date_data = [
             'type'        => 'text',
-            'name'        => $data['name'] . '__date__',
+            'name'        => $this->getDateName($data['name']),
             'id'          => $this->getDomId($data['name'] . '__date__'),
             'class'       => isset($data['date_class']) ? $data['date_class'] : 'form-control inputDate',
             'style'       => isset($data['date_style']) ? $data['date_style'] : null,
@@ -29,7 +30,7 @@ class Datetime implements WidgetInterface
 
         $time_data = [
             'type'        => 'text',
-            'name'        => $data['name'] . '__time__',
+            'name'        => $this->getTimeName($data['name']),
             'id'          => $this->getDomId($data['name'] . '__time__'),
             'class'       => isset($data['time_class']) ? $data['time_class'] : 'form-control inputTime',
             'style'       => isset($data['time_style']) ? $data['time_style'] : null,
@@ -263,9 +264,27 @@ class Datetime implements WidgetInterface
         return $name;
     }
 
-    protected function getName($name)
+    protected function getDateName($name)
     {
+        if (StringTool::end_with($name, ']')) {
+            $last_opening_bracket_index = strripos($name, '[');
+            $subname = substr($name, $last_opening_bracket_index + 1, strlen($name) - $last_opening_bracket_index - 2);
+            $dateName = StringTool::last_replace('[' . $subname . ']', '[' . $subname . '__date__]', $name);
+            return $dateName;
+        } else {
+            return $name . '__date__';
+        }
+    }
 
+    protected function getTimeName($name)
+    {
+        if (StringTool::end_with($name, ']')) {
+            $last_opening_bracket_index = strripos($name, '[');
+            $subname = substr($name, $last_opening_bracket_index + 1, strlen($name) - $last_opening_bracket_index - 2);
+            return StringTool::last_replace('[' . $subname . ']', '[' . $subname . '__time__]', $name);
+        } else {
+            return $name . '__time__';
+        }
     }
 
     public function secureFields(array $data)
@@ -273,8 +292,8 @@ class Datetime implements WidgetInterface
         $debug = 'stop';
 
         return [
-            $data['name'] . '__date__',
-            $data['name'] . '__time__',
+            $this->getDateName($data['name']),
+            $this->getTimeName($data['name']),
             $data['name']
         ];
     }
