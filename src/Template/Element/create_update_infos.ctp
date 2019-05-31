@@ -126,7 +126,7 @@ if(isset($entity))
 				$has_all_props = true;
 				foreach($editor_username_property as $editor_username_prop)
 				{
-					if(!isset($creator->{$editor_username_prop}))
+					if(!isset($editor->{$editor_username_prop}))
 					{
 						$has_all_props = false;
 					}
@@ -137,7 +137,7 @@ if(isset($entity))
 					$editor_name = '';
 					foreach($editor_username_property as $editor_username_prop)
 					{
-						$editor_name .= $creator->{$editor_username_prop} . ' ';
+						$editor_name .= $editor->{$editor_username_prop} . ' ';
 					}
 					$editor_name = trim($editor_name);
 				}
