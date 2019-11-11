@@ -377,7 +377,7 @@ class FilterComponent extends Component
         $search_entity = $this->controller->{$alias}->newEntity();
 
         $search_entity->setAccess('*', true);
-        $this->controller->{$alias}->patchEntity($search_entity, $this->controller->request->getData());
+        $this->controller->{$alias}->patchEntity($search_entity, $this->controller->request->getData(), array('validate' => false));
         $this->controller->set(compact('search_entity'));
     }
 
