@@ -11,7 +11,7 @@ use Cake\Http\Response;
 
 class ShibbolethAuthenticate extends BaseAuthenticate
 {
-    protected $mod_rewrite_prefix = 'REDIRECT_';
+    const MOD_REWRITE_PREFIX = 'REDIRECT_';
 
     /**
      * Contains the key-value mapping between Shibooleth attributes and users properties
@@ -195,17 +195,16 @@ class ShibbolethAuthenticate extends BaseAuthenticate
     {
         $repeat = 0;
         $value  = null;
-
-        while(!isset($value) && $repeat < 5)
+        while (!isset($value) && $repeat < 6)
         {
-            $value = $request->getEnv($this->mod_rewrite_prefix . $attribute_name);
+            $value = $request->getEnv($attribute_name);
 
             if(isset($value))
             {
                 return $value;
             }
 
-            $attribute_name = $this->mod_rewrite_prefix . $attribute_name;
+            $attribute_name = self::MOD_REWRITE_PREFIX . $attribute_name;
 
             $repeat++;
         }
