@@ -190,6 +190,7 @@ class ShibbolethAuthenticate extends BaseAuthenticate
      * Get the value even if the $_SERVER index name is prefixed by some "REDIRECT_" (due to mod_rewrite)
      *
      * @param string $name
+     * @return string The corresponding value
      */
     protected function get_server_value(ServerRequest $request, $attribute_name)
     {
