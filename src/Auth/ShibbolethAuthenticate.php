@@ -22,6 +22,8 @@ class ShibbolethAuthenticate extends BaseAuthenticate
 
     protected $is_new_user = false;
 
+    private $user_in_error = null;
+
     public function authenticate(ServerRequest $request, Response $response)
     {
         return $this->getExistingUser($request);
@@ -120,12 +122,13 @@ class ShibbolethAuthenticate extends BaseAuthenticate
 
         if(isset($this->_config['completeNewUserData']))
         {
-           $user_data = $this->_config['completeNewUserData']($request, $user_data);
+            $user_data = $this->_config['completeNewUserData']($request, $user_data);
         }
 
         $table = TableRegistry::get($userModel);
         $user  = $table->newEntity($user_data);
 
+        $this->user_in_error = null;
         if($table->save($user))
         {
             $this->is_new_user = true;
@@ -134,8 +137,14 @@ class ShibbolethAuthenticate extends BaseAuthenticate
         }
         else
         {
+            $this->user_in_error = $user;
             Log::error('ShibbolethAuthenticate->createNewUser() : ' . print_r($user->getErrors(), true));
         }
+    }
+
+    public function getUserInError()
+    {
+        return $this->user_in_error;
     }
 
     protected function updateUserAttributes(ServerRequest $request, $user)
@@ -159,12 +168,12 @@ class ShibbolethAuthenticate extends BaseAuthenticate
             $new_data = [];
             foreach($this->_config['updatable_properties'] as $user_property)
             {
-                 $attribute_name = array_search($user_property, $this->_config['mapping']);
+                $attribute_name = array_search($user_property, $this->_config['mapping']);
 
-                 if(!empty($attribute_name))
-                 {
-                     $new_data[$user_property] = $this->get_server_value($request, $attribute_name);
-                 }
+                if(!empty($attribute_name))
+                {
+                    $new_data[$user_property] = $this->get_server_value($request, $attribute_name);
+                }
             }
 
             $user = $table->patchEntity($user, $new_data);
