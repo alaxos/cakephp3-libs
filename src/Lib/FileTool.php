@@ -93,13 +93,14 @@ class FileTool
             if($bytes >= 1000) {
 
                 $size = $bytes/1024;
-                if($size < 1000)
-                {
+                if($size < 1000) {
                     $printable_size = round($size, 1) . ' Kb';
-                }
-                else
-                {
+                } elseif ($size < 1024 * 1024) {
                     $printable_size =  round($size/1024, 1) . ' MB';
+                } elseif ($size < 1024 * 1024 * 1024) {
+                    $printable_size =  round($size/(1024 * 1024), 1) . ' GB';
+                } else {
+                    $printable_size =  round($size/(1024 * 1024 * 1024), 1) . ' TB';
                 }
 
             } elseif ($bytes < 2) {
