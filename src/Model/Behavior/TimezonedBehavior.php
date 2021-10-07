@@ -45,8 +45,11 @@ class TimezonedBehavior extends Behavior
             {
                 if(isset($value) && !empty($value))
                 {
-                    $fieldtype = $this->_table->getSchema()->getColumn($field)['type'];
-
+                    $fieldtype = null;
+                    if(!empty($this->_table->getSchema()->getColumn($field))) {
+                        $fieldtype = $this->_table->getSchema()->getColumn($field)['type'];
+                    }
+                    
                     if($fieldtype == 'datetime')
                     {
                         if(is_string($value))
